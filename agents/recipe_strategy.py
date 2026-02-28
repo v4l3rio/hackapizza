@@ -27,7 +27,6 @@ from datapizza.tools import tool
 from infrastructure.http_client import HttpClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
-import config
 
 
 # ---------------------------------------------------------------------------
@@ -161,7 +160,7 @@ class RecipeStrategyAgent(Agent):
         )
 
         task = (
-            "Analizza le nostre opzioni di ricette e decidi su quali 2-4 ricette "
+            "Analizza le nostre opzioni di ricette e decidi su quali 6 ricette "
             "concentrarci per tutta la competizione.\n\n"
             + prices_ctx
             + "Passo 1: chiama fetch_recipes per vedere cosa è disponibile.\n"
@@ -178,39 +177,3 @@ class RecipeStrategyAgent(Agent):
         log("strategy", 0, "agent", f"Done. Strategy: {self.strategy}")
         return self.strategy
 
-
-# ---------------------------------------------------------------------------
-# Standalone runner
-# ---------------------------------------------------------------------------
-
-async def _main() -> None:
-    """
-    Run the recipe strategy agent as a one-shot script.
-    Loads credentials from .env / environment variables.
-    """
-    http = HttpClient(
-        base_url=config.BASE_URL,
-        team_id=config.TEAM_ID,
-        api_key=config.TEAM_API_KEY,
-    )
-
-    agent = RecipeStrategyAgent(http)
-    strategy = await agent.execute()
-
-    print("\n" + "=" * 60)
-    print("FINAL STRATEGY")
-    print("=" * 60)
-    for item in strategy:
-        print(f"  - {item['name']}")
-    if agent.reasoning:
-        print(f"\nReasoning: {agent.reasoning}")
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    import asyncio
-    import os
-    import sys
-    # Fix sys.path when run directly from the agents/ subdirectory
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    asyncio.run(_main())

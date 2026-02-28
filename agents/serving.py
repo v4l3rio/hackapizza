@@ -180,6 +180,7 @@ class ServingAgent(Agent):
         # _pending_orders maps dish_name -> [customer_name, ...] (customer.name, not id)
         customers = self._pending_orders.get(dish_name, [])
 
+        target_customer_name: str = ""
         if customers:
             target_customer_name = customers.pop(0)
             if not customers:
@@ -217,7 +218,7 @@ class ServingAgent(Agent):
                 return
 
         try:
-            result = await self._mcp.serve_dish(dish_name, target_customer_id)
+            result = await self._mcp.serve_dish(dish_name, str(target_customer_id))
             log(
                 "serving",
                 self._state.turn_id,
