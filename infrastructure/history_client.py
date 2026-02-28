@@ -146,6 +146,91 @@ class IngredientPrices:
     timeline: list[PricePoint]
 
 
+# ── Price Board (compact per-snapshot offers) ─────────────────────────────────
+
+
+@dataclass
+class Offer:
+    """A single offer on the market at a given point in time."""
+    restaurant: str
+    side: str
+    price: float
+    quantity: int
+
+
+@dataclass
+class PriceSnapshot:
+    """All offers for an ingredient at one dump timestamp."""
+    ts: str
+    prices: list[Offer]
+
+
+# ── Dish Price History ────────────────────────────────────────────────────────
+
+
+@dataclass
+class DishObservation:
+    """A single price observation of a dish at one restaurant in one dump."""
+    ts: str
+    restaurant_id: str
+    restaurant_name: str
+    price: float
+
+
+@dataclass
+class DishSummary:
+    total_observations: int = 0
+    total_changes: int = 0
+    restaurants: list[str] = field(default_factory=list)
+    restaurant_count: int = 0
+    min_price: float = 0.0
+    max_price: float = 0.0
+    avg_price: float = 0.0
+    first_seen: str = ""
+    last_seen: str = ""
+    current_price: float | None = None
+
+
+@dataclass
+class DishRestaurantBreakdown:
+    """Price history of a dish at one specific restaurant."""
+    observations: int = 0
+    min_price: float = 0.0
+    max_price: float = 0.0
+    avg_price: float = 0.0
+    current_price: float = 0.0
+    price_history: list[DishObservation] = field(default_factory=list)
+
+
+@dataclass
+class DishHistory:
+    """Complete price history for a single dish across all restaurants."""
+    dish: str
+    restaurant_filter: str | None
+    dumps_scanned: int
+    summary: DishSummary
+    changes: list[DishObservation]
+    by_restaurant: dict[str, DishRestaurantBreakdown]
+    observations: list[DishObservation]
+
+
+@dataclass
+class DishBoardEntry:
+    """Summary entry for one dish in the full dish board."""
+    summary: DishSummary
+    observations: list[DishObservation]
+    changes: list[DishObservation]
+
+
+@dataclass
+class DishBoard:
+    """Price history board for all dishes."""
+    dish_count: int
+    restaurant_filter: str | None
+    dumps_scanned: int
+    dishes: dict[str, DishBoardEntry]
+
+
 # ── Restaurant History ────────────────────────────────────────────────────────
 
 
@@ -343,6 +428,76 @@ def _parse_restaurant_history(data: dict) -> RestaurantHistory:
     )
 
 
+def _parse_dish_observation(o: dict) -> DishObservation:
+    return DishObservation(
+        ts=o["ts"],
+        restaurant_id=str(o.get("restaurant_id", "")),
+        restaurant_name=o.get("restaurant_name", ""),
+        price=o.get("price", 0),
+    )
+
+
+def _parse_dish_history(data: dict) -> DishHistory:
+    s = data.get("summary", {})
+    by_restaurant = {}
+    for rname, rdata in data.get("by_restaurant", {}).items():
+        by_restaurant[rname] = DishRestaurantBreakdown(
+            observations=rdata.get("observations", 0),
+            min_price=rdata.get("min_price", 0),
+            max_price=rdata.get("max_price", 0),
+            avg_price=rdata.get("avg_price", 0),
+            current_price=rdata.get("current_price", 0),
+            price_history=[_parse_dish_observation(o) for o in rdata.get("price_history", [])],
+        )
+    return DishHistory(
+        dish=data["dish"],
+        restaurant_filter=data.get("restaurant_filter"),
+        dumps_scanned=data.get("dumps_scanned", 0),
+        summary=DishSummary(
+            total_observations=s.get("total_observations", 0),
+            total_changes=s.get("total_changes", 0),
+            restaurants=s.get("restaurants", []),
+            restaurant_count=s.get("restaurant_count", 0),
+            min_price=s.get("min_price", 0),
+            max_price=s.get("max_price", 0),
+            avg_price=s.get("avg_price", 0),
+            first_seen=s.get("first_seen", ""),
+            last_seen=s.get("last_seen", ""),
+        ),
+        changes=[_parse_dish_observation(o) for o in data.get("changes", [])],
+        by_restaurant=by_restaurant,
+        observations=[_parse_dish_observation(o) for o in data.get("observations", [])],
+    )
+
+
+def _parse_dish_board(data: dict) -> DishBoard:
+    dishes = {}
+    for name, d in data.get("dishes", {}).items():
+        s = d.get("summary", {})
+        dishes[name] = DishBoardEntry(
+            summary=DishSummary(
+                total_observations=s.get("total_observations", 0),
+                total_changes=s.get("total_changes", 0),
+                restaurants=s.get("restaurants", []),
+                restaurant_count=s.get("restaurant_count", 0),
+                min_price=s.get("min_price", 0),
+                max_price=s.get("max_price", 0),
+                avg_price=s.get("avg_price", 0),
+                first_seen=s.get("first_seen", ""),
+                last_seen=s.get("last_seen", ""),
+                current_price=s.get("current_price"),
+            ),
+            observations=[_parse_dish_observation(o) for o in d.get("observations", [])],
+            changes=[_parse_dish_observation(o) for o in d.get("changes", [])],
+        )
+    return DishBoard(
+        dish_count=data.get("dish_count", 0),
+        restaurant_filter=data.get("restaurant_filter"),
+        dumps_scanned=data.get("dumps_scanned", 0),
+        dishes=dishes,
+    )
+
+
 # ── Client ────────────────────────────────────────────────────────────────────
 
 
@@ -412,6 +567,101 @@ class HistoryClient:
             data = self._get("/api/history/restaurant", {"limit": limit})
         return _parse_restaurant_history(data)
 
+    # ── Price board ───────────────────────────────────────────────────
+
+    def price_board(
+        self,
+        ingredients: list[str] | None = None,
+        limit: int = 100,
+        side: str | None = None,
+        delay: float = 0.1,
+    ) -> dict[str, list[PriceSnapshot]]:
+        """
+        Compact price board for all (or selected) ingredients.
+
+        Returns a dict keyed by ingredient name, each value being a
+        chronological list of PriceSnapshot (one per dump), containing
+        only the individual offers observed at that point in time.
+
+        Example output structure:
+            {
+                "Alghe Bioluminescenti": [
+                    PriceSnapshot(ts="2026-...", prices=[
+                        Offer(restaurant="Da Mario", side="BUY", price=10.0, quantity=5),
+                        Offer(restaurant="La Stella", side="SELL", price=12.5, quantity=3),
+                    ]),
+                    ...
+                ],
+            }
+        """
+        if ingredients is None:
+            ingredients = self.market_ingredients()
+            print(f"Found {len(ingredients)} ingredients")
+
+        results: dict[str, list[PriceSnapshot]] = {}
+        for i, name in enumerate(ingredients, 1):
+            print(f"  [{i}/{len(ingredients)}] {name}...", end=" ", flush=True)
+            try:
+                h = self.ingredient_history(name, limit, side)
+                snapshots: list[PriceSnapshot] = []
+                for snap in h.series:
+                    # snap.entries isn't available in IngredientSnapshot (aggregated),
+                    # so we pull from the raw prices endpoint per ingredient
+                    pass  # filled below via ingredient_prices
+                # Use the prices timeline, grouped by ts
+                p = self.ingredient_prices(name, limit, side)
+                by_ts: dict[str, list[Offer]] = {}
+                for pt in p.timeline:
+                    by_ts.setdefault(pt.ts, []).append(Offer(
+                        restaurant=pt.restaurant_name,
+                        side=pt.side or "",
+                        price=pt.unit_price,
+                        quantity=pt.quantity,
+                    ))
+                results[name] = [
+                    PriceSnapshot(ts=ts, prices=offers)
+                    for ts, offers in by_ts.items()
+                ]
+                print("ok")
+            except httpx.HTTPStatusError as e:
+                print(f"error {e.response.status_code}")
+                results[name] = []
+            if delay and i < len(ingredients):
+                time.sleep(delay)
+
+        return results
+
+    # ── Dish prices ───────────────────────────────────────────────────
+
+    def dish_board(
+        self, limit: int = 200, restaurant_id: str | None = None
+    ) -> DishBoard:
+        """
+        Price history for every dish across all restaurants and dumps.
+
+        Returns a DishBoard with a dict of DishBoardEntry per dish name,
+        each containing observations, changes, and summary stats.
+        """
+        params: dict = {"limit": limit}
+        if restaurant_id:
+            params["restaurant_id"] = restaurant_id
+        data = self._get("/api/history/dishes", params)
+        return _parse_dish_board(data)
+
+    def dish_history(
+        self, name: str, limit: int = 200, restaurant_id: str | None = None
+    ) -> DishHistory:
+        """
+        Price history for a single dish (partial/case-insensitive match).
+
+        Returns full observations, changes, per-restaurant breakdown, and summary.
+        """
+        params: dict = {"limit": limit}
+        if restaurant_id:
+            params["restaurant_id"] = restaurant_id
+        data = self._get(f"/api/history/dish/{quote(name, safe='')}", params)
+        return _parse_dish_history(data)
+
     # ── Bulk fetch ────────────────────────────────────────────────────
 
     def all_ingredients_history(
@@ -478,77 +728,119 @@ if __name__ == "__main__":
     BASE_URL = "http://localhost:8765"
 
     with HistoryClient(BASE_URL) as c:
+        print(c.dish_history("Cosmic Synchrony: Il Destino di Pulsar"))
+
+        print(c.ingredient_history("Essenza di Tachioni"))
         # ── List all ingredients ──────────────────────────────────────
-        ingredients = c.market_ingredients()
-        print(f"\n{'='*60}")
-        print(f"  {len(ingredients)} ingredients on the market")
-        print(f"{'='*60}")
-        for name in ingredients:
-            print(f"  • {name}")
-
-        if not ingredients:
-            print("No ingredients found — is the server running?")
-            sys.exit(1)
-
-        sample = ingredients[0]
-
-        # ── Ingredient history (aggregated per dump) ──────────────────
-        print(f"\n{'='*60}")
-        print(f"  History: {sample}")
-        print(f"{'='*60}")
-        h = c.ingredient_history(sample)
-        print(f"  Trend:     {h.summary.price_trend}")
-        print(f"  Avg price: {h.summary.overall_avg_price}")
-        print(f"  Min price: {h.summary.overall_min_price}")
-        print(f"  Max price: {h.summary.overall_max_price}")
-        print(f"  Snapshots: {h.count}")
-        for snap in h.series[-3:]:
-            print(f"    {snap.ts}  avg={snap.avg_unit_price}  vol={snap.total_volume}  Δ={snap.price_delta}")
-
-        # ── Ingredient entries (individual orders) ────────────────────
-        print(f"\n{'='*60}")
-        print(f"  Entries: {sample}")
-        print(f"{'='*60}")
-        e = c.ingredient_entries(sample)
-        print(f"  Total orders: {e.total}")
-        print(f"  By status:    {e.summary.by_status}")
-        print(f"  By side:      {e.summary.by_side}")
-        for entry in e.entries[:5]:
-            print(f"    #{entry.id}  {entry.side}  {entry.unit_price:.4f}/u  "
-                  f"qty={entry.quantity}  {entry.status}  by {entry.restaurant_name}")
-
-        # ── Ingredient prices (raw timeline) ──────────────────────────
-        print(f"\n{'='*60}")
-        print(f"  Prices: {sample}")
-        print(f"{'='*60}")
-        p = c.ingredient_prices(sample)
-        print(f"  Observations: {p.total}")
-        print(f"  Range: {p.summary.min_price} — {p.summary.max_price}")
-        for pt in p.timeline[-5:]:
-            mine = " ★" if pt.is_mine else ""
-            print(f"    {pt.ts}  {pt.side}  {pt.unit_price:.4f}/u  [{pt.status}]{mine}")
-
-        # ── Restaurant history ────────────────────────────────────────
-        print(f"\n{'='*60}")
-        print(f"  My restaurant history")
-        print(f"{'='*60}")
-        r = c.restaurant_history()
-        print(f"  Restaurant ID: {r.restaurant_id}")
-        print(f"  Snapshots:     {r.count}")
-        for snap in r.series[-3:]:
-            delta_info = ""
-            if snap.delta and snap.delta.balance:
-                delta_info = f"  Δbal={snap.delta.balance.diff:+.2f}"
-            print(f"    {snap.ts}  bal={snap.balance}  rep={snap.reputation}{delta_info}")
-
-        # ── Bulk fetch all ingredients ────────────────────────────────
-        print(f"\n{'='*60}")
-        print(f"  Bulk fetch (all ingredients, with entries & prices)")
-        print(f"{'='*60}")
-        all_data = c.all_ingredients_history(include_entries=True, include_prices=True)
-
-        # Export to JSON
-        output_path = "history_dump.json"
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump({name: to_dict(fh) for name, fh in all_data.items()}, f, ensure_ascii=False, indent=2)
-        print(f"\nSaved {len(all_data)} ingredients to {output_path}")
+        # ingredients = c.market_ingredients()
+        # print(f"\n{'='*60}")
+        # print(f"  {len(ingredients)} ingredients on the market")
+        # print(f"{'='*60}")
+        # for name in ingredients:
+        #     print(f"  • {name}")
+        #
+        # if not ingredients:
+        #     print("No ingredients found — is the server running?")
+        #     sys.exit(1)
+        #
+        # sample = ingredients[0]
+        #
+        # # ── Ingredient history (aggregated per dump) ──────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  History: {sample}")
+        # print(f"{'='*60}")
+        # h = c.ingredient_history(sample)
+        # print(f"  Trend:     {h.summary.price_trend}")
+        # print(f"  Avg price: {h.summary.overall_avg_price}")
+        # print(f"  Min price: {h.summary.overall_min_price}")
+        # print(f"  Max price: {h.summary.overall_max_price}")
+        # print(f"  Snapshots: {h.count}")
+        # for snap in h.series[-3:]:
+        #     print(f"    {snap.ts}  avg={snap.avg_unit_price}  vol={snap.total_volume}  Δ={snap.price_delta}")
+        #
+        # # ── Ingredient entries (individual orders) ────────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  Entries: {sample}")
+        # print(f"{'='*60}")
+        # e = c.ingredient_entries(sample)
+        # print(f"  Total orders: {e.total}")
+        # print(f"  By status:    {e.summary.by_status}")
+        # print(f"  By side:      {e.summary.by_side}")
+        # for entry in e.entries[:5]:
+        #     print(f"    #{entry.id}  {entry.side}  {entry.unit_price:.4f}/u  "
+        #           f"qty={entry.quantity}  {entry.status}  by {entry.restaurant_name}")
+        #
+        # # ── Ingredient prices (raw timeline) ──────────────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  Prices: {sample}")
+        # print(f"{'='*60}")
+        # p = c.ingredient_prices(sample)
+        # print(f"  Observations: {p.total}")
+        # print(f"  Range: {p.summary.min_price} — {p.summary.max_price}")
+        # for pt in p.timeline[-5:]:
+        #     mine = " ★" if pt.is_mine else ""
+        #     print(f"    {pt.ts}  {pt.side}  {pt.unit_price:.4f}/u  [{pt.status}]{mine}")
+        #
+        # # ── Restaurant history ────────────────────────────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  My restaurant history")
+        # print(f"{'='*60}")
+        # r = c.restaurant_history()
+        # print(f"  Restaurant ID: {r.restaurant_id}")
+        # print(f"  Snapshots:     {r.count}")
+        # for snap in r.series[-3:]:
+        #     delta_info = ""
+        #     if snap.delta and snap.delta.balance:
+        #         delta_info = f"  Δbal={snap.delta.balance.diff:+.2f}"
+        #     print(f"    {snap.ts}  bal={snap.balance}  rep={snap.reputation}{delta_info}")
+        #
+        # # ── Price board (compact view) ────────────────────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  Price board: {sample}")
+        # print(f"{'='*60}")
+        # board = c.price_board(ingredients=[sample])
+        # for snap in board.get(sample, [])[-3:]:
+        #     print(f"  {snap.ts}")
+        #     for o in snap.prices:
+        #         print(f"    {o.restaurant:30s}  {o.side:4s}  {o.price:.4f}/u  qty={o.quantity}")
+        #
+        # # ── Dish board (all dishes) ───────────────────────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  Dish board (all dishes, all restaurants)")
+        # print(f"{'='*60}")
+        # dboard = c.dish_board()
+        # print(f"  {dboard.dish_count} dishes across {dboard.dumps_scanned} dumps")
+        # for dname, entry in list(dboard.dishes.items())[:5]:
+        #     s = entry.summary
+        #     print(f"    {dname:40s}  {s.min_price:>8.2f} — {s.max_price:<8.2f}  "
+        #           f"avg={s.avg_price:.2f}  ({s.restaurant_count} restaurants)")
+        #
+        # # ── Single dish history ───────────────────────────────────────
+        # if dboard.dishes:
+        #     sample_dish = next(iter(dboard.dishes))
+        #     print(f"\n{'='*60}")
+        #     print(f"  Dish history: {sample_dish}")
+        #     print(f"{'='*60}")
+        #     dh = c.dish_history(sample_dish)
+        #     print(f"  Price range: {dh.summary.min_price} — {dh.summary.max_price}")
+        #     print(f"  Avg price:   {dh.summary.avg_price}")
+        #     print(f"  Restaurants: {', '.join(dh.summary.restaurants)}")
+        #     print(f"  Changes:")
+        #     for ch in dh.changes[-5:]:
+        #         print(f"    {ch.ts}  {ch.restaurant_name:30s}  {ch.price:.2f}")
+        #     print(f"  Per restaurant:")
+        #     for rname, rb in dh.by_restaurant.items():
+        #         print(f"    {rname:30s}  {rb.min_price:.2f} — {rb.max_price:.2f}  "
+        #               f"avg={rb.avg_price:.2f}  current={rb.current_price:.2f}")
+        #
+        # # ── Bulk fetch all ingredients ────────────────────────────────
+        # print(f"\n{'='*60}")
+        # print(f"  Bulk fetch (all ingredients, with entries & prices)")
+        # print(f"{'='*60}")
+        # all_data = c.all_ingredients_history(include_entries=True, include_prices=True)
+        #
+        # # Export to JSON
+        # output_path = "history_dump.json"
+        # with open(output_path, "w", encoding="utf-8") as f:
+        #     json.dump({name: to_dict(fh) for name, fh in all_data.items()}, f, ensure_ascii=False, indent=2)
+        # print(f"\nSaved {len(all_data)} ingredients to {output_path}")
