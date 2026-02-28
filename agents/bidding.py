@@ -129,7 +129,7 @@ class BiddingAgent(Agent):
         """
         valid_ingredients = get_ingredient_data()
 
-        recipes = state.recipes
+        # recipes = state.recipes
         # if focus_recipes:
         #     focus_set = set(focus_recipes)
         #     recipes = [r for r in recipes if r.get("name") in focus_set]
