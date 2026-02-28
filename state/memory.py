@@ -13,6 +13,28 @@ class StrategyMemory:
     served_orders: list[dict[str, Any]] = field(default_factory=list)
     revenue_per_turn: dict[int, float] = field(default_factory=dict)
     focus_recipes: list[str] = field(default_factory=list)  # recipe names chosen by strategy agent
+    news_insights: list[dict[str, Any]] = field(default_factory=list)  # from NewsWatcherAgent
+
+    def get_news_context(self, max_items: int = 5) -> str:
+        """Stringa formattata degli insight per i prompt degli altri agenti."""
+        if not self.news_insights:
+            return ""
+        priority_order = {"high": 0, "medium": 1, "low": 2}
+        top = sorted(
+            self.news_insights,
+            key=lambda x: (priority_order.get(x.get("priority", "low"), 2), -x.get("recorded_at", 0)),
+        )[:max_items]
+        lines = ["=== Notizie recenti da 'Cronache dal Cosmo' ==="]
+        for ins in top:
+            pri = ins.get("priority", "?").upper()
+            line = f"[{pri}] {ins.get('headline', '')}"
+            if ins.get("ingredients_affected"):
+                line += f" | Ingredienti: {', '.join(ins['ingredients_affected'])}"
+            if ins.get("actions"):
+                line += f" | Azioni: {'; '.join(ins['actions'])}"
+            lines.append(line)
+        lines.append("=== Fine notizie ===")
+        return "\n".join(lines)
 
     async def consolidate(self, http: HttpClient, turn_id: int = 0) -> None:
         """

@@ -17,6 +17,7 @@ from agents.menu import MenuAgent
 from agents.market import MarketAgent
 from agents.serving import ServingAgent
 from agents.recipe_strategy import RecipeStrategyAgent
+from agents.news_watcher import NewsWatcherAgent
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
@@ -52,6 +53,11 @@ class AgentManager:
         self._market = MarketAgent()
         self._serving = ServingAgent(mcp=mcp, mcp_tools=mcp_tools)
         self._strategy = RecipeStrategyAgent(http)
+        self._news = NewsWatcherAgent()
+
+        # Avvia subito il polling delle notizie in background (popola memory.news_insights)
+        self._news.start(memory=memory)
+        log("manager", 0, "news", "NewsWatcherAgent avviato in background")
 
         # Register persistent SSE handlers (serving events span the whole session)
         self._serving.register(sse, state, mcp, http)
