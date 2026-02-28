@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import random
 
 from state.game_state import GameState
@@ -130,8 +129,6 @@ class SpeakingAgent:
     - Executing transactions on our BUY entries (they sell directly to us)
     """
 
-    def __init__(self) -> None:
-        pass
 
     async def execute(
         self,

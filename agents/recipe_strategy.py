@@ -18,17 +18,8 @@ After `execute()` the chosen recipes are stored in `self.strategy` so callers
 
 from __future__ import annotations
 
-import asyncio
 import json
-import os
-import sys
 from typing import Any
-
-# When run directly (`python agents/recipe_strategy.py`), Python adds the
-# `agents/` subdirectory to sys.path instead of the project root, so sibling
-# packages like `infrastructure`, `state`, and `config` are not found.
-# Inserting the project root fixes this without affecting normal imports.
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datapizza.agents import Agent
 from datapizza.tools import tool
@@ -217,4 +208,9 @@ async def _main() -> None:
 
 
 if __name__ == "__main__":
+    import asyncio
+    import os
+    import sys
+    # Fix sys.path when run directly from the agents/ subdirectory
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     asyncio.run(_main())

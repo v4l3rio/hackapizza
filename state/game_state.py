@@ -1,10 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-if TYPE_CHECKING:
-    from infrastructure.http_client import HttpClient
+from infrastructure.http_client import HttpClient
+
+
+def ingredient_cost(recipe: dict[str, Any], clearing_prices: dict[str, float] | None = None) -> float:
+    """Estimate ingredient cost using clearing prices if available, else 50/unit default."""
+    ingredients = recipe.get("ingredients", {})
+    if clearing_prices:
+        return sum(clearing_prices.get(ing, 50.0) * qty for ing, qty in ingredients.items())
+    return float(len(ingredients)) * 50.0
 
 
 @dataclass
@@ -18,7 +25,7 @@ class GameState:
     active_meals: list[dict[str, Any]] = field(default_factory=list)
     restaurants: list[dict[str, Any]] = field(default_factory=list)
 
-    async def refresh_all(self, http: "HttpClient") -> None:
+    async def refresh_all(self, http: HttpClient) -> None:
         """Refresh all state from the game server."""
         results = await http.get_all(self.turn_id)
         self.balance = results.get("balance", self.balance)
@@ -40,10 +47,3 @@ class GameState:
             if can_cook:
                 cookable.append(recipe)
         return cookable
-
-    def ingredient_cost(self, recipe: dict[str, Any], clearing_prices: dict[str, float] | None = None) -> float:
-        """Estimate ingredient cost using clearing prices if available, else 50/unit default."""
-        ingredients = recipe.get("ingredients", {})
-        if clearing_prices:
-            return sum(clearing_prices.get(ing, 50.0) * qty for ing, qty in ingredients.items())
-        return float(len(ingredients)) * 50.0

@@ -12,6 +12,7 @@ from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 from utils.ingredient_data import dish_prestige_score, dish_avg_prep_time_ms
+from state.game_state import ingredient_cost
 from config import (
     MENU_MARKUP_BUDGET,
     MENU_MARKUP_STANDARD,
@@ -73,6 +74,8 @@ class MenuAgent(Agent):
         """Publish the menu to the game server."""
         try:
             items = json.loads(items_json)
+            for item in items:
+                item["price"] = 50.0
             result = await self._mcp.save_menu(items)
             turn = self._state.turn_id if self._state else "?"
             log("waiting", turn, "tool", f"Menu saved ({len(items)} items): {result}")
@@ -116,7 +119,7 @@ class MenuAgent(Agent):
             dish_profiles: list[dict] = []
             for recipe in cookable:
                 name = recipe.get("name", "Unknown")
-                cost = state.ingredient_cost(recipe, clearing)
+                cost = ingredient_cost(recipe, clearing)
                 prestige_score = dish_prestige_score(recipe)
                 avg_prep_ms = dish_avg_prep_time_ms(recipe)
 

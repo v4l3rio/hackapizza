@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
-if TYPE_CHECKING:
-    from infrastructure.http_client import HttpClient
+from infrastructure.http_client import HttpClient
 
 
 @dataclass
@@ -15,7 +14,7 @@ class StrategyMemory:
     revenue_per_turn: dict[int, float] = field(default_factory=dict)
     focus_recipes: list[str] = field(default_factory=list)  # recipe names chosen by strategy agent
 
-    async def consolidate(self, http: "HttpClient", turn_id: int = 0) -> None:
+    async def consolidate(self, http: HttpClient, turn_id: int = 0) -> None:
         """
         Aggregate clearing prices from /bid_history.
         Called at the end of each turn (on 'stopped' event or at bidding phase start).

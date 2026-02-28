@@ -38,8 +38,7 @@ class ServingAgent(Agent):
         "  - Space Sage: unlimited budget, long time → pick the most PRESTIGIOUS or RARE dish.\n"
         "  - Orbital Family: balanced → pick the best QUALITY-TO-PRICE ratio dish.\n"
         "If no archetype is explicit, infer it from the order text and client name. "
-        "Then prepare the dish using the prepare_dish tool. "
-        "When asked to open the restaurant, call open_restaurant. "
+        "Call prepare_dish with the exact dish name from our menu. "
         "Act decisively — always call a tool to take action."
     )
 
@@ -52,22 +51,6 @@ class ServingAgent(Agent):
         super().__init__(client=get_llm_client(), max_steps=3)
 
     # ------------------------------------------------------------------ tools
-
-    @tool(
-        name="open_restaurant",
-        description="Open the restaurant so clients can be served.",
-    )
-    async def open_restaurant(self) -> str:
-        """Mark the restaurant as open for business."""
-        try:
-            result = await self._mcp.update_restaurant_is_open(True)
-            turn = self._state.turn_id if self._state else "?"
-            log("serving", turn, "tool", f"Restaurant opened: {result}")
-            return f"Restaurant is now open: {result}"
-        except Exception as exc:
-            turn = self._state.turn_id if self._state else "?"
-            log_error("serving", turn, "tool", f"open_restaurant failed: {exc}")
-            return f"Error opening restaurant: {exc}"
 
     @tool(
         name="prepare_dish",
@@ -194,34 +177,45 @@ class ServingAgent(Agent):
         dish_name = data.get("dish") or data.get("name", "")
         log("serving", self._state.turn_id, "kitchen", f"Preparation complete: '{dish_name}'")
 
-        # Qui _pending_orders[dish_name] deve contenere NOMI cliente (customer.name), non id
+        # _pending_orders maps dish_name -> [customer_name, ...] (customer.name, not id)
         customers = self._pending_orders.get(dish_name, [])
-        if not customers:
+
+        if customers:
+            target_customer_name = customers.pop(0)
+            if not customers:
+                del self._pending_orders[dish_name]
+
+            # Resolve customer name -> customerId via /meals
+            try:
+                target_customer_id = await self._lookup_customer_id_from_meals(target_customer_name)
+            except Exception as exc:
+                log_error(
+                    "serving",
+                    self._state.turn_id,
+                    "meal_lookup",
+                    f"Failed to lookup customerId for '{target_customer_name}': {exc}",
+                )
+                return
+        else:
+            # Dish name mismatch between prepare_dish call and preparation_complete event —
+            # fall back to /meals to find the first unserved customer in this turn.
             log(
                 "serving",
                 self._state.turn_id,
                 "kitchen",
-                f"No pending customer for '{dish_name}' — ignoring",
+                f"No pending order found for '{dish_name}' — falling back to /meals lookup",
             )
-            return
+            try:
+                target_customer_id = await self._lookup_any_unserved_customer()
+            except Exception as exc:
+                log_error(
+                    "serving",
+                    self._state.turn_id,
+                    "meal_lookup",
+                    f"Fallback lookup failed for '{dish_name}': {exc}",
+                )
+                return
 
-        target_customer_name = customers.pop(0)
-        if not customers:
-            del self._pending_orders[dish_name]
-
-        # 1) ricava customerId da /meals
-        try:
-            target_customer_id = await self._lookup_customer_id_from_meals(target_customer_name)
-        except Exception as exc:
-            log_error(
-                "serving",
-                self._state.turn_id,
-                "meal_lookup",
-                f"Failed to lookup customerId for '{target_customer_name}': {exc}",
-            )
-            return
-
-        # 2) servi
         try:
             result = await self._mcp.serve_dish(dish_name, target_customer_id)
             log(
@@ -238,19 +232,41 @@ class ServingAgent(Agent):
                 f"serve_dish failed for customer {target_customer_id} ('{target_customer_name}'): {exc}",
             )
 
+    async def _lookup_any_unserved_customer(self) -> int:
+        if self._state is None:
+            raise RuntimeError("Missing state")
+
+        turn_id = self._state.turn_id
+        restaurant_id = self._http.team_id
+
+        meals = await self._http.get_meals(turn_id=turn_id, restaurant_id=restaurant_id)
+
+        for m in meals:
+            if (
+                not m.get("executed", False)
+                and (m.get("status") or "").lower() not in ("cancelled", "canceled")
+                and m.get("servedDishId") is None
+            ):
+                cid = m.get("customerId")
+                if cid is not None:
+                    name = ((m.get("customer") or {}).get("name") or "")
+                    log("serving", turn_id, "meal_lookup", f"Fallback: serving customer '{name}' (id={cid})")
+                    return int(cid)
+
+        raise LookupError(f"No unserved customer found in /meals (turn_id={turn_id})")
+
     async def _lookup_customer_id_from_meals(self, customer_name: str) -> int:
         if self._state is None:
             raise RuntimeError("Missing state")
 
         turn_id = self._state.turn_id
-        restaurant_id = getattr(self._state, "restaurant_id", None)
+        restaurant_id = self._http.team_id
 
-        # se il tuo http client usa team_id come restaurant_id, puoi anche non passarlo
         meals = await self._http.get_meals(turn_id=turn_id, restaurant_id=restaurant_id)
 
         key = customer_name.strip().lower()
 
-        # preferisci non-eseguiti e non-cancellati
+        # Prefer non-executed, non-cancelled meals
         preferred = [
             m for m in meals
             if not m.get("executed", False)

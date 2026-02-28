@@ -33,19 +33,19 @@ class MCPClient:
             },
             "id": 1,
         }
-        log("MCP", "?", "call", f"→ {tool}({params})")
+        log("mcp", 0, "call", f"→ {tool}({params})")
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=payload, headers=self._headers) as resp:
                 response = await resp.json(content_type=None)
                 if not resp.ok:
-                    log_error("MCP", "?", tool, f"HTTP {resp.status}: {response}")
+                    log_error("mcp", 0, tool, f"HTTP {resp.status}: {response}")
                     resp.raise_for_status()
                 tool_result = response.get("result", {})
                 if tool_result.get("isError"):
                     error_text = (tool_result.get("content") or [{}])[0].get("text", "unknown error")
-                    log_error("MCP", "?", tool, f"Tool error: {error_text}")
+                    log_error("mcp", 0, tool, f"Tool error: {error_text}")
                     raise RuntimeError(f"MCP tool error ({tool}): {error_text}")
-                log("MCP", "?", "result", f"← {tool}: {tool_result}")
+                log("mcp", 0, "ok", f"← {tool} done")
                 return tool_result
 
     # --- Auction ---
