@@ -19,6 +19,7 @@ class MCPClient:
         self._headers = {
             "x-api-key": api_key,
             "Content-Type": "application/json",
+            "Accept": "application/json, text/event-stream",
         }
 
     async def _call_tool(self, tool: str, params: dict[str, Any]) -> Any:
@@ -35,7 +36,7 @@ class MCPClient:
         log("MCP", "?", "call", f"→ {tool}({params})")
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=payload, headers=self._headers) as resp:
-                response = await resp.json()
+                response = await resp.json(content_type=None)
                 if not resp.ok:
                     log_error("MCP", "?", tool, f"HTTP {resp.status}: {response}")
                     resp.raise_for_status()
