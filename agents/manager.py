@@ -60,7 +60,7 @@ class AgentManager:
 
     async def _on_heartbeat(self, data: dict[str, Any]) -> None:
         turn_id = data.get("turn_id", 0)
-        log("manager", int(turn_id), "heartbeat", f"Heartbeat received")
+        #log("manager", int(turn_id), "heartbeat", f"Heartbeat received")
 
 
     async def _on_game_started(self, data: dict[str, Any]) -> None:
