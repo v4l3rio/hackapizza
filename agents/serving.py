@@ -145,13 +145,17 @@ class ServingAgent(Agent):
             span.set_attribute("client_id", client_id)
             span.set_attribute("turn_id", self._state.turn_id)
 
+            # Filter recipes to only those currently on the menu
+            menu_names = {item.get("name") for item in self._state.menu_items}
+            menu_recipes = [r for r in self._state.recipes if r.get("name") in menu_names]
+
             # Let LLM pick best matching dish and call prepare_dish
             task = (
                 f"Client '{client_id}' has arrived.\n"
                 f"Their order: \"{order_text}\"\n"
                 f"Their dietary intolerances/allergies: {json.dumps(intolerances)}\n\n"
                 f"Current menu: {json.dumps(self._state.menu_items)}\n"
-                f"Recipes with ingredients: {json.dumps(self._state.recipes)}\n\n"
+                f"Recipes with ingredients (for intolerance checking): {json.dumps(menu_recipes)}\n\n"
                 "Select the best matching menu item for this client. "
                 "IMPORTANT: exclude any dish that contains an ingredient the client is intolerant to. "
                 "If there is a good match, call prepare_dish with the exact dish name. "

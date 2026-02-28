@@ -93,24 +93,24 @@ class BiddingAgent(Agent):
             )
 
             budget = state.balance * MAX_BID_BALANCE_FRACTION
-            needed = self._compute_needed(state)
+            needed = self._compute_needed(state, memory.focus_recipes)
 
             if not needed:
                 log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
                 return
 
+            focus_label = memory.focus_recipes if memory.focus_recipes else "all recipes"
             task = (
                 f"Current balance: {state.balance:.2f}\n"
                 f"Budget cap ({int(MAX_BID_BALANCE_FRACTION * 100)}% of balance): {budget:.2f}\n"
-                f"Current inventory: {json.dumps(state.inventory)}\n"
-                f"All recipes: {json.dumps(state.recipes)}\n"
-                f"Pre-computed needed ingredients (max shortfall per ingredient): {json.dumps(needed)}\n"
+                f"Focus recipes: {json.dumps(focus_label)}\n"
+                f"Needed ingredients for focus recipes (shortfall per ingredient): {json.dumps(needed)}\n"
                 f"Last known clearing prices: {json.dumps(memory.clearing_prices)}\n"
-                f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if available, "
+                f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if history exists, "
                 f"else flat default = {DEFAULT_BID_FLAT}.\n"
                 f"Total bid spend MUST NOT exceed {budget:.2f}.\n\n"
-                "Compute the best bids for each needed ingredient, respect the budget cap, "
-                "then call submit_bids once with the complete JSON array."
+                "For each needed ingredient bid clearing_price * multiplier (or flat default). "
+                "Respect the budget cap, then call submit_bids once with the complete JSON array."
             )
 
             try:
@@ -121,10 +121,15 @@ class BiddingAgent(Agent):
 
     # ------------------------------------------------------------------ helpers
 
-    def _compute_needed(self, state: GameState) -> dict[str, int]:
-        """Find max shortfall per ingredient across all recipes."""
+    def _compute_needed(self, state: GameState, focus_recipes: list[str]) -> dict[str, int]:
+        """Find max shortfall per ingredient, restricted to focus recipes if set."""
+        recipes = state.recipes
+        if focus_recipes:
+            focus_set = set(focus_recipes)
+            recipes = [r for r in recipes if r.get("name") in focus_set]
+
         needed: dict[str, int] = {}
-        for recipe in state.recipes:
+        for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
                 have = state.inventory.get(ing, 0)
                 shortfall = max(0, qty - have)

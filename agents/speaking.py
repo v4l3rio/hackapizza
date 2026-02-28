@@ -99,12 +99,11 @@ class SpeakingAgent(Agent):
             task = (
                 f"Current inventory: {json.dumps(state.inventory)}\n"
                 f"Ingredients we need (shortfall): {json.dumps(needed)}\n"
-                f"Our recipes: {json.dumps(state.recipes)}\n"
                 f"Other restaurants in the game: {json.dumps(state.restaurants)}\n"
                 f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
                 "Decide whether to negotiate with any other restaurant. "
-                "If we need ingredients and others might have surplus (based on their menus), "
-                "send a targeted message proposing a trade. "
+                "If we need ingredients and others might have surplus (based on their visible menus), "
+                "send a targeted message proposing a trade or swap. "
                 "Keep messages short and business-like. "
                 "Only send messages if there is a clear strategic benefit."
             )

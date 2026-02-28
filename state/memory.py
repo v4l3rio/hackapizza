@@ -13,6 +13,7 @@ class StrategyMemory:
     clearing_prices: dict[str, float] = field(default_factory=dict)
     served_orders: list[dict[str, Any]] = field(default_factory=list)
     revenue_per_turn: dict[int, float] = field(default_factory=dict)
+    focus_recipes: list[str] = field(default_factory=list)  # recipe names chosen by strategy agent
 
     async def consolidate(self, http: "HttpClient", turn_id: int = 0) -> None:
         """

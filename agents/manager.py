@@ -12,6 +12,7 @@ from agents.bidding import BiddingAgent
 from agents.menu import MenuAgent
 from agents.market import MarketAgent
 from agents.serving import ServingAgent
+from agents.recipe_strategy import RecipeStrategyAgent
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
@@ -45,6 +46,7 @@ class AgentManager:
         self._menu = MenuAgent()
         self._market = MarketAgent()
         self._serving = ServingAgent()
+        self._strategy = RecipeStrategyAgent(http)
 
         # Register persistent SSE handlers (serving events span the whole session)
         self._serving.register(sse, state, memory, mcp)
@@ -59,11 +61,22 @@ class AgentManager:
         turn_id = data.get("turn_id", 0)
         self.state.turn_id = int(turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
+        await self._run_strategy()
 
     async def _on_game_reset(self, data: dict[str, Any]) -> None:
         log("manager", self.state.turn_id, "reset", f"Game reset: {data}")
         self.state.turn_id = 0
         self.state.phase = "unknown"
+        await self._run_strategy()
+
+    async def _run_strategy(self) -> None:
+        """Run RecipeStrategyAgent to pick focus recipes for this game session."""
+        try:
+            strategy = await self._strategy.execute()
+            self.memory.focus_recipes = [r["name"] for r in strategy if r.get("name")]
+            log("manager", self.state.turn_id, "strategy", f"Focus recipes: {self.memory.focus_recipes}")
+        except Exception as exc:
+            log_error("manager", self.state.turn_id, "strategy", f"Strategy selection failed: {exc}")
 
     async def _on_message(self, data: dict[str, Any]) -> None:
         sender = data.get("sender", "unknown")
