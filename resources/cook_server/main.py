@@ -18,6 +18,14 @@ from datetime import datetime, timezone
 from typing import Any
 from dotenv import load_dotenv
 
+import sys
+from pathlib import Path
+
+# Add project root to path so we can import from there
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from config import BASE_URL
+
 # ── LOAD .env ─────────────────────────────────────────────────────────────────
 
 load_dotenv()  # reads .env from cwd or project root automatically
@@ -25,8 +33,8 @@ load_dotenv()  # reads .env from cwd or project root automatically
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 
 CONFIG = {
-    "base_url":           os.environ.get("BASE_URL", "").rstrip("/"),
-    "api_key":            os.environ.get("API_KEY",  ""),
+    "base_url":           BASE_URL, #os.environ.get("BASE_URL", "").rstrip("/"),
+    "api_key":            os.getenv("TEAM_API_KEY", ""), #os.environ.get("API_KEY",  ""),
     "my_restaurant_id":   os.environ.get("MY_RESTAURANT_ID", "5"),
     "refresh_interval":   int(os.environ.get("REFRESH_INTERVAL", "30")),
     "port":               int(os.environ.get("PORT", "8765")),
