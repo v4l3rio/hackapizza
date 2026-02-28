@@ -6,6 +6,8 @@ Bootstraps config, creates all components, and starts the SSE event loop.
 import argparse
 import asyncio
 
+from opentelemetry import trace as otel_trace
+
 import config
 from datapizza.tracing import DatapizzaMonitoringInstrumentor
 from state.game_state import GameState
@@ -85,3 +87,5 @@ if __name__ == "__main__":
                 asyncio.run(main())
     except KeyboardInterrupt:
         print("\n[main] Interrupted by user. Goodbye!")
+    finally:
+        otel_trace.get_tracer_provider().force_flush()

@@ -5,9 +5,14 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/recipes
+  url: {{baseUrl}}/meals?turn_id=3&restaurant_id=5
   body: none
   auth: inherit
+}
+
+params:query {
+  turn_id: 3
+  restaurant_id: 5
 }
 
 settings {
