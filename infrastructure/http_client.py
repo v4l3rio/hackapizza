@@ -48,7 +48,7 @@ class HttpClient:
 
     async def get_restaurant_info(self) -> dict[str, Any]:
         """Fetch own restaurant info including balance and inventory."""
-        return await self._get(f"/restaurants/{self.team_id}")
+        return await self._get(f"/restaurant/{self.team_id}")
 
     async def get_all(self) -> dict[str, Any]:
         """Fetch all relevant state in parallel."""
