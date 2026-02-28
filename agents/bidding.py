@@ -5,7 +5,7 @@ import json
 from datapizza.agents import Agent
 from datapizza.tools import tool
 
-from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER, BID_SERVINGS_MULTIPLIER
+from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, DEFAULT_BID_QUANTITY, BID_CLEARING_MULTIPLIER, BID_SERVINGS_MULTIPLIER
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
@@ -94,21 +94,19 @@ class BiddingAgent(Agent):
             )
 
             budget = state.balance * MAX_BID_BALANCE_FRACTION
-            needed = self._compute_needed(state, memory.focus_recipes)
+            needed = self._compute_needed(state)
 
             if not needed:
                 log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
                 return
 
-            focus_label = memory.focus_recipes if memory.focus_recipes else "all recipes"
             task = (
                 f"Saldo attuale: {state.balance:.2f}\n"
                 f"Limite di budget ({int(MAX_BID_BALANCE_FRACTION * 100)}% del saldo): {budget:.2f}\n"
-                f"Ricette focus: {json.dumps(focus_label)}\n"
-                f"Ingredienti necessari per le ricette focus ({BID_SERVINGS_MULTIPLIER} porzioni ciascuna, deficit): {json.dumps(needed)}\n"
+                f"Ingredienti necessari: {json.dumps(needed)}\n"
                 f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
             #    f"Regola di prezzo: clearing_price * {BID_CLEARING_MULTIPLIER} se esiste storico, "
-                f"Regola di prezzo valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+                f"Regola di valore bid fisso predefinito = {DEFAULT_BID_FLAT}.\n"
             #    f"altrimenti valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
                 f"La spesa totale delle offerte NON deve superare {budget:.2f}.\n\n"
             #    "Per ogni ingrediente necessario, offri clearing_price * moltiplicatore (o valore fisso predefinito). "
@@ -123,7 +121,7 @@ class BiddingAgent(Agent):
 
     # ------------------------------------------------------------------ helpers
 
-    def _compute_needed(self, state: GameState, focus_recipes: list[str]) -> dict[str, int]:
+    def _compute_needed(self, state: GameState) -> dict[str, int]:
         """Find shortfall per ingredient for BID_SERVINGS_MULTIPLIER servings of focus recipes.
 
         Only considers ingredients present in ingredient_frequencies.yaml to guard against
@@ -143,8 +141,8 @@ class BiddingAgent(Agent):
             if ing not in valid_ingredients:
                 log("closed_bid", state.turn_id, "agent", f"Skipping unknown ingredient: {ing!r}")
                 continue
-            have = state.inventory.get(ing, 0)
-            shortfall = 5 # max(0, qty * BID_SERVINGS_MULTIPLIER - have)
+            # have = state.inventory.get(ing, 0)
+            shortfall = DEFAULT_BID_QUANTITY # max(0, qty * BID_SERVINGS_MULTIPLIER - have)
             if shortfall > 0:
                 needed[ing] = max(needed.get(ing, 0), shortfall)
         return needed
