@@ -66,13 +66,19 @@ class MarketAgent:
             for entry in entries:
                 entry_id = entry.get("id") or entry.get("market_entry_id")
                 ingredient = entry.get("ingredient_name") or entry.get("ingredient", "")
-                price = float(entry.get("price", 9999))
-                seller_id = entry.get("seller_id") or entry.get("restaurant_id")
+                # The server may return ingredient as a nested dict — flatten to string
+                if isinstance(ingredient, dict):
+                    ingredient = ingredient.get("name") or ingredient.get("ingredient_name") or ""
+                ingredient = str(ingredient) if ingredient else ""
+
+                price_raw = entry.get("price") or entry.get("unit_price") or entry.get("unitPrice", 9999)
+                price = float(price_raw)
+                seller_id = entry.get("seller_id") or entry.get("restaurant_id") or entry.get("createdByRestaurantId")
                 side = entry.get("side", "SELL")
                 status = entry.get("status", "open")
 
                 # Only buy SELL entries that are open
-                if side != "SELL" or status not in ("open", "active", "OPEN", "ACTIVE"):
+                if side not in ("SELL", "sell") or status not in ("open", "active", "OPEN", "ACTIVE", "available"):
                     continue
 
                 # Don't buy our own listings

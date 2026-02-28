@@ -15,6 +15,7 @@ pydantic = "^2.0"
 pyyaml = "^6.0.3"
 uvicorn = {extras = ["standard"], version = "^0.41.0"}
 uv = "^0.10.7"
+pyaml = "^26.2.1"
 
 [tool.poetry.scripts]
 run-with-webapp = "hackapizza.launcher:run_with_webapp"

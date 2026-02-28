@@ -143,34 +143,50 @@ class ServingAgent(Agent):
         if self._http is None or self._state is None:
             return None
         turn_id = self._state.turn_id
-        for attempt in range(3):
+        for attempt in range(4):
             try:
                 meals = await self._http.get_meals(turn_id)
+                # Log raw response on first attempt to aid debugging
+                if attempt == 0:
+                    log("serving", turn_id, "meal_lookup",
+                        f"GET /meals returned {len(meals)} entries: {meals[:3]}")
                 for meal in meals:
-                    name = meal.get("clientName") or meal.get("client_name") or meal.get("name")
+                    # Try every plausible name field
+                    name = (
+                        meal.get("clientName")
+                        or meal.get("client_name")
+                        or meal.get("name")
+                        or meal.get("customer")
+                    )
                     if name == client_name and not meal.get("executed", False):
-                        meal_id = (
-                            meal.get("id")
+                        # The field serve_dish needs is "client_id" — try that first,
+                        # then fall back to generic id fields.
+                        resolved = (
+                            meal.get("client_id")
+                            or meal.get("clientId")
+                            or meal.get("id")
                             or meal.get("mealId")
                             or meal.get("meal_id")
+                            or meal.get("_id")
                         )
-                        if meal_id is not None:
+                        if resolved is not None:
                             log(
-                                "serving",
-                                turn_id,
-                                "meal_lookup",
-                                f"Resolved '{client_name}' → meal_id={meal_id}",
+                                "serving", turn_id, "meal_lookup",
+                                f"Resolved '{client_name}' → client_id={resolved}",
                             )
-                            return str(meal_id)
+                            return str(resolved)
+                        # ID field not found — log all keys so we can fix the alias
+                        log_error(
+                            "serving", turn_id, "meal_lookup",
+                            f"Meal matched but no id field found. Keys: {list(meal.keys())} Values: {meal}",
+                        )
             except Exception as exc:
                 log_error("serving", turn_id, "meal_lookup", f"Attempt {attempt+1} failed: {exc}")
-            if attempt < 2:
-                await asyncio.sleep(0.5)
+            if attempt < 3:
+                await asyncio.sleep(0.8)
         log_error(
-            "serving",
-            turn_id,
-            "meal_lookup",
-            f"Could not resolve meal_id for '{client_name}' — falling back to clientName",
+            "serving", turn_id, "meal_lookup",
+            f"Could not resolve client_id for '{client_name}' after 4 attempts — falling back to clientName",
         )
         return None
 
