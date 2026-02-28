@@ -42,7 +42,7 @@ class BiddingAgent(Agent):
         self._state: GameState | None = None
         self._strat: StrategyMemory | None = None
         self._mcp: MCPClient | None = None
-        super().__init__(client=get_llm_client(), max_steps=3)
+        super().__init__(client=get_llm_client(), max_steps=1)
 
     # ------------------------------------------------------------------ tools
 

@@ -122,9 +122,11 @@ class AgentManager:
                     await self._speaking.execute(self.state, self.memory, self.mcp)
 
                 elif phase == "closed_bid":
-                    # Consolidate memory from previous turns before bidding
+                    # Consolidate memory from the PREVIOUS turn's bid results before bidding.
+                    # (turn_id - 1 so we fetch already-settled history, not the current auction.)
+                    # When turn_id == 1 this becomes 0, which returns all history — fine for T1.
                     try:
-                        await self.memory.consolidate(self.http, self.state.turn_id)
+                        await self.memory.consolidate(self.http, self.state.turn_id - 1)
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 

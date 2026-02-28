@@ -141,12 +141,10 @@ class MenuAgent(Agent):
                     "suggested_price": suggested_price,
                 })
 
-            log(
-                "waiting",
-                state.turn_id,
-                "menu",
-                f"Dish profiles: {[f\"{p['name']} [{p['tier']}] {p['suggested_price']}\" for p in dish_profiles]}",
+            profile_summary = ", ".join(
+                f"{p['name']} [{p['tier']}] {p['suggested_price']}" for p in dish_profiles
             )
+            log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
                 f"Cookable dishes (full recipe data): {json.dumps(cookable)}\n\n"

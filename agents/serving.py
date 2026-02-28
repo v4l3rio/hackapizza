@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
@@ -70,20 +71,23 @@ class ServingAgent(Agent):
     @tool(
         name="prepare_dish",
         description=(
-            "Start preparing a dish in the kitchen. "
-            "The dish name must exactly match one of the items on our current menu. "
+            "Start preparing a dish in the kitchen for a specific client. "
+            "dish_name must exactly match one of the items on our current menu. "
+            "client_id is the clientName received in the order event. "
             "This triggers a 'preparation_complete' event when the dish is ready."
         ),
     )
-    async def prepare_dish(self, dish_name: str) -> str:
-        """Begin kitchen preparation for a named dish."""
+    async def prepare_dish(self, dish_name: str, client_id: str) -> str:
+        """Begin kitchen preparation and register the client immediately."""
+        turn = self._state.turn_id if self._state else "?"
         try:
             result = await self._mcp.prepare_dish(dish_name)
-            turn = self._state.turn_id if self._state else "?"
-            log("serving", turn, "tool", f"Preparing '{dish_name}': {result}")
-            return f"Preparation started for '{dish_name}': {result}"
+            # Register the client->dish mapping HERE, at call time,
+            # so preparation_complete can serve it without relying on result.tools_used.
+            self._pending_orders.setdefault(dish_name, []).append(client_id)
+            log("serving", turn, "tool", f"Preparing '{dish_name}' for {client_id}: {result}")
+            return f"Preparation started for '{dish_name}' (client: {client_id}): {result}"
         except Exception as exc:
-            turn = self._state.turn_id if self._state else "?"
             log_error("serving", turn, "tool", f"prepare_dish failed: {exc}")
             return f"Error preparing '{dish_name}': {exc}"
 
@@ -128,6 +132,13 @@ class ServingAgent(Agent):
     # ------------------------------------------------------------------ SSE handlers
 
     async def _on_client_spawned(self, data: dict[str, Any]) -> None:
+        """Fire-and-forget: each client is handled concurrently so the SSE loop never blocks."""
+        if self._state is None or self._mcp is None:
+            return
+        asyncio.create_task(self._handle_client_spawned(data))
+
+    async def _handle_client_spawned(self, data: dict[str, Any]) -> None:
+        """Full LLM handling for a single client_spawned event (runs as a background task)."""
         if self._state is None or self._mcp is None:
             return
 
@@ -146,7 +157,9 @@ class ServingAgent(Agent):
             cookable = self._state.cookable_dishes()
             menu_recipes = [r for r in cookable if r.get("name") in menu_names]
 
-            # Let LLM pick best matching dish and call prepare_dish
+            # Let LLM pick best matching dish and call prepare_dish.
+            # NOTE: prepare_dish tool now takes both dish_name AND client_id so it can
+            # register the pending order atomically — no reliance on result.tools_used.
             task = (
                 f"Client '{client_id}' has arrived.\n"
                 f"Their order: \"{order_text}\"\n"
@@ -160,28 +173,16 @@ class ServingAgent(Agent):
                 f"Recipes with ingredients (for intolerance checking): {json.dumps(menu_recipes)}\n\n"
                 "Select the best matching menu item using the archetype criteria above. "
                 "IMPORTANT: exclude any dish containing an ingredient the client is intolerant to. "
-                "If there is a good match, call prepare_dish with the exact dish name. "
+                f"If there is a good match, call prepare_dish with dish_name=<exact menu name> "
+                f"and client_id='{client_id}'. "
                 "If no safe dish is available, do nothing."
             )
 
             try:
-                result = await self.a_run(task, tool_choice="required_first")
-                # Record which dish we're preparing for this client
-                if result:
-                    for tool_call in result.tools_used:
-                        if tool_call.name == "prepare_dish":
-                            dish_name = tool_call.arguments.get("dish_name", "")
-                            if dish_name:
-                                self._pending_orders.setdefault(dish_name, []).append(client_id)
-                                log(
-                                    "serving",
-                                    self._state.turn_id,
-                                    "kitchen",
-                                    f"Preparing '{dish_name}' for client {client_id}",
-                                )
+                await self.a_run(task, tool_choice="required_first")
             except Exception as exc:
                 span.record_exception(exc)
-                log_error("serving", self._state.turn_id, "client", f"_on_client_spawned failed: {exc}")
+                log_error("serving", self._state.turn_id, "client", f"_handle_client_spawned failed: {exc}")
 
     async def _on_preparation_complete(self, data: dict[str, Any]) -> None:
         if self._state is None or self._mcp is None:
