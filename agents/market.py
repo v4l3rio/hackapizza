@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
@@ -9,7 +7,7 @@ from infrastructure.http_client import HttpClient
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 import config
-from config import BID_SERVINGS_MULTIPLIER, MARKET_MAX_BUY_MULTIPLIER, MARKET_MAX_BUY_FLAT
+from config import MARKET_MAX_BUY_MULTIPLIER, MARKET_MAX_BUY_FLAT
 
 tracer = get_tracer(__name__)
 
@@ -23,9 +21,6 @@ class MarketAgent:
       below clearing_price * MARKET_MAX_BUY_MULTIPLIER (or MARKET_MAX_BUY_FLAT
       if no clearing price is known). Buy only from other teams.
     """
-
-    def __init__(self) -> None:
-        pass
 
     async def execute_waiting(
         self,

@@ -52,16 +52,11 @@ class AgentManager:
         self._serving.register(sse, state, memory, mcp, http)
 
         # Register game lifecycle handlers
-        sse.on("heartbeat", self._on_heartbeat)
         sse.on("game_started", self._on_game_started)
         sse.on("game_phase_changed", self._on_phase_changed)
         sse.on("game_reset", self._on_game_reset)
         sse.on("message", self._on_message)
         sse.on("new_message", self._on_new_message)
-
-    async def _on_heartbeat(self, data: dict[str, Any]) -> None:
-        turn_id = data.get("turn_id", 0)
-        # log("manager", int(turn_id), "heartbeat", f"Heartbeat received")
 
 
     async def _on_game_started(self, data: dict[str, Any]) -> None:
@@ -73,7 +68,7 @@ class AgentManager:
     async def _on_game_reset(self, data: dict[str, Any]) -> None:
         log("manager", self.state.turn_id, "reset", f"Game reset: {data}")
         self.state.turn_id = 0
-        self.state.phase = "unknown"
+        self.state.phase = "ND"
         await self._run_strategy()
 
     async def _run_strategy(self) -> None:

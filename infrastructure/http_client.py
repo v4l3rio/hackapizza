@@ -78,7 +78,7 @@ class HttpClient:
             out["balance"] = info.get("balance", 0.0)
             out["inventory"] = info.get("inventory", {})
         else:
-            log_error("HTTP", "?", "get_all", f"get_restaurant_info failed: {info}")
+            log_error("HTTP", "ERROR", "get_all", f"get_restaurant_info failed: {info}")
 
         out["recipes"] = recipes if isinstance(recipes, list) else []
         out["active_meals"] = meals if isinstance(meals, list) else []

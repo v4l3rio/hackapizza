@@ -5,6 +5,7 @@ import json
 from datapizza.agents import Agent
 from datapizza.tools import tool
 
+from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER, BID_SERVINGS_MULTIPLIER
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
@@ -13,7 +14,6 @@ from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
-from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER, BID_SERVINGS_MULTIPLIER
 
 
 class BiddingAgent(Agent):
