@@ -36,7 +36,7 @@ class MarketAgent(Agent):
 
     def __init__(self) -> None:
         self._state: GameState | None = None
-        self._memory: StrategyMemory | None = None
+        self._strat: StrategyMemory | None = None
         self._mcp: MCPClient | None = None
         self._http: HttpClient | None = None
         super().__init__(client=get_llm_client(), max_steps=8)
@@ -112,7 +112,7 @@ class MarketAgent(Agent):
     ) -> None:
         """Called during the 'waiting' phase: sell surplus ingredients."""
         self._state = state
-        self._memory = memory
+        self._strat = memory
         self._mcp = mcp
 
         with tracer.start_as_current_span("market_agent.execute_waiting") as span:
@@ -150,7 +150,7 @@ class MarketAgent(Agent):
     ) -> None:
         """Called during the 'serving' phase: buy missing ingredients at fair prices."""
         self._state = state
-        self._memory = memory
+        self._strat = memory
         self._mcp = mcp
         self._http = http
 

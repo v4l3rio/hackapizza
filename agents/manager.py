@@ -52,10 +52,16 @@ class AgentManager:
         self._serving.register(sse, state, memory, mcp)
 
         # Register game lifecycle handlers
+        sse.on("heartbeat", self._on_heartbeat)
         sse.on("game_started", self._on_game_started)
         sse.on("game_phase_changed", self._on_phase_changed)
         sse.on("game_reset", self._on_game_reset)
         sse.on("message", self._on_message)
+
+    async def _on_heartbeat(self, data: dict[str, Any]) -> None:
+        turn_id = data.get("turn_id", 0)
+        log("manager", int(turn_id), "heartbeat", f"Heartbeat received")
+
 
     async def _on_game_started(self, data: dict[str, Any]) -> None:
         turn_id = data.get("turn_id", 0)
@@ -126,6 +132,11 @@ class AgentManager:
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory, self.mcp)
                     await self._market.execute_waiting(self.state, self.memory, self.mcp)
+                    try:
+                        await self.mcp.update_restaurant_is_open(True)
+                        log("manager", self.state.turn_id, "phase", "Restaurant opened")
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
                     await self._serving.execute(self.state, self.memory, self.mcp)
