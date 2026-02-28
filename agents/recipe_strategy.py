@@ -160,7 +160,7 @@ class RecipeStrategyAgent(Agent):
         )
 
         task = (
-            "Analizza le nostre opzioni di ricette e decidi su quali 6 ricette "
+            "Analizza le nostre opzioni di ricette e prendi tutte le ricette possibili "
             "concentrarci per tutta la competizione.\n\n"
             + prices_ctx
             + "Passo 1: chiama fetch_recipes per vedere cosa è disponibile.\n"
