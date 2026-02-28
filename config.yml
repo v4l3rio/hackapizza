@@ -3,7 +3,9 @@ REGOLO_BASE_URL: https://api.regolo.ai/v1
 REGOLO_MODEL_BIG: gpt-oss-120b
 
 # Bidding strategy
-DEFAULT_BID_FLAT: 3          # flat bid per ingredient on turn 1
+DEFAULT_BID_FLAT: 1         # flat bid per ingredient on turn 1
+DEFAULT_BID_QUANTITY: 3
+DEFAULT_PRICE_SELL: 200
 BID_CLEARING_MULTIPLIER: 1.1  # bid = clearing_price * multiplier
 MAX_BID_BALANCE_FRACTION: 0.6  # cap: max 60% of balance in bids
 BID_SERVINGS_MULTIPLIER: 2

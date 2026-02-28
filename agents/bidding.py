@@ -74,12 +74,14 @@ class BiddingAgent(Agent):
             task = (
                 f"Saldo attuale: {state.balance:.2f}\n"
                 f"Limite di budget ({int(MAX_BID_BALANCE_FRACTION * 100)}% del saldo): {budget:.2f}\n"
-                f"Ricette focus: {json.dumps(focus_label)}\n"
-                f"Ingredienti necessari per le ricette focus ({BID_SERVINGS_MULTIPLIER} porzioni ciascuna, deficit): {json.dumps(needed)}\n"
+                f"Ingredienti necessari: {json.dumps(needed)}\n"
                 f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
-                f"Regola di prezzo: valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+                #    f"Regola di prezzo: clearing_price * {BID_CLEARING_MULTIPLIER} se esiste storico, "
+                f"Regola di valore bid fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+                #    f"altrimenti valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
                 f"La spesa totale delle offerte NON deve superare {budget:.2f}.\n\n"
-                "Rispetta il limite di budget, poi chiama closed_bid una volta con l'array completo."
+                #    "Per ogni ingrediente necessario, offri clearing_price * moltiplicatore (o valore fisso predefinito). "
+                "Rispetta il limite di budget, poi chiama submit_bids una volta con l'array JSON completo."
             )
 
             try:

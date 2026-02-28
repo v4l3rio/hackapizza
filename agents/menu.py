@@ -18,6 +18,7 @@ from config import (
     MENU_MARKUP_PRESTIGE,
     MENU_PRESTIGE_SCORE_HIGH,
     MENU_PRESTIGE_SCORE_LOW,
+    DEFAULT_PRICE_SELL
 )
 
 tracer = get_tracer(__name__)
@@ -44,7 +45,7 @@ class MenuAgent(Agent):
         "Sei l'agente del menu per il nostro ristorante in un multiverso gastronomico sci-fi. "
         "Il tuo compito è creare un menu attraente dai piatti che possiamo attualmente cucinare. "
         "Ogni piatto ha un livello pre-calcolato (BUDGET / STANDARD / PRESTIGE) e un prezzo suggerito. "
-        "Usa il prezzo suggerito — puoi aggiustarlo fino al 10% se ha senso strategico. "
+        f"Usa il prezzo è fisso {DEFAULT_PRICE_SELL}"
         "Chiama save_menu esattamente una volta con tutti i piatti del menu."
     )
 
