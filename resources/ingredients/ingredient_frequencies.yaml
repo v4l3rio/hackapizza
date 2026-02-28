@@ -1,0 +1,187 @@
+ingredients:
+  Carne di Balena spaziale:
+    frequency: 65
+    avg_prestige: 63.75
+  Carne di Kraken:
+    frequency: 62
+    avg_prestige: 63.02
+  Pane di Luce:
+    frequency: 61
+    avg_prestige: 59.38
+  Teste di Idra:
+    frequency: 56
+    avg_prestige: 66.25
+  Fibra di Sintetex:
+    frequency: 54
+    avg_prestige: 64.0
+  Carne di Drago:
+    frequency: 54
+    avg_prestige: 60.83
+  Uova di Fenice:
+    frequency: 53
+    avg_prestige: 65.72
+  Pane degli Abissi:
+    frequency: 48
+    avg_prestige: 63.12
+  Carne di Xenodonte:
+    frequency: 47
+    avg_prestige: 63.38
+  Amido di Stellarion:
+    frequency: 47
+    avg_prestige: 63.43
+  Riso di Cassandra:
+    frequency: 47
+    avg_prestige: 65.85
+  Carne di Mucca:
+    frequency: 46
+    avg_prestige: 65.63
+  Farina di Nettuno:
+    frequency: 46
+    avg_prestige: 62.41
+  Lattuga Namecciana:
+    frequency: 46
+    avg_prestige: 59.76
+  Granuli di Nebbia Arcobaleno:
+    frequency: 45
+    avg_prestige: 64.64
+  Colonia di Mycoflora:
+    frequency: 45
+    avg_prestige: 64.0
+  Radici di Singolarità:
+    frequency: 45
+    avg_prestige: 62.78
+  Baccacedro:
+    frequency: 44
+    avg_prestige: 60.77
+  Biscotti della Galassia:
+    frequency: 43
+    avg_prestige: 64.91
+  Spaghi del Sole:
+    frequency: 43
+    avg_prestige: 64.95
+  Foglie di Nebulosa:
+    frequency: 42
+    avg_prestige: 62.14
+  Radici di Gravità:
+    frequency: 39
+    avg_prestige: 62.13
+  Nettare di Sirena:
+    frequency: 39
+    avg_prestige: 59.72
+  Fusilli del Vento:
+    frequency: 39
+    avg_prestige: 61.92
+  Gnocchi del Crepuscolo:
+    frequency: 38
+    avg_prestige: 67.16
+  Lacrime di Unicorno:
+    frequency: 36
+    avg_prestige: 61.0
+  Foglie di Mandragora:
+    frequency: 34
+    avg_prestige: 61.35
+  Muffa Lunare:
+    frequency: 32
+    avg_prestige: 64.53
+  Alghe Bioluminescenti:
+    frequency: 31
+    avg_prestige: 60.77
+  Essenza di Tachioni:
+    frequency: 31
+    avg_prestige: 68.16
+  Liane di Plasmodio:
+    frequency: 31
+    avg_prestige: 62.26
+  Funghi dell’Etere:
+    frequency: 29
+    avg_prestige: 59.59
+  Funghi Orbitali:
+    frequency: 29
+    avg_prestige: 61.52
+  Essenza di Speziaria:
+    frequency: 29
+    avg_prestige: 59.07
+  Shard di Materia Oscura:
+    frequency: 29
+    avg_prestige: 66.31
+  Essenza di Vuoto:
+    frequency: 29
+    avg_prestige: 63.41
+  Lacrime di Andromeda:
+    frequency: 28
+    avg_prestige: 70.25
+  Nduja Fritta Tanto:
+    frequency: 28
+    avg_prestige: 64.96
+  Petali di Eco:
+    frequency: 28
+    avg_prestige: 64.75
+  Polvere di Stelle:
+    frequency: 28
+    avg_prestige: 67.14
+  Sale Temporale:
+    frequency: 27
+    avg_prestige: 66.19
+  Vero Ghiaccio:
+    frequency: 27
+    avg_prestige: 61.44
+  Polvere di Pulsar:
+    frequency: 26
+    avg_prestige: 61.04
+  Polvere di Crononite:
+    frequency: 26
+    avg_prestige: 71.81
+  Salsa Szechuan:
+    frequency: 26
+    avg_prestige: 54.46
+  Plasma Vitale:
+    frequency: 25
+    avg_prestige: 62.56
+  Frammenti di Supernova:
+    frequency: 25
+    avg_prestige: 64.84
+  Shard di Prisma Stellare:
+    frequency: 24
+    avg_prestige: 70.88
+  Erba Pipa:
+    frequency: 23
+    avg_prestige: 62.74
+  Cristalli di Memoria:
+    frequency: 23
+    avg_prestige: 62.26
+  Cristalli di Nebulite:
+    frequency: 22
+    avg_prestige: 56.05
+  Frutti del Diavolo:
+    frequency: 21
+    avg_prestige: 68.62
+  Spore Quantiche:
+    frequency: 19
+    avg_prestige: 66.42
+  Spezie Melange:
+    frequency: 1
+    avg_prestige: 79.0
+  Cioccorane:
+    frequency: 1
+    avg_prestige: 94.0
+  Burrobirra:
+    frequency: 1
+    avg_prestige: 80.0
+  Slurm:
+    frequency: 1
+    avg_prestige: 81.0
+  Sashimi di Magikarp:
+    frequency: 1
+    avg_prestige: 59.0
+  Pickle Rick Croccante:
+    frequency: 1
+    avg_prestige: 70.0
+  Chocobo Wings:
+    frequency: 1
+    avg_prestige: 59.0
+  Latte+:
+    frequency: 1
+    avg_prestige: 55.0
+  Ravioli al Vaporeon:
+    frequency: 1
+    avg_prestige: 83.0
