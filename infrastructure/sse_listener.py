@@ -105,21 +105,18 @@ class SSEListener:
         if not line:
             return
 
-        # All game events arrive as:  data: <json>
-        if not line.startswith("data:"):
-            return
-
-        payload_str = line[5:].strip()
-
-        # Handshake sentinel — not a real event
-        if payload_str == "connected":
-            log("SSE", "?", "connect", "Handshake received")
-            return
+        # Strip "data:" prefix if present (standard SSE format)
+        if line.startswith("data:"):
+            line = line[5:].strip()
+            # Handshake sentinel — not a real event
+            if line == "connected":
+                log("SSE", "?", "connect", "Handshake received")
+                return
 
         try:
-            event_json = json.loads(payload_str)
+            event_json = json.loads(line)
         except json.JSONDecodeError:
-            log("SSE", "?", "raw", f"Could not parse: {payload_str}")
+            log("SSE", "?", "raw", f"Could not parse: {line}")
             return
 
         event_type = event_json.get("type", "unknown")

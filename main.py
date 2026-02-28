@@ -3,7 +3,10 @@ Hackapizza — entrypoint.
 Bootstraps config, creates all components, and starts the SSE event loop.
 """
 
+import argparse
 import asyncio
+
+from opentelemetry import trace as otel_trace
 
 import config
 from datapizza.tracing import DatapizzaMonitoringInstrumentor
@@ -22,6 +25,18 @@ instrumentor = DatapizzaMonitoringInstrumentor(
 )
 instrumentor.instrument()
 tracer = instrumentor.get_tracer(__name__)
+
+
+async def sse_only() -> None:
+    log("main", 0, "boot", "SSE-only mode — printing all events")
+    log("main", 0, "boot", f"SSE_URL={config.SSE_URL}")
+
+    sse_headers = {
+        "x-api-key": config.TEAM_API_KEY,
+        "Accept": "text/event-stream",
+    }
+    sse = SSEListener(url=config.SSE_URL, headers=sse_headers)
+    await sse.listen()
 
 
 async def main() -> None:
@@ -60,8 +75,17 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--only-sse", action="store_true", help="Solo SSE listener, stampa gli eventi raw")
+    args = parser.parse_args()
+
     try:
-        with tracer.start_as_current_span("hackapizza_session"):
-            asyncio.run(main())
+        if args.only_sse:
+            asyncio.run(sse_only())
+        else:
+            with tracer.start_as_current_span("hackapizza_session"):
+                asyncio.run(main())
     except KeyboardInterrupt:
         print("\n[main] Interrupted by user. Goodbye!")
+    finally:
+        otel_trace.get_tracer_provider().force_flush()

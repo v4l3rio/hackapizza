@@ -1,0 +1,36 @@
+meta {
+  name: POST Send message
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/mcp
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "send_message",
+      "arguments": {
+        "recipient_id": 5,
+        "text": "ciao"
+      }
+    },
+    "id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

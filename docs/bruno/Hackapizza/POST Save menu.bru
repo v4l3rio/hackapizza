@@ -1,0 +1,40 @@
+meta {
+  name: POST Save menu
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/mcp
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "save_menu",
+      "arguments": {
+        "items": [
+          {
+            "name" : "Nebulosa Galattica",
+            "price": 500
+          }
+        ]
+      }
+    },
+    "id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
