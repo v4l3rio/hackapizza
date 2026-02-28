@@ -29,17 +29,17 @@ class ServingAgent(Agent):
 
     name = "serving_agent"
     system_prompt = (
-        "You are the serving agent for our restaurant. "
-        "When a client arrives, identify the best dish from our menu that matches their order "
-        "and avoids any ingredients they are intolerant to. "
-        "Use the client's archetype to guide your choice:\n"
-        "  - Galactic Explorer: low budget, short time → pick the CHEAPEST and FASTEST dish.\n"
-        "  - Astrobaron: high budget, short time → pick the most PREMIUM and FASTEST dish.\n"
-        "  - Space Sage: unlimited budget, long time → pick the most PRESTIGIOUS or RARE dish.\n"
-        "  - Orbital Family: balanced → pick the best QUALITY-TO-PRICE ratio dish.\n"
-        "If no archetype is explicit, infer it from the order text and client name. "
-        "Call prepare_dish with the exact dish name from our menu. "
-        "Act decisively — always call a tool to take action."
+        "Sei l'agente di servizio per il nostro ristorante. "
+        "Quando arriva un cliente, identifica il piatto migliore dal nostro menu che corrisponda al suo ordine "
+        "ed eviti qualsiasi ingrediente a cui è intollerante. "
+        "Usa l'archetipo del cliente per guidare la tua scelta:\n"
+        "  - Galactic Explorer: budget basso, poco tempo → scegli il piatto più ECONOMICO e VELOCE.\n"
+        "  - Astrobaron: budget alto, poco tempo → scegli il piatto più PREMIUM e VELOCE.\n"
+        "  - Space Sage: budget illimitato, molto tempo → scegli il piatto più PRESTIGIOSO o RARO.\n"
+        "  - Orbital Family: equilibrato → scegli il miglior rapporto QUALITÀ-PREZZO.\n"
+        "Se l'archetipo non è esplicito, deducilo dal testo dell'ordine e dal nome del cliente. "
+        "Chiama prepare_dish con il nome esatto del piatto dal nostro menu. "
+        "Agisci con decisione — chiama sempre uno strumento per agire."
     )
 
     def __init__(self) -> None:
@@ -135,20 +135,20 @@ class ServingAgent(Agent):
 
             # Let LLM pick best matching dish and call prepare_dish
             task = (
-                f"Client '{client_id}' has arrived.\n"
-                f"Their order: \"{order_text}\"\n"
-                f"Their dietary intolerances/allergies: {json.dumps(intolerances)}\n\n"
-                "Identify the client's archetype from their name and order text:\n"
-                "  - Galactic Explorer → cheapest + fewest ingredients (fast prep)\n"
-                "  - Astrobaron → highest price + fewest ingredients (fast prep)\n"
-                "  - Space Sage → rarest/most prestigious ingredients\n"
-                "  - Orbital Family → best price-to-quality ratio\n\n"
-                f"Current menu (name, price, description): {json.dumps(self._state.menu_items)}\n"
-                f"Recipes with ingredients (for intolerance checking): {json.dumps(menu_recipes)}\n\n"
-                "Select the best matching menu item using the archetype criteria above. "
-                "IMPORTANT: exclude any dish containing an ingredient the client is intolerant to. "
-                "If there is a good match, call prepare_dish with the exact dish name. "
-                "If no safe dish is available, do nothing."
+                f"Il cliente '{client_id}' è arrivato.\n"
+                f"Il suo ordine: \"{order_text}\"\n"
+                f"Le sue intolleranze/allergie alimentari: {json.dumps(intolerances)}\n\n"
+                "Identifica l'archetipo del cliente dal suo nome e dal testo dell'ordine:\n"
+                "  - Galactic Explorer → prezzo più basso + meno ingredienti (preparazione veloce)\n"
+                "  - Astrobaron → prezzo più alto + meno ingredienti (preparazione veloce)\n"
+                "  - Space Sage → ingredienti più rari/prestigiosi\n"
+                "  - Orbital Family → miglior rapporto prezzo-qualità\n\n"
+                f"Menu attuale (nome, prezzo, descrizione): {json.dumps(self._state.menu_items)}\n"
+                f"Ricette con ingredienti (per controllo intolleranze): {json.dumps(menu_recipes)}\n\n"
+                "Seleziona il piatto del menu che corrisponde meglio usando i criteri dell'archetipo sopra. "
+                "IMPORTANTE: escludi qualsiasi piatto contenente un ingrediente a cui il cliente è intollerante. "
+                "Se c'è una buona corrispondenza, chiama prepare_dish con il nome esatto del piatto. "
+                "Se nessun piatto sicuro è disponibile, non fare nulla."
             )
 
             try:

@@ -31,12 +31,12 @@ class BiddingAgent(Agent):
 
     name = "bidding_agent"
     system_prompt = (
-        "You are the bidding agent for our restaurant in a competitive cooking game. "
-        "Your goal is to acquire the ingredients needed to cook as many dishes as possible. "
-        "Analyze the current inventory, needed ingredients, and clearing prices. "
-        "Compute competitive bids (clearing_price * multiplier, or flat default if no history). "
-        "Respect the budget cap and submit all bids in a single call to submit_bids. "
-        "Always call submit_bids exactly once — do not skip it if there are needed ingredients."
+        "Sei l'agente di offerta del nostro ristorante in un gioco di cucina competitivo. "
+        "Il tuo obiettivo è acquisire gli ingredienti necessari per cucinare quanti più piatti possibile. "
+        "Analizza l'inventario attuale, gli ingredienti necessari e i prezzi di aggiudicazione. "
+        "Calcola offerte competitive (clearing_price * moltiplicatore, o valore fisso predefinito se non c'è storico). "
+        "Rispetta il limite di budget e invia tutte le offerte in una singola chiamata a submit_bids. "
+        "Chiama submit_bids esattamente una volta — non saltarla se ci sono ingredienti necessari."
     )
 
     def __init__(self) -> None:
@@ -102,16 +102,16 @@ class BiddingAgent(Agent):
 
             focus_label = memory.focus_recipes if memory.focus_recipes else "all recipes"
             task = (
-                f"Current balance: {state.balance:.2f}\n"
-                f"Budget cap ({int(MAX_BID_BALANCE_FRACTION * 100)}% of balance): {budget:.2f}\n"
-                f"Focus recipes: {json.dumps(focus_label)}\n"
-                f"Needed ingredients for focus recipes ({BID_SERVINGS_MULTIPLIER} servings each, shortfall): {json.dumps(needed)}\n"
-                f"Last known clearing prices: {json.dumps(memory.clearing_prices)}\n"
-                f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if history exists, "
-                f"else flat default = {DEFAULT_BID_FLAT}.\n"
-                f"Total bid spend MUST NOT exceed {budget:.2f}.\n\n"
-                "For each needed ingredient bid clearing_price * multiplier (or flat default). "
-                "Respect the budget cap, then call submit_bids once with the complete JSON array."
+                f"Saldo attuale: {state.balance:.2f}\n"
+                f"Limite di budget ({int(MAX_BID_BALANCE_FRACTION * 100)}% del saldo): {budget:.2f}\n"
+                f"Ricette focus: {json.dumps(focus_label)}\n"
+                f"Ingredienti necessari per le ricette focus ({BID_SERVINGS_MULTIPLIER} porzioni ciascuna, deficit): {json.dumps(needed)}\n"
+                f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
+                f"Regola di prezzo: clearing_price * {BID_CLEARING_MULTIPLIER} se esiste storico, "
+                f"altrimenti valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+                f"La spesa totale delle offerte NON deve superare {budget:.2f}.\n\n"
+                "Per ogni ingrediente necessario, offri clearing_price * moltiplicatore (o valore fisso predefinito). "
+                "Rispetta il limite di budget, poi chiama submit_bids una volta con l'array JSON completo."
             )
 
             try:

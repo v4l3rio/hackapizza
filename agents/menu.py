@@ -42,15 +42,15 @@ class MenuAgent(Agent):
 
     name = "menu_agent"
     system_prompt = (
-        "You are the menu agent for our restaurant in a sci-fi gastronomic multiverse. "
-        "Your job is to craft an appealing menu from the dishes we can currently cook. "
-        "Each dish has a pre-computed tier (BUDGET / STANDARD / PRESTIGE) and a suggested_price. "
-        "Use the suggested_price — you may adjust by up to 10% if it makes strategic sense. "
-        "Write a short description that matches the tier:\n"
-        "  - BUDGET: 'quick, affordable, satisfying' — appeals to Galactic Explorer.\n"
-        "  - STANDARD: 'balanced quality and value' — appeals to Orbital Family and Astrobaron.\n"
-        "  - PRESTIGE: 'rare, exquisite, extraordinary' — appeals to Space Sage (unlimited budget).\n"
-        "Call set_menu exactly once with all menu items as a JSON array."
+        "Sei l'agente del menu per il nostro ristorante in un multiverso gastronomico sci-fi. "
+        "Il tuo compito è creare un menu attraente dai piatti che possiamo attualmente cucinare. "
+        "Ogni piatto ha un livello pre-calcolato (BUDGET / STANDARD / PRESTIGE) e un prezzo suggerito. "
+        "Usa il prezzo suggerito — puoi aggiustarlo fino al 10% se ha senso strategico. "
+        "Scrivi una breve descrizione che si adatti al livello:\n"
+        "  - BUDGET: 'veloce, conveniente, soddisfacente' — ideale per il Galactic Explorer.\n"
+        "  - STANDARD: 'qualità ed equilibrio' — ideale per Orbital Family e Astrobaron.\n"
+        "  - PRESTIGE: 'raro, squisito, straordinario' — ideale per lo Space Sage (budget illimitato).\n"
+        "Chiama set_menu esattamente una volta con tutti i piatti del menu come array JSON."
     )
 
     def __init__(self) -> None:
@@ -150,22 +150,22 @@ class MenuAgent(Agent):
             log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
-                f"Cookable dishes (full recipe data): {json.dumps(cookable)}\n\n"
-                f"Pricing profiles (pre-computed — use suggested_price as base):\n"
+                f"Piatti cucinabili (dati ricetta completi): {json.dumps(cookable)}\n\n"
+                f"Profili di prezzo (pre-calcolati — usa il suggested_price come base):\n"
                 f"{json.dumps(dish_profiles, indent=2)}\n\n"
-                f"Tier rules:\n"
+                f"Regole per livello:\n"
                 f"  BUDGET   (prestige_score < {MENU_PRESTIGE_SCORE_LOW}) "
-                f"→ {MENU_MARKUP_BUDGET}x markup — common ingredients, cheap & fast, "
-                f"appeals to Galactic Explorer.\n"
+                f"→ markup {MENU_MARKUP_BUDGET}x — ingredienti comuni, economici e veloci, "
+                f"ideale per Galactic Explorer.\n"
                 f"  STANDARD ({MENU_PRESTIGE_SCORE_LOW}–{MENU_PRESTIGE_SCORE_HIGH}) "
-                f"→ {MENU_MARKUP_STANDARD}x markup — balanced quality, "
-                f"appeals to Orbital Family and Astrobaron.\n"
+                f"→ markup {MENU_MARKUP_STANDARD}x — qualità equilibrata, "
+                f"ideale per Orbital Family e Astrobaron.\n"
                 f"  PRESTIGE (prestige_score >= {MENU_PRESTIGE_SCORE_HIGH}) "
-                f"→ {MENU_MARKUP_PRESTIGE}x markup — rare/exotic ingredients, "
-                f"appeals to Space Sage (unlimited budget, seeks the extraordinary).\n\n"
-                "For each dish: use the suggested_price (±10% adjustment allowed), "
-                "write a short description that matches the tier and the dish's ingredient profile. "
-                "Then call set_menu once with the complete JSON array."
+                f"→ markup {MENU_MARKUP_PRESTIGE}x — ingredienti rari/esotici, "
+                f"ideale per lo Space Sage (budget illimitato, cerca l'eccezionale).\n\n"
+                "Per ogni piatto: usa il suggested_price (±10% di aggiustamento consentito), "
+                "scrivi una breve descrizione che si adatti al livello e al profilo degli ingredienti del piatto. "
+                "Poi chiama set_menu una volta con l'array JSON completo."
             )
 
             try:

@@ -35,35 +35,35 @@ import config
 # ---------------------------------------------------------------------------
 
 _SYSTEM_PROMPT = """
-You are the strategy agent for our restaurant in a competitive cooking hackathon
-set in a gastronomic multiverse.
+Sei l'agente di strategia per il nostro ristorante in un hackathon gastronomico competitivo
+ambientato in un multiverso gastronomico.
 
-Context
--------
-* Each game turn has phases: speaking → closed_bid → waiting → serving → stopped.
-* During 'closed_bid' we compete in a blind auction to acquire ingredients.
-  Ingredients expire at the end of the turn — unused stock is wasted.
-* During 'serving' clients arrive and we earn money by serving them dishes.
-* Client archetypes and what they value:
-    - Galactic Explorer : low budget, little time  → cheap & fast dishes
-    - Astrobaron        : big budget, little time  → premium & fast dishes
-    - Space Sage        : unlimited budget, ample time → prestigious/rare dishes
-    - Orbital Family    : balanced budget & time   → quality/price ratio
+Contesto
+--------
+* Ogni turno di gioco ha fasi: speaking → closed_bid → waiting → serving → stopped.
+* Durante 'closed_bid' comptiamo in un'asta cieca per acquisire ingredienti.
+  Gli ingredienti scadono alla fine del turno — le scorte inutilizzate vengono sprecate.
+* Durante 'serving' arrivano i clienti e guadagniamo denaro servendo loro i piatti.
+* Archetipi di clienti e cosa apprezzano:
+    - Galactic Explorer : budget basso, poco tempo  → piatti economici e veloci
+    - Astrobaron        : budget alto, poco tempo   → piatti premium e veloci
+    - Space Sage        : budget illimitato, molto tempo → piatti prestigiosi/rari
+    - Orbital Family    : budget e tempo equilibrati → rapporto qualità/prezzo
 
-Goal
-----
-Pick 2-4 recipes to focus on across the entire competition.
-Good focus recipes share traits like:
-  * Few, commonly-available ingredients (easier to win at auction)
-  * Short preparation time (serve more clients per turn)
-  * High revenue potential relative to ingredient cost
-  * Broad appeal to multiple client archetypes
+Obiettivo
+---------
+Scegli 2-4 ricette su cui concentrarti per tutta la competizione.
+Le buone ricette focus condividono caratteristiche come:
+  * Pochi ingredienti comuni (più facile vincere all'asta)
+  * Breve tempo di preparazione (servire più clienti per turno)
+  * Alto potenziale di ricavi rispetto al costo degli ingredienti
+  * Ampio appeal per più archetipi di clienti
 
-Instructions
-------------
-1. Call fetch_recipes to retrieve all available recipes.
-2. Analyse each recipe: ingredient count, preparation time, estimated margin.
-3. Call set_strategy ONCE with your final prioritised list and clear reasoning.
+Istruzioni
+----------
+1. Chiama fetch_recipes per recuperare tutte le ricette disponibili.
+2. Analizza ogni ricetta: numero di ingredienti, tempo di preparazione, margine stimato.
+3. Chiama set_strategy UNA VOLTA con la tua lista finale prioritizzata e una spiegazione chiara.
 """
 
 
@@ -154,20 +154,20 @@ class RecipeStrategyAgent(Agent):
         log("strategy", 0, "agent", "RecipeStrategyAgent started")
 
         prices_ctx = (
-            f"Known ingredient clearing prices from past turns: {json.dumps(clearing_prices)}\n"
-            "Use these to estimate auction cost per recipe (sum of price * qty for each ingredient).\n"
+            f"Prezzi di aggiudicazione noti dai turni precedenti: {json.dumps(clearing_prices)}\n"
+            "Usali per stimare il costo d'asta per ricetta (somma di prezzo * quantità per ogni ingrediente).\n"
             if clearing_prices
-            else "No clearing price history yet (first turn) — assume ~50 per ingredient unit.\n"
+            else "Nessuno storico di prezzi di aggiudicazione (primo turno) — assume ~50 per unità di ingrediente.\n"
         )
 
         task = (
-            "Please analyse our recipe options and decide which 2-4 recipes "
-            "we should focus on throughout the competition.\n\n"
+            "Analizza le nostre opzioni di ricette e decidi su quali 2-4 ricette "
+            "concentrarci per tutta la competizione.\n\n"
             + prices_ctx
-            + "Step 1: call fetch_recipes to see what is available.\n"
-            "Step 2: for each recipe estimate auction cost (clearing_price * qty per ingredient), "
-            "prep time, and fit for multiple client archetypes.\n"
-            "Step 3: call set_strategy with your prioritised list and reasoning."
+            + "Passo 1: chiama fetch_recipes per vedere cosa è disponibile.\n"
+            "Passo 2: per ogni ricetta stima il costo d'asta (clearing_price * quantità per ingrediente), "
+            "il tempo di preparazione e l'adattabilità a più archetipi di clienti.\n"
+            "Passo 3: chiama set_strategy con la tua lista prioritizzata e la motivazione."
         )
 
         try:
