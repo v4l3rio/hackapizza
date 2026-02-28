@@ -26,6 +26,9 @@ class BiddingAgent(Agent):
       - Turn 1: flat bid per ingredient
       - Turn > 1: bid = clearing_price * multiplier (from memory)
       - Cap: max MAX_BID_BALANCE_FRACTION of balance in total bids
+
+    Note: the server expects bids with field 'bid' (not 'price').
+    Each bid object: {"ingredient": str, "bid": float, "quantity": int}
     """
 
     name = "bidding_agent"
@@ -35,6 +38,8 @@ class BiddingAgent(Agent):
         "Analyze the current inventory, needed ingredients, and clearing prices. "
         "Compute competitive bids (clearing_price * multiplier, or flat default if no history). "
         "Respect the budget cap and submit all bids in a single call to submit_bids. "
+        "IMPORTANT: each bid object must have keys: 'ingredient' (str), 'bid' (float), 'quantity' (int). "
+        "Use 'bid' not 'price' for the price field. "
         "Always call submit_bids exactly once — do not skip it if there are needed ingredients."
     )
 
@@ -51,14 +56,19 @@ class BiddingAgent(Agent):
         description=(
             "Submit all ingredient bids for this auction round. "
             "Accepts a JSON array of bid objects, each with keys: "
-            "ingredient (str), quantity (int), price (float). "
-            'Example: [{"ingredient": "flour", "quantity": 5, "price": 55.0}]'
+            "ingredient (str), bid (float), quantity (int). "
+            'Note: use "bid" not "price" for the amount. '
+            'Example: [{"ingredient": "flour", "quantity": 5, "bid": 55.0}]'
         ),
     )
     async def submit_bids(self, bids_json: str) -> str:
         """Submit bids to the closed-bid auction."""
         try:
             bids = json.loads(bids_json)
+            # Normalise: if agent used 'price' instead of 'bid', fix it
+            for b in bids:
+                if "price" in b and "bid" not in b:
+                    b["bid"] = b.pop("price")
             result = await self._mcp.closed_bid(bids)
             turn = self._state.turn_id if self._state else "?"
             log("closed_bid", turn, "tool", f"Submitted {len(bids)} bids: {result}")
@@ -99,6 +109,14 @@ class BiddingAgent(Agent):
                 log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
                 return
 
+            # Filter to focused recipes if strategy has been set
+            focus_hint = ""
+            if memory.focused_recipe_names:
+                focus_hint = (
+                    f"Priority recipes to focus on: {memory.focused_recipe_names}\n"
+                    "Prioritize ingredients needed by these recipes.\n"
+                )
+
             task = (
                 f"Current balance: {state.balance:.2f}\n"
                 f"Budget cap ({int(MAX_BID_BALANCE_FRACTION * 100)}% of balance): {budget:.2f}\n"
@@ -106,11 +124,13 @@ class BiddingAgent(Agent):
                 f"All recipes: {json.dumps(state.recipes)}\n"
                 f"Pre-computed needed ingredients (max shortfall per ingredient): {json.dumps(needed)}\n"
                 f"Last known clearing prices: {json.dumps(memory.clearing_prices)}\n"
+                f"{focus_hint}"
                 f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if available, "
                 f"else flat default = {DEFAULT_BID_FLAT}.\n"
                 f"Total bid spend MUST NOT exceed {budget:.2f}.\n\n"
                 "Compute the best bids for each needed ingredient, respect the budget cap, "
-                "then call submit_bids once with the complete JSON array."
+                "then call submit_bids once with the complete JSON array. "
+                "Each bid object: {\"ingredient\": str, \"bid\": float, \"quantity\": int}."
             )
 
             try:

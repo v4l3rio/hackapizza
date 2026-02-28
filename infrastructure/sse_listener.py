@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Callable, Any, Awaitable
 
@@ -21,7 +22,8 @@ class SSEListener:
     Each `data:` line carries a JSON object with `type` and `data` fields.
     A special `data: connected` line signals a successful handshake — not an event.
 
-    Connection is exit-on-drop (matches reference client behaviour).
+    Reconnects automatically on disconnect or 409 (another connection already active).
+    A 409 means a previous connection is still alive on the server; we wait and retry.
     """
 
     def __init__(self, url: str, headers: dict[str, str]) -> None:
@@ -45,7 +47,45 @@ class SSEListener:
                 log_error("SSE", "?", "dispatch", f"Handler error for '{event_type}': {exc}")
 
     async def listen(self) -> None:
-        """Open the SSE connection and process events until the server closes it."""
+        """
+        Open the SSE connection and process events.
+        Retries with backoff on disconnect or 409 (conflict).
+        """
+        retry_delay = 5  # seconds
+        max_retry_delay = 60
+
+        while True:
+            try:
+                await self._connect_once()
+                # Connection closed cleanly — retry immediately
+                log("SSE", "?", "connect", "Connection closed — reconnecting in 2s")
+                await asyncio.sleep(2)
+                retry_delay = 5  # reset backoff
+
+            except aiohttp.ClientResponseError as exc:
+                if exc.status == 409:
+                    log(
+                        "SSE",
+                        "?",
+                        "connect",
+                        f"409 Conflict: another connection active. Retrying in {retry_delay}s...",
+                    )
+                elif exc.status == 401:
+                    log_error("SSE", "?", "connect", "401 Unauthorized — check API key. Stopping.")
+                    raise  # Fatal — don't retry
+                else:
+                    log_error("SSE", "?", "connect", f"HTTP {exc.status} error: {exc}. Retrying in {retry_delay}s...")
+
+                await asyncio.sleep(retry_delay)
+                retry_delay = min(retry_delay * 2, max_retry_delay)
+
+            except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
+                log_error("SSE", "?", "connect", f"Connection error: {exc}. Retrying in {retry_delay}s...")
+                await asyncio.sleep(retry_delay)
+                retry_delay = min(retry_delay * 2, max_retry_delay)
+
+    async def _connect_once(self) -> None:
+        """Open one SSE connection and read until it closes."""
         log("SSE", "?", "connect", f"Connecting to {self.url}")
         timeout = aiohttp.ClientTimeout(total=None, sock_connect=15, sock_read=None)
 
@@ -56,8 +96,6 @@ class SSEListener:
 
                 async for raw_line in response.content:
                     await self._handle_line(raw_line)
-
-        log("SSE", "?", "connect", "Connection closed — exiting")
 
     async def _handle_line(self, raw_line: bytes) -> None:
         if not raw_line:

@@ -12,6 +12,7 @@ from agents.bidding import BiddingAgent
 from agents.menu import MenuAgent
 from agents.market import MarketAgent
 from agents.serving import ServingAgent
+from agents.recipe_strategy import RecipeStrategyAgent
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
@@ -45,6 +46,7 @@ class AgentManager:
         self._menu = MenuAgent()
         self._market = MarketAgent()
         self._serving = ServingAgent()
+        self._recipe_strategy = RecipeStrategyAgent(http)
 
         # Register persistent SSE handlers (serving events span the whole session)
         self._serving.register(sse, state, memory, mcp)
@@ -60,10 +62,29 @@ class AgentManager:
         self.state.turn_id = int(turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
 
+        # Run recipe strategy once at game start to guide all subsequent decisions
+        if not self.memory.focused_recipe_names:
+            try:
+                log("manager", self.state.turn_id, "strategy", "Running RecipeStrategyAgent...")
+                await self._recipe_strategy.execute()
+                self.memory.focused_recipe_names = [
+                    r["name"] for r in self._recipe_strategy.strategy
+                ]
+                log(
+                    "manager",
+                    self.state.turn_id,
+                    "strategy",
+                    f"Focused recipes: {self.memory.focused_recipe_names}",
+                )
+            except Exception as exc:
+                log_error("manager", self.state.turn_id, "strategy", f"RecipeStrategyAgent failed: {exc}")
+
     async def _on_game_reset(self, data: dict[str, Any]) -> None:
         log("manager", self.state.turn_id, "reset", f"Game reset: {data}")
         self.state.turn_id = 0
         self.state.phase = "unknown"
+        # Clear recipe strategy so it re-runs on next game start
+        self.memory.focused_recipe_names = []
 
     async def _on_message(self, data: dict[str, Any]) -> None:
         sender = data.get("sender", "unknown")
@@ -104,7 +125,7 @@ class AgentManager:
                 elif phase == "closed_bid":
                     # Consolidate memory from previous turns before bidding
                     try:
-                        await self.memory.consolidate(self.http)
+                        await self.memory.consolidate(self.http, turn_id=self.state.turn_id)
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 
@@ -125,7 +146,7 @@ class AgentManager:
                     except Exception:
                         pass
                     try:
-                        await self.memory.consolidate(self.http)
+                        await self.memory.consolidate(self.http, turn_id=self.state.turn_id)
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Final consolidate failed: {exc}")
 

@@ -13,13 +13,15 @@ class StrategyMemory:
     clearing_prices: dict[str, float] = field(default_factory=dict)
     served_orders: list[dict[str, Any]] = field(default_factory=list)
     revenue_per_turn: dict[int, float] = field(default_factory=dict)
+    # Recipe strategy set by RecipeStrategyAgent at game start
+    focused_recipe_names: list[str] = field(default_factory=list)
 
-    async def consolidate(self, http: "HttpClient") -> None:
+    async def consolidate(self, http: "HttpClient", turn_id: int = 0) -> None:
         """
         Aggregate clearing prices from /bid_history.
         Called at the end of each turn (on 'stopped' event or at bidding phase start).
         """
-        history = await http.get_bid_history()
+        history = await http.get_bid_history(turn_id=turn_id if turn_id > 0 else None)
         self.bid_history = history
 
         # Build clearing price map: ingredient -> latest clearing price
