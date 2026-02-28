@@ -107,10 +107,11 @@ class BiddingAgent(Agent):
                 f"Ricette focus: {json.dumps(focus_label)}\n"
                 f"Ingredienti necessari per le ricette focus ({BID_SERVINGS_MULTIPLIER} porzioni ciascuna, deficit): {json.dumps(needed)}\n"
                 f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
-                f"Regola di prezzo: clearing_price * {BID_CLEARING_MULTIPLIER} se esiste storico, "
-                f"altrimenti valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+            #    f"Regola di prezzo: clearing_price * {BID_CLEARING_MULTIPLIER} se esiste storico, "
+                f"Regola di prezzo valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+            #    f"altrimenti valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
                 f"La spesa totale delle offerte NON deve superare {budget:.2f}.\n\n"
-                "Per ogni ingrediente necessario, offri clearing_price * moltiplicatore (o valore fisso predefinito). "
+            #    "Per ogni ingrediente necessario, offri clearing_price * moltiplicatore (o valore fisso predefinito). "
                 "Rispetta il limite di budget, poi chiama submit_bids una volta con l'array JSON completo."
             )
 
@@ -131,18 +132,19 @@ class BiddingAgent(Agent):
         valid_ingredients = get_ingredient_data()
 
         recipes = state.recipes
-        if focus_recipes:
-            focus_set = set(focus_recipes)
-            recipes = [r for r in recipes if r.get("name") in focus_set]
+        # if focus_recipes:
+        #     focus_set = set(focus_recipes)
+        #     recipes = [r for r in recipes if r.get("name") in focus_set]
 
         needed: dict[str, int] = {}
-        for recipe in recipes:
-            for ing, qty in recipe.get("ingredients", {}).items():
-                if ing not in valid_ingredients:
-                    log("closed_bid", state.turn_id, "agent", f"Skipping unknown ingredient: {ing!r}")
-                    continue
-                have = state.inventory.get(ing, 0)
-                shortfall = max(0, qty * BID_SERVINGS_MULTIPLIER - have)
-                if shortfall > 0:
-                    needed[ing] = max(needed.get(ing, 0), shortfall)
+        # for recipe in recipes:
+        #     for ing, qty in recipe.get("ingredients", {}).items():
+        for ing in valid_ingredients:
+            if ing not in valid_ingredients:
+                log("closed_bid", state.turn_id, "agent", f"Skipping unknown ingredient: {ing!r}")
+                continue
+            have = state.inventory.get(ing, 0)
+            shortfall = 5 # max(0, qty * BID_SERVINGS_MULTIPLIER - have)
+            if shortfall > 0:
+                needed[ing] = max(needed.get(ing, 0), shortfall)
         return needed
