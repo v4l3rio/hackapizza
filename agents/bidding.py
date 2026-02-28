@@ -59,7 +59,7 @@ class BiddingAgent(Agent):
                 f"Limite di budget ({int(MAX_BID_BALANCE_FRACTION * 100)}% del saldo): {budget:.2f}\n"
                 f"Ingredienti da offrire (quantità per ciascuno: {DEFAULT_BID_QUANTITY}): {json.dumps(list(needed))}\n"
                 f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
-                f"Prezzo fisso di default per offerta: {DEFAULT_BID_FLAT}.\n"
+                f"Prezzo fisso di default per bid (non moltiplicare questo valore per la quantità, inseriscilo come parametro come fornito): {DEFAULT_BID_FLAT}.\n"
                 f"La spesa totale NON deve superare {budget:.2f}.\n\n"
                 "Chiama closed_bid una volta con l'array completo di offerte."
             )
