@@ -35,5 +35,9 @@ BID_CLEARING_MULTIPLIER: float = config['BID_CLEARING_MULTIPLIER']  # bid = clea
 MAX_BID_BALANCE_FRACTION: float = config['MAX_BID_BALANCE_FRACTION']  # cap: max 60% of balance in bids
 BID_SERVINGS_MULTIPLIER: int = config['BID_SERVINGS_MULTIPLIER']   # bid for N servings of each focus recipe per turn
 
+# Market strategy
+MARKET_MAX_BUY_MULTIPLIER: float = config['MARKET_MAX_BUY_MULTIPLIER']
+MARKET_MAX_BUY_FLAT: int = config['MARKET_MAX_BUY_FLAT']
+
 # Menu pricing
 MENU_MARKUP: float = config['MENU_MARKUP']            # dish price = ingredient cost * markup

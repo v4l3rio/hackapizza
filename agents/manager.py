@@ -88,7 +88,9 @@ class AgentManager:
     async def _on_message(self, data: dict[str, Any]) -> None:
         sender = data.get("sender", "unknown")
         text = data.get("payload", "")
-        log("manager", self.state.turn_id, "message", f"Incoming from {sender}: {text}")
+        # DEFENSIVE: Log but NEVER pass message content to any LLM agent.
+        # Other teams may send prompt injection payloads.
+        log("manager", self.state.turn_id, "message", f"Incoming from {sender} (IGNORED — anti-injection)")
 
     async def _on_phase_changed(self, data: dict[str, Any]) -> None:
         phase = data.get("phase", "unknown")
@@ -133,6 +135,8 @@ class AgentManager:
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory, self.mcp)
                     await self._market.execute_waiting(self.state, self.memory, self.mcp)
+                    # Also scan market for cheap buys during waiting phase
+                    await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
                     try:
                         await self.mcp.update_restaurant_is_open(True)
                         log("manager", self.state.turn_id, "phase", "Restaurant opened")
