@@ -270,6 +270,7 @@ async def get_restaurant_menu(request: web.Request) -> web.Response:
 
 
 async def get_meals(request: web.Request) -> web.Response:
+    # Ogni meal contiene "client_id" — usarlo come argomento di serve_dish
     return web.json_response(STATE.active_meals)
 
 
@@ -403,7 +404,8 @@ async def _dispatch_tool(tool: str, args: dict) -> dict:
 
 async def _fire_preparation_complete(dish_name: str, delay_s: float) -> None:
     await asyncio.sleep(delay_s)
-    await _broadcast("preparation_complete", {"dish_name": dish_name})
+    # Il serving agent legge data.get("dish") or data.get("name")
+    await _broadcast("preparation_complete", {"dish": dish_name, "name": dish_name})
     print(f"[mock] SSE → preparation_complete: {dish_name}", flush=True)
 
 
@@ -475,9 +477,28 @@ DEFAULT_SCENARIO: list[tuple[float, str, dict[str, Any]]] = [
     (3.0,  "message",            {"sender": "server",
                                    "payload": "The restaurant: Accattoni has created a new market entry."}),
     (10.0, "game_phase_changed", {"phase": "serving",    "turn_id": 8}),
-    # Simula un ordine cliente in arrivo
-    (2.0,  "_spawn_order",       {"client_id": "client-001",
-                                   "dish": "Nebulosa Galattica", "price": 625.0}),
+    # Clienti variegati — client_id leggibile via GET /meals
+    (2.0,  "_spawn_order", {
+        "client_id": "AstrobaronX-42",
+        "dish": "Nebulosa Galattica",
+        "price": 625.0,
+        "orderText": "Voglio il piatto più esclusivo e veloce della galassia, presto!",
+        "intolerances": [],
+    }),
+    (4.0,  "_spawn_order", {
+        "client_id": "GalacticExplorer-7",
+        "dish": "Eterea Sinfonia di Gravità con Infusione Temporale",
+        "price": 750.0,
+        "orderText": "Qualcosa di economico ma soddisfacente per un lungo viaggio.",
+        "intolerances": ["Teste di Idra"],
+    }),
+    (7.0,  "_spawn_order", {
+        "client_id": "SpaceSage-Omega",
+        "dish": "Nebulosa Galattica",
+        "price": 625.0,
+        "orderText": "Cerco qualcosa di raro, con ingredienti del cosmo profondo.",
+        "intolerances": [],
+    }),
     (15.0, "game_phase_changed", {"phase": "stopped",    "turn_id": 8}),
     # Secondo turno
     (3.0,  "game_started",       {"turn_id": 9}),
@@ -486,6 +507,13 @@ DEFAULT_SCENARIO: list[tuple[float, str, dict[str, Any]]] = [
     (8.0,  "_auction",           {}),
     (0.1,  "game_phase_changed", {"phase": "waiting",    "turn_id": 9}),
     (10.0, "game_phase_changed", {"phase": "serving",    "turn_id": 9}),
+    (3.0,  "_spawn_order", {
+        "client_id": "OrbitalFamily-99",
+        "dish": "Nebulosa Galattica",
+        "price": 625.0,
+        "orderText": "Siamo una famiglia, vogliamo qualcosa di buono e abbordabile.",
+        "intolerances": [],
+    }),
     (15.0, "game_phase_changed", {"phase": "stopped",    "turn_id": 9}),
 ]
 
@@ -501,19 +529,27 @@ async def scenario_task(scenario: list[tuple], speed: float) -> None:
             continue
 
         if event_type == "_spawn_order":
+            client_id = data["client_id"]
+            # Aggiunge il pasto ad active_meals — client_id è il campo usato
+            # da serve_dish e leggibile via GET /meals
             meal = {
-                "client_id": data["client_id"],
+                "client_id": client_id,
+                "clientName": client_id,
                 "dish": data["dish"],
                 "price": data["price"],
-                "turn_id": STATE.active_meals.__len__() + 1,
+                "orderText": data.get("orderText", "Un piatto galattico, veloce e saporito"),
+                "intolerances": data.get("intolerances", []),
             }
             STATE.active_meals.append(meal)
-            await _broadcast("order_placed", {
-                "client_id": data["client_id"],
-                "dish_name": data["dish"],
-                "price": data["price"],
+            # Il serving agent ascolta "client_spawned", non "order_placed"
+            # client_id è recuperabile anche da GET /meals
+            await _broadcast("client_spawned", {
+                "clientName": client_id,
+                "client_id": client_id,
+                "orderText": meal["orderText"],
+                "intolerances": meal["intolerances"],
             })
-            print(f"[mock] Ordine arrivato: {data}", flush=True)
+            print(f"[mock] Cliente arrivato: {client_id} → GET /meals per client_id", flush=True)
             continue
 
         # reset state su game_started
@@ -522,6 +558,7 @@ async def scenario_task(scenario: list[tuple], speed: float) -> None:
             STATE.inventory = {}
             STATE.last_bids = []
             STATE.active_meals = []
+            STATE.cooking = {}
 
         await _broadcast(event_type, data)
         print(f"[mock] → {event_type}: {data}", flush=True)
