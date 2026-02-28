@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ristorante Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf8f4;
+      --paper: #ede8dc;
+      --espresso: #1a1209;
+      --bark: #3d2b1a;
+      --rust: #c4511a;
+      --gold: #d4922a;
+      --sage: #6b7c5c;
+      --terracotta: #b85c38;
+      --muted: #8a7d6e;
+      --border: #ddd5c4;
+      --card-shadow: 0 2px 12px rgba(26,18,9,0.08), 0 1px 3px rgba(26,18,9,0.05);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cream);
+      color: var(--espresso);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── CONFIG BAR ── */
+    .config-bar {
+      background: var(--espresso);
+      color: var(--cream);
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .config-bar label { font-size: 0.65rem; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .config-bar input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 3px;
+      width: 200px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .config-bar input:focus { border-color: var(--gold); }
+
+    .config-group { display: flex; align-items: center; gap: 0.5rem; }
+
+    .refresh-btn {
+      margin-left: auto;
+      background: var(--rust);
+      border: none;
+      color: white;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .refresh-btn:hover { background: var(--terracotta); }
+
+    .countdown-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    select.interval-select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* ── MASTHEAD ── */
+    .masthead {
+      background: var(--espresso);
+      color: var(--cream);
+      padding: 2.5rem 2rem 2rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .masthead-title {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .masthead-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .masthead-sub {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      margin-top: 0.4rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .masthead-date {
+      text-align: right;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--paper);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.8rem 1.2rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    nav a:hover { color: var(--rust); }
+    nav a.active { color: var(--rust); border-bottom-color: var(--rust); }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 500;
+    }
+
+    .section-title span {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 400;
+      margin-bottom: 0.2rem;
+    }
+
+    .section-status {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+      display: inline-block;
+    }
+    .dot.ok { background: var(--sage); box-shadow: 0 0 4px var(--sage); }
+    .dot.error { background: var(--rust); }
+    .dot.loading { background: var(--gold); animation: blink 1s infinite; }
+
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
+
+    /* ── ERROR / EMPTY ── */
+    .state-msg {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-style: italic;
+      font-family: var(--font-display);
+      font-size: 1rem;
+    }
+
+    /* ════════════════════════════════════
+       SECTION 1 — MY RESTAURANT
+    ════════════════════════════════════ */
+    .my-restaurant-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .restaurant-hero {
+      grid-column: 1 / -1;
+      background: var(--espresso);
+      color: var(--cream);
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .restaurant-hero::before {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,146,42,0.2) 0%, transparent 70%);
+    }
+
+    .restaurant-name {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .restaurant-name em { font-style: italic; color: var(--gold); }
+
+    .restaurant-tagline {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-family: var(--font-mono);
+    }
+
+    .open-badge {
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      border: 1px solid;
+    }
+    .open-badge.open { background: rgba(107,124,92,0.25); border-color: var(--sage); color: #a8c490; }
+    .open-badge.closed { background: rgba(196,81,26,0.2); border-color: var(--rust); color: #e88a6a; }
+
+    .info-card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: var(--card-shadow);
+    }
+
+    .info-card-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.6rem;
+    }
+
+    .info-card-value {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--espresso);
+    }
+
+    .info-card-value.big {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--rust);
+    }
+
+    .info-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .info-tag {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.7rem;
+      font-size: 0.7rem;
+      color: var(--bark);
+      font-family: var(--font-mono);
+    }
+
+    /* ════════════════════════════════════
+       SECTION 2 — MARKET ENTRIES
+    ════════════════════════════════════ */
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .market-card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .market-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26,18,9,0.12);
+    }
+
+    .market-card-top {
+      background: var(--paper);
+      padding: 1rem 1.2rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .market-card-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .market-price {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--rust);
+      white-space: nowrap;
+    }
+
+    .market-card-body {
+      padding: 0.9rem 1.2rem;
+    }
+
+    .market-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .market-category {
+      display: inline-block;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--bark);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 0.4rem;
+    }
+
+    .stock-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 0.6rem;
+      overflow: hidden;
+    }
+    .stock-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--sage);
+      transition: width 0.5s ease;
+    }
+    .stock-fill.low { background: var(--rust); }
+    .stock-fill.mid { background: var(--gold); }
+
+    /* ════════════════════════════════════
+       SECTION 3 — OTHER RESTAURANTS
+    ════════════════════════════════════ */
+    .restaurants-table {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .restaurants-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .restaurants-table thead th {
+      background: var(--paper);
+      padding: 0.75rem 1.2rem;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+    }
+
+    .restaurants-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .restaurants-table tbody tr:last-child { border-bottom: none; }
+    .restaurants-table tbody tr:hover { background: var(--cream); }
+
+    .restaurants-table td {
+      padding: 0.9rem 1.2rem;
+      vertical-align: middle;
+    }
+
+    .r-name {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .r-cuisine {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      margin-top: 0.1rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.67rem;
+      font-family: var(--font-mono);
+      font-weight: 500;
+    }
+    .status-pill.open { background: rgba(107,124,92,0.15); color: var(--sage); }
+    .status-pill.closed { background: rgba(196,81,26,0.12); color: var(--terracotta); }
+
+    .rating-stars {
+      color: var(--gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .rating-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-left: 0.3rem;
+    }
+
+    /* ════════════════════════════════════
+       SECTION 4 — RECIPES
+    ════════════════════════════════════ */
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .recipe-card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+    }
+    .recipe-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(26,18,9,0.12);
+    }
+    .recipe-card.expanded { transform: none; }
+
+    .recipe-card-header {
+      padding: 1.2rem 1.3rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--paper);
+    }
+
+    .recipe-num {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+    }
+
+    .recipe-name {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .recipe-name em { font-style: italic; color: var(--rust); }
+
+    .recipe-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.6rem;
+    }
+
+    .recipe-tag {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.45rem;
+      font-size: 0.62rem;
+      font-family: var(--font-mono);
+      color: var(--bark);
+      text-transform: uppercase;
+    }
+
+    .recipe-body {
+      padding: 1rem 1.3rem;
+    }
+
+    .recipe-desc {
+      font-size: 0.78rem;
+      color: var(--bark);
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+    }
+
+    .recipe-meta-row {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .recipe-meta-item { display: flex; flex-direction: column; gap: 0.1rem; }
+    .recipe-meta-label { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .recipe-meta-val { font-family: var(--font-mono); font-size: 0.75rem; color: var(--espresso); font-weight: 500; }
+
+    .recipe-ingredients {
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+    .recipe-card.expanded .recipe-ingredients { display: block; }
+
+    .recipe-ingredients-title {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .recipe-ingredient-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .recipe-ingredient-list li {
+      font-size: 0.75rem;
+      color: var(--bark);
+      padding-left: 0.9rem;
+      position: relative;
+    }
+    .recipe-ingredient-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 0.7rem;
+    }
+
+    .expand-hint {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 0.6rem;
+    }
+
+    /* ── LOADING SKELETON ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--paper) 25%, var(--border) 50%, var(--paper) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .my-restaurant-layout { grid-template-columns: 1fr; }
+      .restaurant-hero { flex-direction: column; align-items: flex-start; }
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CONFIG BAR -->
+<div class="config-bar">
+  <div class="config-group">
+    <label>Base URL</label>
+    <input id="cfgBaseUrl" type="text" placeholder="https://your-api-url.com"/>
+  </div>
+  <div class="config-group">
+    <label>x-api-key</label>
+    <input id="cfgApiKey" type="password" placeholder="your-api-key"/>
+  </div>
+  <div class="config-group">
+    <label>Auto-refresh</label>
+    <select class="interval-select" id="cfgInterval">
+      <option value="10000">10s</option>
+      <option value="30000" selected>30s</option>
+      <option value="60000">60s</option>
+      <option value="0">Off</option>
+    </select>
+  </div>
+  <span class="countdown-badge" id="cfgCountdown"></span>
+  <button class="refresh-btn" onclick="fetchAll()">↺ Aggiorna</button>
+</div>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div>
+    <div class="masthead-title">La Cucina <em>Digitale</em></div>
+    <div class="masthead-sub">Pannello di controllo · Ristorante #5</div>
+  </div>
+  <div class="masthead-date" id="mastheadDate"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#my-restaurant" class="active">Il Mio Ristorante</a>
+  <a href="#market">Mercato</a>
+  <a href="#competitors">Concorrenti</a>
+  <a href="#recipes">Ricettario</a>
+</nav>
+
+<main>
+
+  <!-- ══ SECTION 1: MY RESTAURANT ══ -->
+  <section id="my-restaurant">
+    <div class="section-header">
+      <div class="section-title">
+        <span>Il Mio Ristorante</span>
+        La tua attività
+      </div>
+      <div class="section-status">
+        <span class="dot" id="dot-restaurant"></span>
+        <span id="status-restaurant">In attesa…</span>
+      </div>
+    </div>
+    <div id="my-restaurant-content">
+      <div class="state-msg">Configura Base URL per iniziare</div>
+    </div>
+  </section>
+
+  <!-- ══ SECTION 2: MARKET ══ -->
+  <section id="market">
+    <div class="section-header">
+      <div class="section-title">
+        <span>Mercato</span>
+        Voci disponibili
+      </div>
+      <div class="section-status">
+        <span class="dot" id="dot-market"></span>
+        <span id="status-market">In attesa…</span>
+      </div>
+    </div>
+    <div id="market-content">
+      <div class="state-msg">Configura Base URL per iniziare</div>
+    </div>
+  </section>
+
+  <!-- ══ SECTION 3: OTHER RESTAURANTS ══ -->
+  <section id="competitors">
+    <div class="section-header">
+      <div class="section-title">
+        <span>Concorrenti</span>
+        Gli altri ristoranti
+      </div>
+      <div class="section-status">
+        <span class="dot" id="dot-restaurants"></span>
+        <span id="status-restaurants">In attesa…</span>
+      </div>
+    </div>
+    <div id="restaurants-content">
+      <div class="state-msg">Configura Base URL per iniziare</div>
+    </div>
+  </section>
+
+  <!-- ══ SECTION 4: RECIPES ══ -->
+  <section id="recipes">
+    <div class="section-header">
+      <div class="section-title">
+        <span>Ricettario</span>
+        Tutte le ricette
+      </div>
+      <div class="section-status">
+        <span class="dot" id="dot-recipes"></span>
+        <span id="status-recipes">In attesa…</span>
+      </div>
+    </div>
+    <div id="recipes-content">
+      <div class="state-msg">Configura Base URL per iniziare</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── UTILITIES ──────────────────────────────────────────────
+function getConfig() {
+  return {
+    baseUrl: document.getElementById('cfgBaseUrl').value.trim().replace(/\/$/, ''),
+    apiKey: document.getElementById('cfgApiKey').value.trim(),
+  };
+}
+
+async function apiFetch(path) {
+  const { baseUrl, apiKey } = getConfig();
+  if (!baseUrl) return null;
+  const headers = { 'Accept': 'application/json' };
+  if (apiKey) headers['x-api-key'] = apiKey;
+  const res = await fetch(baseUrl + path, { headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function setDot(id, state) {
+  document.getElementById(`dot-${id}`).className = `dot ${state}`;
+}
+function setStatus(id, text) {
+  document.getElementById(`status-${id}`).textContent = text;
+}
+
+function stars(rating) {
+  if (!rating) return '–';
+  const full = Math.round(rating);
+  return '★'.repeat(Math.min(full,5)) + '☆'.repeat(Math.max(0,5-full));
+}
+
+function formatPrice(val) {
+  if (val == null) return '–';
+  return typeof val === 'number' ? `€${val.toFixed(2)}` : val;
+}
+
+// ── DATE ──────────────────────────────────────────────────
+function updateDate() {
+  const d = new Date();
+  document.getElementById('mastheadDate').textContent =
+    d.toLocaleDateString('it-IT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+updateDate();
+
+// ── RENDER: MY RESTAURANT ────────────────────────────────
+function renderRestaurant(data) {
+  const r = data;
+  const isOpen = r.isOpen;
+  const name = r.name || 'Ristorante #5';
+  const balance = r.balance ?? null;
+  const reputation = r.reputation ?? null;
+  const inventory = r.inventory || {};
+  const menuItems = r.menu?.items || [];
+  const kitchen = r.kitchen || [];
+  const messages = r.receivedMessages || [];
+
+  const inventoryEntries = Object.entries(inventory);
+
+  document.getElementById('my-restaurant-content').innerHTML = `
+    <div class="my-restaurant-layout">
+      <div class="restaurant-hero">
+        <div>
+          <div class="restaurant-name">${name}</div>
+          <div class="restaurant-tagline">ID #${r.id} · Pannello operativo</div>
+        </div>
+        <span class="open-badge ${isOpen ? 'open' : 'closed'}">${isOpen ? '● Aperto' : '○ Chiuso'}</span>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-label">Saldo</div>
+        <div class="info-card-value big">€${(balance ?? 0).toLocaleString('it-IT')}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-label">Reputazione</div>
+        <div class="info-card-value big" style="color:var(--gold)">${reputation ?? '–'}</div>
+        <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);margin-top:0.3rem">punti reputazione</div>
+      </div>
+
+      <div class="info-card" style="grid-column:1/-1">
+        <div class="info-card-label">Menu attivo (${menuItems.length} ${menuItems.length===1?'piatto':'piatti'})</div>
+        ${menuItems.length ? `
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.6rem">
+            ${menuItems.map(item => `
+              <div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.9rem;display:flex;align-items:center;gap:0.7rem">
+                <span style="font-family:var(--font-display);font-size:0.9rem">${item.name}</span>
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust);font-weight:500">€${item.price}</span>
+              </div>`).join('')}
+          </div>
+        ` : `<div style="color:var(--muted);font-style:italic;font-size:0.8rem;margin-top:0.4rem">Nessun piatto nel menu</div>`}
+      </div>
+
+      <div class="info-card" style="grid-column:1/-1">
+        <div class="info-card-label">Inventario (${inventoryEntries.length} ingredienti)</div>
+        ${inventoryEntries.length ? `
+          <div class="info-tag-list" style="margin-top:0.5rem">
+            ${inventoryEntries.map(([name, qty]) =>
+              `<span class="info-tag">🧂 ${name} <b style="color:var(--rust)">×${qty}</b></span>`
+            ).join('')}
+          </div>
+        ` : `<div style="color:var(--muted);font-style:italic;font-size:0.8rem;margin-top:0.4rem">Inventario vuoto</div>`}
+      </div>
+
+      ${kitchen.length ? `
+      <div class="info-card" style="grid-column:1/-1">
+        <div class="info-card-label">In cucina (${kitchen.length})</div>
+        <div class="info-tag-list" style="margin-top:0.5rem">
+          ${kitchen.map(k => `<span class="info-tag">🍳 ${JSON.stringify(k)}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${messages.length ? `
+      <div class="info-card" style="grid-column:1/-1">
+        <div class="info-card-label">Messaggi ricevuti (${messages.length})</div>
+        <div style="margin-top:0.5rem;display:flex;flex-direction:column;gap:0.4rem">
+          ${messages.map(m => `<div style="font-size:0.78rem;padding:0.4rem 0.7rem;background:var(--paper);border-radius:4px;border-left:2px solid var(--gold)">${JSON.stringify(m)}</div>`).join('')}
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+// ── RENDER: MARKET ────────────────────────────────────────
+function renderMarket(data) {
+  const entries = Array.isArray(data) ? data : [];
+
+  if (!entries.length) {
+    document.getElementById('market-content').innerHTML = '<div class="state-msg">Nessuna voce di mercato trovata.</div>';
+    return;
+  }
+
+  // Build a name lookup from cached restaurants data
+  const nameOf = id => {
+    const r = restaurantsData.find(r => String(r.id) === String(id));
+    return r ? r.name : `Ristorante #${id}`;
+  };
+
+  const statusColor = s => ({ 'cancelled': 'var(--muted)', 'open': 'var(--espresso)', 'filled': 'var(--gold)' }[s] || 'var(--muted)');
+  const statusIcon  = s => ({ 'cancelled': '✕', 'open': '●', 'filled': '✓' }[s] || '?');
+  const fmtDate = d => new Date(d).toLocaleString('it-IT', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+
+  // Group by ingredient name, sort groups alphabetically, entries by unit price asc
+  const groups = {};
+  entries.forEach(e => {
+    const key = e.ingredient?.name || `Ingrediente #${e.ingredientId}`;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(e);
+  });
+  const sortedGroupNames = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+  sortedGroupNames.forEach(k => {
+    groups[k].sort((a, b) => (a.totalPrice / a.quantity) - (b.totalPrice / b.quantity));
+  });
+
+  const html = sortedGroupNames.map(groupName => {
+    const groupEntries = groups[groupName];
+    const bestPrice = (groupEntries[0].totalPrice / groupEntries[0].quantity).toFixed(2);
+
+    const cards = groupEntries.map((e, idx) => {
+      const isMine = String(e.createdByRestaurantId) === '5';
+      const isBuy  = e.side === 'BUY';
+      const unitPrice = (e.totalPrice / e.quantity).toFixed(2);
+      const rName = nameOf(e.createdByRestaurantId);
+
+      // BUY: warm cream bg with rust left border; SELL: dark espresso bg with gold left border
+      const cardBg        = isBuy ? '#faf8f4' : '#1a1209';
+      const cardColor     = isBuy ? 'var(--espresso)' : 'var(--cream)';
+      const cardBorder    = isBuy ? 'var(--border)' : '#3d2b1a';
+      const accentColor   = isBuy ? 'var(--rust)' : 'var(--gold)';
+      const sideLabel     = isBuy ? 'BUY' : 'SELL';
+      const sideBg        = isBuy ? 'rgba(196,81,26,0.12)' : 'rgba(212,146,42,0.18)';
+      const mutedColor    = isBuy ? 'var(--muted)' : '#8a7060';
+
+      const myRing = isMine ? `box-shadow:0 0 0 2px ${accentColor};` : '';
+
+      return `
+        <div class="market-card" style="background:${cardBg};color:${cardColor};border-color:${cardBorder};${myRing}position:relative;overflow:hidden">
+          ${isMine ? `<div style="position:absolute;top:0;right:0;background:${accentColor};color:${isBuy?'white':'var(--espresso)'};font-family:var(--font-mono);font-size:0.55rem;font-weight:600;padding:0.15rem 0.5rem;letter-spacing:0.08em">TUO</div>` : ''}
+          <div class="market-card-top" style="background:${isBuy ? 'var(--paper)' : '#241509'};border-bottom-color:${cardBorder}">
+            <div>
+              <div style="display:inline-block;background:${sideBg};border:1px solid ${accentColor};color:${accentColor};font-family:var(--font-mono);font-size:0.62rem;font-weight:600;padding:0.1rem 0.45rem;border-radius:3px;letter-spacing:0.06em">${sideLabel}</div>
+              <div style="font-family:var(--font-mono);font-size:0.65rem;color:${mutedColor};margin-top:0.3rem;font-weight:${isMine?'600':'400'}">${rName}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="market-price" style="color:${accentColor}">€${unitPrice}<span style="font-size:0.6rem;color:${mutedColor}">/u</span></div>
+              <div style="font-family:var(--font-mono);font-size:0.62rem;color:${mutedColor};margin-top:0.1rem">tot. €${e.totalPrice}</div>
+            </div>
+          </div>
+          <div class="market-card-body">
+            <div class="market-meta" style="display:flex;justify-content:space-between;align-items:center;color:${mutedColor}">
+              <span>Qtà: <b style="color:${cardColor}">${e.quantity}</b></span>
+              <span style="font-family:var(--font-mono);font-size:0.68rem;color:${statusColor(e.status)}">
+                ${statusIcon(e.status)} ${e.status}
+              </span>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:0.65rem;margin-top:0.3rem;color:${mutedColor}">${fmtDate(e.insertedAt)}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div style="margin-bottom:1.8rem">
+        <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">
+          <span style="font-family:var(--font-display);font-size:1rem;font-weight:500">${groupName}</span>
+          <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted)">${groupEntries.length} offert${groupEntries.length===1?'a':'e'}</span>
+          <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);margin-left:auto">da €${bestPrice}/u</span>
+        </div>
+        <div class="market-grid">${cards}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('market-content').innerHTML = html;
+}
+
+// ── RENDER: OTHER RESTAURANTS ─────────────────────────────
+let restaurantsData = [];
+let sortCol = 'name';
+let sortDir = 1; // 1 asc, -1 desc
+
+function sortRestaurants(col) {
+  if (sortCol === col) {
+    sortDir *= -1;
+  } else {
+    sortCol = col;
+    sortDir = 1;
+  }
+  drawRestaurantsTable();
+}
+
+function drawRestaurantsTable() {
+  const others = restaurantsData.filter(r => r.id !== '5');
+  if (!others.length) return;
+
+  const maxRep = Math.max(...others.map(r => r.reputation || 0), 1);
+  const sorted = [...others].sort((a, b) => {
+    let av, bv;
+    if (sortCol === 'name')       { av = a.name; bv = b.name; return sortDir * av.localeCompare(bv); }
+    if (sortCol === 'isOpen')     { av = a.isOpen ? 1 : 0; bv = b.isOpen ? 1 : 0; }
+    if (sortCol === 'balance')    { av = a.balance ?? 0; bv = b.balance ?? 0; }
+    if (sortCol === 'reputation') { av = a.reputation ?? 0; bv = b.reputation ?? 0; }
+    if (sortCol === 'inventory')  { av = Object.keys(a.inventory||{}).length; bv = Object.keys(b.inventory||{}).length; }
+    if (sortCol === 'menu')       { av = (a.menu?.items||[]).length; bv = (b.menu?.items||[]).length; }
+    return sortDir * (av - bv);
+  });
+
+  const arrow = col => sortCol === col ? (sortDir === 1 ? ' ↑' : ' ↓') : ' ↕';
+  const thStyle = 'cursor:pointer;user-select:none;white-space:nowrap';
+
+  const rows = sorted.map(r => {
+    const inventoryKeys = Object.keys(r.inventory || {});
+    const menuItems = r.menu?.items || [];
+    return `
+      <tr>
+        <td>
+          <div class="r-name">${r.name}</div>
+          <div class="r-cuisine">#${r.id}</div>
+        </td>
+        <td>
+          <span class="status-pill ${r.isOpen ? 'open' : 'closed'}">
+            <span class="dot ${r.isOpen ? 'ok' : 'error'}" style="width:5px;height:5px"></span>
+            ${r.isOpen ? 'Aperto' : 'Chiuso'}
+          </span>
+        </td>
+        <td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust)">
+          €${(r.balance ?? 0).toLocaleString('it-IT')}
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:0.4rem">
+            <div style="width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+              <div style="width:${Math.round((r.reputation||0)/maxRep*100)}%;height:100%;background:var(--gold);border-radius:3px"></div>
+            </div>
+            <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">${r.reputation}</span>
+          </div>
+        </td>
+        <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">
+          ${inventoryKeys.length ? `${inventoryKeys.length} ingredienti` : '—'}
+        </td>
+        <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">
+          ${menuItems.length ? `${menuItems.length} piatti` : '—'}
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('restaurants-content').innerHTML = `
+    <div class="restaurants-table">
+      <table>
+        <thead>
+          <tr>
+            <th style="${thStyle}" onclick="sortRestaurants('name')">Ristorante${arrow('name')}</th>
+            <th style="${thStyle}" onclick="sortRestaurants('isOpen')">Stato${arrow('isOpen')}</th>
+            <th style="${thStyle}" onclick="sortRestaurants('balance')">Saldo${arrow('balance')}</th>
+            <th style="${thStyle}" onclick="sortRestaurants('reputation')">Reputazione${arrow('reputation')}</th>
+            <th style="${thStyle}" onclick="sortRestaurants('inventory')">Inventario${arrow('inventory')}</th>
+            <th style="${thStyle}" onclick="sortRestaurants('menu')">Menu${arrow('menu')}</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderRestaurants(data) {
+  restaurantsData = Array.isArray(data) ? data : [];
+  const others = restaurantsData.filter(r => r.id !== '5');
+  if (!others.length) {
+    document.getElementById('restaurants-content').innerHTML = '<div class="state-msg">Nessun altro ristorante trovato.</div>';
+    return;
+  }
+  drawRestaurantsTable();
+}
+
+// ── RENDER: RECIPES ───────────────────────────────────────
+let expandedRecipe = null;
+
+function toggleRecipe(idx) {
+  expandedRecipe = expandedRecipe === idx ? null : idx;
+  document.querySelectorAll('.recipe-card').forEach(c => {
+    c.classList.toggle('expanded', c.dataset.id === String(expandedRecipe));
+  });
+}
+
+function renderRecipes(data) {
+  const list = Array.isArray(data) ? data : [];
+
+  if (!list.length) {
+    document.getElementById('recipes-content').innerHTML = '<div class="state-msg">Nessuna ricetta trovata.</div>';
+    return;
+  }
+
+  const fmtTime = ms => ms >= 60000 ? `${(ms/60000).toFixed(1)}min` : `${(ms/1000).toFixed(0)}s`;
+
+  const cards = list.map((r, i) => {
+    const ingredients = r.ingredients || {};
+    const ingEntries = Object.entries(ingredients);
+
+    return `
+      <div class="recipe-card" data-id="${i}" onclick="toggleRecipe(${i})">
+        <div class="recipe-card-header">
+          <div class="recipe-num">Ricetta #${String(i+1).padStart(3,'0')}</div>
+          <div class="recipe-name">${r.name}</div>
+          <div class="recipe-tags">
+            <span class="recipe-tag">⏱ ${fmtTime(r.preparationTimeMs)}</span>
+            <span class="recipe-tag" style="color:var(--gold);border-color:var(--gold)">✦ Prestige ${r.prestige}</span>
+          </div>
+        </div>
+        <div class="recipe-body">
+          <div class="recipe-meta-row">
+            <div class="recipe-meta-item">
+              <span class="recipe-meta-label">Preparazione</span>
+              <span class="recipe-meta-val">${fmtTime(r.preparationTimeMs)}</span>
+            </div>
+            <div class="recipe-meta-item">
+              <span class="recipe-meta-label">Ingredienti</span>
+              <span class="recipe-meta-val">${ingEntries.length}</span>
+            </div>
+            <div class="recipe-meta-item">
+              <span class="recipe-meta-label">Prestige</span>
+              <span class="recipe-meta-val" style="color:var(--gold)">${r.prestige}</span>
+            </div>
+          </div>
+
+          <div class="recipe-ingredients">
+            <div class="recipe-ingredients-title">Ingredienti</div>
+            <ul class="recipe-ingredient-list">
+              ${ingEntries.map(([name, qty]) =>
+                `<li>${name} <span style="color:var(--rust);font-weight:500">×${qty}</span></li>`
+              ).join('')}
+            </ul>
+          </div>
+
+          <div class="expand-hint">${ingEntries.length ? '↕ clicca per ingredienti' : ''}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('recipes-content').innerHTML = `<div class="recipes-grid">${cards}</div>`;
+}
+
+// ── FETCH ALL ─────────────────────────────────────────────
+async function fetchSection(id, path, renderFn) {
+  const { baseUrl } = getConfig();
+  if (!baseUrl) return;
+  setDot(id, 'loading');
+  setStatus(id, 'Caricamento…');
+  try {
+    const data = await apiFetch(path);
+    renderFn(data);
+    setDot(id, 'ok');
+    setStatus(id, `Aggiornato ${new Date().toLocaleTimeString('it-IT')}`);
+  } catch(e) {
+    setDot(id, 'error');
+    setStatus(id, `Errore: ${e.message}`);
+  }
+}
+
+function fetchAll() {
+  const { baseUrl } = getConfig();
+  if (!baseUrl) return;
+  fetchSection('restaurant', '/restaurant/5', renderRestaurant);
+  fetchSection('market', '/market/entries', renderMarket);
+  fetchSection('restaurants', '/restaurants', renderRestaurants);
+  fetchSection('recipes', '/recipes', renderRecipes);
+}
+
+// ── AUTO REFRESH ──────────────────────────────────────────
+let refreshTimer = null;
+let countdownTimer = null;
+let secondsLeft = 0;
+
+function startAutoRefresh() {
+  clearInterval(refreshTimer);
+  clearInterval(countdownTimer);
+  const interval = parseInt(document.getElementById('cfgInterval').value);
+  if (!interval) { document.getElementById('cfgCountdown').textContent = ''; return; }
+  secondsLeft = interval / 1000;
+  document.getElementById('cfgCountdown').textContent = `prossimo in ${secondsLeft}s`;
+  refreshTimer = setInterval(() => { fetchAll(); secondsLeft = interval / 1000; }, interval);
+  countdownTimer = setInterval(() => {
+    secondsLeft--;
+    document.getElementById('cfgCountdown').textContent = `prossimo in ${secondsLeft}s`;
+  }, 1000);
+}
+
+document.getElementById('cfgInterval').addEventListener('change', startAutoRefresh);
+
+// ── PERSIST CONFIG ────────────────────────────────────────
+['cfgBaseUrl', 'cfgApiKey'].forEach(id => {
+  const el = document.getElementById(id);
+  const saved = localStorage.getItem(id);
+  if (saved) el.value = saved;
+  el.addEventListener('input', () => localStorage.setItem(id, el.value));
+});
+
+// ── NAV ACTIVE STATE ──────────────────────────────────────
+const navLinks = document.querySelectorAll('nav a');
+const sections = document.querySelectorAll('main section');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+
+// ── BOOT ──────────────────────────────────────────────────
+startAutoRefresh();
+if (document.getElementById('cfgBaseUrl').value) fetchAll();
+</script>
+</body>
+</html>
