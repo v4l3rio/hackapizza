@@ -155,12 +155,12 @@ class NewsWatcherAgent(Agent):
     system_prompt = _SYSTEM_PROMPT
 
     def __init__(self) -> None:
-        super().__init__(client=get_llm_client(), max_steps=3)
         self._seen_urls: set[str] = set()           # URL già analizzati
         self._seen_headlines: set[str] = set()      # headline normalizzati già salvati (anti-duplicati)
-        self._insights: list[dict[str, Any]] = []   # insights raccolti durante la sessione
+        self._ins: list[dict[str, Any]] = []   # insights raccolti durante la sessione
         self._strategy_memory: Any | None = None    # StrategyMemory condivisa (opzionale)
         self._polling_task: asyncio.Task | None = None
+        super().__init__(client=get_llm_client(), max_steps=3)
 
     @staticmethod
     def _normalize_headline(headline: str) -> str:
@@ -213,7 +213,7 @@ class NewsWatcherAgent(Agent):
             "raw_summary": str(raw_summary),
             "recorded_at": time.time(),
         }
-        self._insights.append(insight)
+        self._ins.append(insight)
         # Propaga anche alla StrategyMemory condivisa (se disponibile)
         if self._strategy_memory is not None:
             self._strategy_memory.news_insights.append(insight)
@@ -322,11 +322,11 @@ class NewsWatcherAgent(Agent):
 
         log("news", "—", "poll", f"Trovati {len(new_urls)} articoli nuovi")
 
-        before = len(self._insights)
+        before = len(self._ins)
         for url in new_urls[:5]:  # max 5 articoli per passata
             await self._analyze_url(url)
 
-        return self._insights[before:]
+        return self._ins[before:]
 
     async def run_loop(self) -> None:
         """Loop infinito: analizza subito poi ogni POLL_INTERVAL_SECONDS."""
@@ -365,18 +365,18 @@ class NewsWatcherAgent(Agent):
     @property
     def insights(self) -> list[dict[str, Any]]:
         """Tutti gli insight raccolti finora."""
-        return list(self._insights)
+        return list(self._ins)
 
     def format_advisory(self, max_items: int = 5) -> str:
         """
         Ritorna una stringa formattata con i top insight (per includerla
         nel prompt degli altri agenti).
         """
-        if not self._insights:
+        if not self._ins:
             return ""
         priority_order = {"high": 0, "medium": 1, "low": 2}
         sorted_ins = sorted(
-            self._insights,
+            self._ins,
             key=lambda x: (priority_order.get(x.get("priority", "low"), 2), -x.get("recorded_at", 0)),
         )[:max_items]
         lines = ["=== Notizie da 'Cronache dal Cosmo' ==="]
