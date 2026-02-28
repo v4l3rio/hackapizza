@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from config import WEB_APP_URL
+from infrastructure.history_client import HistoryClient
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.http_client import HttpClient
@@ -67,6 +69,8 @@ class AgentManager:
     async def _on_game_started(self, data: dict[str, Any]) -> None:
         turn_id = data.get("turn_id", 0)
         self.state.turn_id = int(turn_id)
+        with HistoryClient(WEB_APP_URL) as c:
+            c.set_turn(self.state.turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
         await self._run_strategy()
 

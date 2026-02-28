@@ -27,12 +27,14 @@ DATAPIZZA_MONITORING_OTLP_ENDPOINT: str = os.getenv(
     "https://datapizza-monitoring.datapizza.tech/gateway/v1/traces",
 )
 
+WEB_APP_URL: str = os.getenv("WEB_APP_URL")
 BASE_URL: str = os.getenv("BASE_URL", "https://hackapizza.datapizza.tech")
 SSE_URL: str = f"{BASE_URL}/events/{TEAM_ID}"
 MCP_URL: str = f"{BASE_URL}/mcp"
 
 REGOLO_BASE_URL: str = config["REGOLO_BASE_URL"]
 REGOLO_MODEL: str = config["REGOLO_MODEL_BIG"]
+
 
 # Bidding strategy
 DEFAULT_BID_FLAT: int = config['DEFAULT_BID_FLAT']          # flat bid per ingredient on turn 1
