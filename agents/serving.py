@@ -164,7 +164,7 @@ class ServingAgent(Agent):
             )
 
             try:
-                result = await self.a_run(task, tool_choice="required_first")
+                result = await self.a_run(task)
                 # Record which dish we're preparing for this client
                 if result:
                     for tool_call in result.tools_used:

@@ -128,12 +128,10 @@ class MarketAgent(Agent):
                 return
 
             task = (
-                f"Current inventory: {json.dumps(state.inventory)}\n"
-                f"Recipes and their ingredient requirements: {json.dumps(state.recipes)}\n"
-                f"Surplus ingredients (beyond what we need): {json.dumps(surplus)}\n"
+                f"Surplus ingredients to sell (beyond what our focus recipes need): {json.dumps(surplus)}\n"
                 f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
                 "List each surplus ingredient for sale at clearing_price * 1.05 "
-                "(or 10.0 if no clearing price). "
+                "(or 50.0 if no clearing price). "
                 "Call list_ingredient_for_sale once per surplus ingredient."
             )
 
@@ -186,34 +184,38 @@ class MarketAgent(Agent):
     # ------------------------------------------------------------------ helpers
 
     def _compute_surplus(self, state: GameState, focus_recipes: list[str] | None = None) -> dict[str, int]:
-        """Ingredients beyond what focus recipes need for BID_SERVINGS_MULTIPLIER servings."""
-        needed: dict[str, int] = {}
+        """Ingredients beyond what ALL focus recipes collectively need (SUM, not max)."""
+        total_needed: dict[str, int] = {}
         recipes = state.recipes
         if focus_recipes:
             focus_set = set(focus_recipes)
             recipes = [r for r in recipes if r.get("name") in focus_set]
         for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
-                needed[ing] = max(needed.get(ing, 0), qty * BID_SERVINGS_MULTIPLIER)
+                total_needed[ing] = total_needed.get(ing, 0) + qty * BID_SERVINGS_MULTIPLIER
 
         surplus: dict[str, int] = {}
         for ing, have in state.inventory.items():
-            need = needed.get(ing, 0)
+            need = total_needed.get(ing, 0)
             if have > need:
                 surplus[ing] = have - need
         return surplus
 
     def _compute_needed(self, state: GameState, focus_recipes: list[str] | None = None) -> dict[str, int]:
-        """Ingredients still missing for focus recipes."""
-        needed: dict[str, int] = {}
+        """Ingredients still missing to cook all focus recipes once (SUM, not max)."""
+        total_needed: dict[str, int] = {}
         recipes = state.recipes
         if focus_recipes:
             focus_set = set(focus_recipes)
             recipes = [r for r in recipes if r.get("name") in focus_set]
         for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
-                have = state.inventory.get(ing, 0)
-                shortfall = max(0, qty - have)
-                if shortfall > 0:
-                    needed[ing] = max(needed.get(ing, 0), shortfall)
+                total_needed[ing] = total_needed.get(ing, 0) + qty
+
+        needed: dict[str, int] = {}
+        for ing, total in total_needed.items():
+            have = state.inventory.get(ing, 0)
+            shortfall = max(0, total - have)
+            if shortfall > 0:
+                needed[ing] = shortfall
         return needed
