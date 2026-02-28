@@ -4,11 +4,10 @@ import json
 from typing import Any
 
 from datapizza.agents import Agent
-from datapizza.tools import tool
+from datapizza.tools import Tool
+from datapizza.tools.mcp_client import MCPClient
 
 from state.game_state import GameState
-from state.memory import StrategyMemory
-from infrastructure.mcp_client import MCPClient
 from infrastructure.sse_listener import SSEListener
 from infrastructure.http_client import HttpClient
 from infrastructure.llm_factory import get_llm_client
@@ -42,35 +41,12 @@ class ServingAgent(Agent):
         "Agisci con decisione — chiama sempre uno strumento per agire."
     )
 
-    def __init__(self) -> None:
+    def __init__(self, mcp: MCPClient, mcp_tools: list[Tool]) -> None:
         self._state: GameState | None = None
-        self._strat: StrategyMemory | None = None
-        self._mcp: MCPClient | None = None
+        self._mcp = mcp
         self._http: HttpClient | None = None
         self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_id, ...]
-        super().__init__(client=get_llm_client(), max_steps=3)
-
-    # ------------------------------------------------------------------ tools
-
-    @tool(
-        name="prepare_dish",
-        description=(
-            "Start preparing a dish in the kitchen. "
-            "The dish name must exactly match one of the items on our current menu. "
-            "This triggers a 'preparation_complete' event when the dish is ready."
-        ),
-    )
-    async def prepare_dish(self, dish_name: str) -> str:
-        """Begin kitchen preparation for a named dish."""
-        try:
-            result = await self._mcp.prepare_dish(dish_name)
-            turn = self._state.turn_id if self._state else "?"
-            log("serving", turn, "tool", f"Preparing '{dish_name}': {result}")
-            return f"Preparation started for '{dish_name}': {result}"
-        except Exception as exc:
-            turn = self._state.turn_id if self._state else "?"
-            log_error("serving", turn, "tool", f"prepare_dish failed: {exc}")
-            return f"Error preparing '{dish_name}': {exc}"
+        super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=3)
 
     # ------------------------------------------------------------------ phase entry
 
@@ -78,28 +54,19 @@ class ServingAgent(Agent):
         self,
         sse: SSEListener,
         state: GameState,
-        memory: StrategyMemory,
         mcp: MCPClient,
         http: HttpClient,
     ) -> None:
         """Register SSE handlers. Call once at startup."""
         self._state = state
-        self._strat = memory
         self._mcp = mcp
         self._http = http
         sse.on("client_spawned", self._on_client_spawned)
         sse.on("preparation_complete", self._on_preparation_complete)
 
-    async def execute(
-        self,
-        state: GameState,
-        memory: StrategyMemory,
-        mcp: MCPClient,
-    ) -> None:
+    async def execute(self, state: GameState) -> None:
         """Called when the serving phase starts — restaurant already opened in waiting phase."""
         self._state = state
-        self._strat = memory
-        self._mcp = mcp
         self._pending_orders.clear()
 
         with tracer.start_as_current_span("serving_agent.execute") as span:
@@ -218,7 +185,10 @@ class ServingAgent(Agent):
                 return
 
         try:
-            result = await self._mcp.serve_dish(dish_name, str(target_customer_id))
+            result = await self._mcp.call_tool(
+                "serve_dish",
+                {"dish_name": dish_name, "client_id": str(target_customer_id)},
+            )
             log(
                 "serving",
                 self._state.turn_id,

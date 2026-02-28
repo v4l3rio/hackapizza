@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
+from datapizza.tools import Tool
+from datapizza.tools.mcp_client import MCPClient
+
 from config import WEB_APP_URL
 from infrastructure.history_client import HistoryClient
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.http_client import HttpClient
-from infrastructure.mcp_client import MCPClient
 from infrastructure.sse_listener import SSEListener
 from agents.speaking import SpeakingAgent
 from agents.bidding import BiddingAgent
@@ -35,6 +37,7 @@ class AgentManager:
         memory: StrategyMemory,
         http: HttpClient,
         mcp: MCPClient,
+        mcp_tools: list[Tool],
         sse: SSEListener,
     ) -> None:
         self.state = state
@@ -44,14 +47,14 @@ class AgentManager:
         self.sse = sse
 
         self._speaking = SpeakingAgent()
-        self._bidding = BiddingAgent()
-        self._menu = MenuAgent()
+        self._bidding = BiddingAgent(mcp_tools=mcp_tools)
+        self._menu = MenuAgent(mcp_tools=mcp_tools)
         self._market = MarketAgent()
-        self._serving = ServingAgent()
+        self._serving = ServingAgent(mcp=mcp, mcp_tools=mcp_tools)
         self._strategy = RecipeStrategyAgent(http)
 
         # Register persistent SSE handlers (serving events span the whole session)
-        self._serving.register(sse, state, memory, mcp, http)
+        self._serving.register(sse, state, mcp, http)
 
         # Register game lifecycle handlers
         sse.on("game_started", self._on_game_started)
@@ -144,19 +147,19 @@ class AgentManager:
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 
-                    await self._bidding.execute(self.state, self.memory, self.mcp)
+                    await self._bidding.execute(self.state, self.memory)
 
                 elif phase == "waiting":
-                    await self._menu.execute(self.state, self.memory, self.mcp)
-                    await self._market.execute_waiting(self.state, self.memory, self.mcp)
+                    await self._menu.execute(self.state, self.memory)
+                    await self._market.execute_waiting(self.state)
                     try:
-                        await self.mcp.update_restaurant_is_open(True)
+                        await self.mcp.call_tool("update_restaurant_is_open", {"is_open": True})
                         log("manager", self.state.turn_id, "phase", "Restaurant opened")
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
-                    await self._serving.execute(self.state, self.memory, self.mcp)
+                    await self._serving.execute(self.state)
                     await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 
                 elif phase == "stopped":

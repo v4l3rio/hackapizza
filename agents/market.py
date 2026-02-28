@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from datapizza.tools.mcp_client import MCPClient
+
 from state.game_state import GameState
 from state.memory import StrategyMemory
-from infrastructure.mcp_client import MCPClient
 from infrastructure.http_client import HttpClient
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
@@ -22,12 +23,7 @@ class MarketAgent:
       if no clearing price is known). Buy only from other teams.
     """
 
-    async def execute_waiting(
-        self,
-        state: GameState,
-        memory: StrategyMemory,
-        mcp: MCPClient,
-    ) -> None:
+    async def execute_waiting(self, state: GameState) -> None:
         """Waiting phase: selling is BLOCKED. Do nothing."""
         log("waiting", state.turn_id, "market", "MarketAgent: selling BLOCKED — skipping")
 
@@ -95,7 +91,7 @@ class MarketAgent:
 
                 # Buy it
                 try:
-                    result = await mcp.execute_transaction(str(entry_id))
+                    result = await mcp.call_tool("execute_transaction", {"entry_id": str(entry_id)})
                     qty = entry.get("quantity", "?")
                     log(
                         "serving", state.turn_id, "market",

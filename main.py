@@ -7,11 +7,11 @@ import asyncio
 
 import config
 from datapizza.tracing import DatapizzaMonitoringInstrumentor
+from datapizza.tools.mcp_client import MCPClient
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.sse_listener import SSEListener
 from infrastructure.http_client import HttpClient
-from infrastructure.mcp_client import MCPClient
 from agents.manager import AgentManager
 from utils.logger import log
 
@@ -40,11 +40,10 @@ async def main() -> None:
         team_id=config.TEAM_ID,
         api_key=config.TEAM_API_KEY,
     )
-    mcp = MCPClient(
-        mcp_url=config.MCP_URL,
-        team_id=config.TEAM_ID,
-        api_key=config.TEAM_API_KEY,
-    )
+
+    mcp_headers = {
+        "x-api-key": config.TEAM_API_KEY,
+    }
 
     sse_headers = {
         "x-api-key": config.TEAM_API_KEY,
@@ -52,12 +51,17 @@ async def main() -> None:
     }
     sse = SSEListener(url=config.SSE_URL, headers=sse_headers)
 
-    # Wire up agent manager (registers all SSE handlers)
-    AgentManager(state=state, memory=memory, http=http, mcp=mcp, sse=sse)
+    # Use datapizza MCPClient in persistent mode for shared session
+    async with MCPClient(url=config.MCP_URL, headers=mcp_headers) as mcp:
+        mcp_tools = await mcp.a_list_tools()
+        log("main", 0, "boot", f"MCP tools discovered: {[t.name for t in mcp_tools]}")
 
-    log("main", 0, "boot", "All components initialized. Starting SSE listener...")
+        # Wire up agent manager (registers all SSE handlers)
+        AgentManager(state=state, memory=memory, http=http, mcp=mcp, mcp_tools=mcp_tools, sse=sse)
 
-    await sse.listen()
+        log("main", 0, "boot", "All components initialized. Starting SSE listener...")
+
+        await sse.listen()
 
 
 

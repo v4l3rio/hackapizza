@@ -3,12 +3,11 @@ from __future__ import annotations
 import json
 
 from datapizza.agents import Agent
-from datapizza.tools import tool
+from datapizza.tools import Tool
 
-from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER, BID_SERVINGS_MULTIPLIER
+from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_SERVINGS_MULTIPLIER
 from state.game_state import GameState
 from state.memory import StrategyMemory
-from infrastructure.mcp_client import MCPClient
 from infrastructure.llm_factory import get_llm_client
 from utils.ingredient_data import get_ingredient_data
 from utils.logger import log, log_error
@@ -35,39 +34,13 @@ class BiddingAgent(Agent):
         "Il tuo obiettivo è acquisire gli ingredienti necessari per cucinare quanti più piatti possibile. "
         "Analizza l'inventario attuale, gli ingredienti necessari e i prezzi di aggiudicazione. "
         "Calcola offerte competitive (clearing_price * moltiplicatore, o valore fisso predefinito se non c'è storico). "
-        "Rispetta il limite di budget e invia tutte le offerte in una singola chiamata a submit_bids. "
-        "Chiama submit_bids esattamente una volta — non saltarla se ci sono ingredienti necessari."
+        "Rispetta il limite di budget e invia tutte le offerte in una singola chiamata a closed_bid. "
+        "Chiama closed_bid esattamente una volta — non saltarla se ci sono ingredienti necessari."
     )
 
-    def __init__(self) -> None:
+    def __init__(self, mcp_tools: list[Tool]) -> None:
         self._state: GameState | None = None
-        self._strat: StrategyMemory | None = None
-        self._mcp: MCPClient | None = None
-        super().__init__(client=get_llm_client(), max_steps=1)
-
-    # ------------------------------------------------------------------ tools
-
-    @tool(
-        name="submit_bids",
-        description=(
-            "Submit all ingredient bids for this auction round. "
-            "Accepts a JSON array of bid objects, each with keys: "
-            "ingredient (str), quantity (int), bid (float). "
-            'Example: [{"ingredient": "flour", "quantity": 5, "bid": 55.0}]'
-        ),
-    )
-    async def submit_bids(self, bids_json: str) -> str:
-        """Submit bids to the closed-bid auction."""
-        try:
-            bids = json.loads(bids_json)
-            result = await self._mcp.closed_bid(bids)
-            turn = self._state.turn_id if self._state else "?"
-            log("closed_bid", turn, "tool", f"Submitted {len(bids)} bids: {result}")
-            return f"Bids submitted successfully: {result}"
-        except Exception as exc:
-            turn = self._state.turn_id if self._state else "?"
-            log_error("closed_bid", turn, "tool", f"submit_bids failed: {exc}")
-            return f"Error submitting bids: {exc}"
+        super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=1)
 
     # ------------------------------------------------------------------ phase entry
 
@@ -75,11 +48,8 @@ class BiddingAgent(Agent):
         self,
         state: GameState,
         memory: StrategyMemory,
-        mcp: MCPClient,
     ) -> None:
         self._state = state
-        self._strat = memory
-        self._mcp = mcp
 
         with tracer.start_as_current_span("bidding_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
@@ -94,7 +64,7 @@ class BiddingAgent(Agent):
             )
 
             budget = state.balance * MAX_BID_BALANCE_FRACTION
-            needed = self._compute_needed(state, memory.focus_recipes)
+            needed = self._compute_needed(state)
 
             if not needed:
                 log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
@@ -107,12 +77,9 @@ class BiddingAgent(Agent):
                 f"Ricette focus: {json.dumps(focus_label)}\n"
                 f"Ingredienti necessari per le ricette focus ({BID_SERVINGS_MULTIPLIER} porzioni ciascuna, deficit): {json.dumps(needed)}\n"
                 f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
-            #    f"Regola di prezzo: clearing_price * {BID_CLEARING_MULTIPLIER} se esiste storico, "
-                f"Regola di prezzo valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
-            #    f"altrimenti valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
+                f"Regola di prezzo: valore fisso predefinito = {DEFAULT_BID_FLAT}.\n"
                 f"La spesa totale delle offerte NON deve superare {budget:.2f}.\n\n"
-            #    "Per ogni ingrediente necessario, offri clearing_price * moltiplicatore (o valore fisso predefinito). "
-                "Rispetta il limite di budget, poi chiama submit_bids una volta con l'array JSON completo."
+                "Rispetta il limite di budget, poi chiama closed_bid una volta con l'array completo."
             )
 
             try:
@@ -123,28 +90,17 @@ class BiddingAgent(Agent):
 
     # ------------------------------------------------------------------ helpers
 
-    def _compute_needed(self, state: GameState, focus_recipes: list[str]) -> dict[str, int]:
-        """Find shortfall per ingredient for BID_SERVINGS_MULTIPLIER servings of focus recipes.
+    def _compute_needed(self, state: GameState) -> dict[str, int]:
+        """Find shortfall per ingredient.
 
         Only considers ingredients present in ingredient_frequencies.yaml to guard against
         typos or unknown ingredient names coming from the game server.
         """
         valid_ingredients = get_ingredient_data()
-
-        recipes = state.recipes
-        # if focus_recipes:
-        #     focus_set = set(focus_recipes)
-        #     recipes = [r for r in recipes if r.get("name") in focus_set]
-
         needed: dict[str, int] = {}
-        # for recipe in recipes:
-        #     for ing, qty in recipe.get("ingredients", {}).items():
         for ing in valid_ingredients:
-            if ing not in valid_ingredients:
-                log("closed_bid", state.turn_id, "agent", f"Skipping unknown ingredient: {ing!r}")
-                continue
             have = state.inventory.get(ing, 0)
-            shortfall = 5 # max(0, qty * BID_SERVINGS_MULTIPLIER - have)
+            shortfall = 5
             if shortfall > 0:
                 needed[ing] = max(needed.get(ing, 0), shortfall)
         return needed

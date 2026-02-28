@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import random
 
+from datapizza.tools.mcp_client import MCPClient
+
 from state.game_state import GameState
 from state.memory import StrategyMemory
-from infrastructure.mcp_client import MCPClient
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 import config
@@ -165,7 +166,7 @@ class SpeakingAgent:
                     message = templates[template_idx].format(our_id=OUR_ID)
 
                     try:
-                        await mcp.send_message(rival_id, message)
+                        await mcp.call_tool("send_message", {"recipient_id": rival_id, "text": message})
                         log(
                             "speaking", state.turn_id, "inject",
                             f"Sent injection #{template_idx} to team {rival_id}"
