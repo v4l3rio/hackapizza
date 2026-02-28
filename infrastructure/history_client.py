@@ -290,6 +290,159 @@ class IngredientFullHistory:
     prices: IngredientPrices | None = None
     error: str | None = None
 
+# ── Meal dataclasses ──────────────────────────────────────────────────────────
+
+@dataclass
+class MealCustomer:
+    name: str = ""
+
+@dataclass
+class Meal:
+    id: int = 0
+    turn_id: int = 0
+    customer_id: int = 0
+    restaurant_id: int = 0
+    request: str = ""
+    start_time: str = ""
+    served_dish_id: int | None = None
+    status: str = ""
+    customer: MealCustomer | None = None
+    executed: bool = False
+    first_seen: str = ""
+    last_seen: str = ""
+    status_history: list[StatusChange] = field(default_factory=list)
+
+@dataclass
+class MealsSummary:
+    total: int = 0
+    by_status: dict[str, int] = field(default_factory=dict)
+    unique_dishes: int = 0
+
+@dataclass
+class Meals:
+    ts: str = ""
+    turn_id: int | None = None
+    data: list[Meal] = field(default_factory=list)
+    by_dish: dict[str, list[Meal]] = field(default_factory=dict)
+    summary: MealsSummary | None = None
+
+@dataclass
+class MealsSnapshotDish:
+    count: int = 0
+    statuses: dict[str, int] = field(default_factory=dict)
+
+@dataclass
+class MealsSnapshot:
+    ts: str = ""
+    turn_id: int | None = None
+    total: int = 0
+    new_count: int = 0
+    by_status: dict[str, int] = field(default_factory=dict)
+    by_dish: dict[str, MealsSnapshotDish] = field(default_factory=dict)
+    unique_dishes: int = 0
+    meals: list[Meal] = field(default_factory=list)
+
+@dataclass
+class MealsHistory:
+    restaurant_id: str = ""
+    count: int = 0
+    series: list[MealsSnapshot] = field(default_factory=list)
+
+@dataclass
+class MealsEntriesSummary:
+    by_status: dict[str, int] = field(default_factory=dict)
+    by_dish: dict[str, int] = field(default_factory=dict)
+
+@dataclass
+class MealsEntries:
+    total: int = 0
+    summary: MealsEntriesSummary | None = None
+    entries: list[Meal] = field(default_factory=list)
+
+
+# ── Bid dataclasses ───────────────────────────────────────────────────────────
+
+@dataclass
+class BidRestaurant:
+    name: str = ""
+
+@dataclass
+class BidIngredient:
+    id: int = 0
+    name: str = ""
+
+@dataclass
+class Bid:
+    id: int = 0
+    turn_id: int = 0
+    restaurant_id: int = 0
+    ingredient_id: int = 0
+    quantity: int = 0
+    price_for_each: float = 0
+    status: str = ""
+    restaurant: BidRestaurant | None = None
+    ingredient: BidIngredient | None = None
+    first_seen: str = ""
+    last_seen: str = ""
+    status_history: list[StatusChange] = field(default_factory=list)
+
+@dataclass
+class BidHistorySummary:
+    total: int = 0
+    by_status: dict[str, int] = field(default_factory=dict)
+    unique_ingredients: int = 0
+    unique_restaurants: int = 0
+    total_spent: float = 0
+
+@dataclass
+class BidHistory:
+    ts: str = ""
+    turn_id: int | None = None
+    data: list[Bid] = field(default_factory=list)
+    by_ingredient: dict[str, list[Bid]] = field(default_factory=dict)
+    by_restaurant: dict[str, list[Bid]] = field(default_factory=dict)
+    summary: BidHistorySummary | None = None
+
+@dataclass
+class BidIngredientAgg:
+    count: int = 0
+    total_qty: int = 0
+    total_spent: float = 0
+
+@dataclass
+class BidRestaurantAgg:
+    count: int = 0
+    total_spent: float = 0
+
+@dataclass
+class BidsSnapshot:
+    ts: str = ""
+    turn_id: int | None = None
+    total: int = 0
+    new_count: int = 0
+    by_status: dict[str, int] = field(default_factory=dict)
+    by_ingredient: dict[str, BidIngredientAgg] = field(default_factory=dict)
+    by_restaurant: dict[str, BidRestaurantAgg] = field(default_factory=dict)
+    total_spent: float = 0
+    bids: list[Bid] = field(default_factory=list)
+
+@dataclass
+class BidsHistory:
+    count: int = 0
+    series: list[BidsSnapshot] = field(default_factory=list)
+
+@dataclass
+class BidsEntriesSummary:
+    by_status: dict[str, int] = field(default_factory=dict)
+    by_ingredient: dict[str, int] = field(default_factory=dict)
+    by_restaurant: dict[str, int] = field(default_factory=dict)
+    total_spent: float = 0
+
+@dataclass
+class BidsEntries:
+    total: int = 0
+    summary: BidsEntriesSummary | None = None
+    entries: list[Bid] = field(default_factory=list)
 
 # ── Parsing helpers ───────────────────────────────────────────────────────────
 
@@ -497,6 +650,188 @@ def _parse_dish_board(data: dict) -> DishBoard:
         dishes=dishes,
     )
 
+# ── Parsers ───────────────────────────────────────────────────────────────────
+
+def _parse_meal(m: dict) -> Meal:
+    customer = None
+    if m.get("customer"):
+        customer = MealCustomer(name=m["customer"].get("name", ""))
+    return Meal(
+        id=m.get("id", 0),
+        turn_id=m.get("turnId", 0),
+        customer_id=m.get("customerId", 0),
+        restaurant_id=m.get("restaurantId", 0),
+        request=m.get("request", ""),
+        start_time=m.get("startTime", ""),
+        served_dish_id=m.get("servedDishId"),
+        status=m.get("status", ""),
+        customer=customer,
+        executed=m.get("executed", False),
+        first_seen=m.get("first_seen", ""),
+        last_seen=m.get("last_seen", ""),
+        status_history=[
+            StatusChange(ts=sh["ts"], status=sh.get("status"))
+            for sh in m.get("status_history", [])
+        ],
+    )
+
+
+def _parse_bid(b: dict) -> Bid:
+    restaurant = None
+    if b.get("restaurant"):
+        restaurant = BidRestaurant(name=b["restaurant"].get("name", ""))
+    ingredient = None
+    if b.get("ingredient"):
+        ingredient = BidIngredient(
+            id=b["ingredient"].get("id", 0),
+            name=b["ingredient"].get("name", ""),
+        )
+    return Bid(
+        id=b.get("id", 0),
+        turn_id=b.get("turnId", 0),
+        restaurant_id=b.get("restaurantId", 0),
+        ingredient_id=b.get("ingredientId", 0),
+        quantity=b.get("quantity", 0),
+        price_for_each=b.get("priceForEach", 0),
+        status=b.get("status", ""),
+        restaurant=restaurant,
+        ingredient=ingredient,
+        first_seen=b.get("first_seen", ""),
+        last_seen=b.get("last_seen", ""),
+        status_history=[
+            StatusChange(ts=sh["ts"], status=sh.get("status"))
+            for sh in b.get("status_history", [])
+        ],
+    )
+
+
+def _parse_meals(data: dict) -> Meals:
+    meals = [_parse_meal(m) for m in data.get("data", [])]
+    by_dish: dict[str, list[Meal]] = {}
+    for dish_name, meal_list in data.get("by_dish", {}).items():
+        by_dish[dish_name] = [_parse_meal(m) for m in meal_list]
+    s = data.get("summary", {})
+    return Meals(
+        ts=data.get("ts", ""),
+        turn_id=data.get("turn_id"),
+        data=meals,
+        by_dish=by_dish,
+        summary=MealsSummary(
+            total=s.get("total", 0),
+            by_status=s.get("by_status", {}),
+            unique_dishes=s.get("unique_dishes", 0),
+        ),
+    )
+
+
+def _parse_bid_history(data: dict) -> BidHistory:
+    bids = [_parse_bid(b) for b in data.get("data", [])]
+    by_ingredient: dict[str, list[Bid]] = {}
+    for name, bid_list in data.get("by_ingredient", {}).items():
+        by_ingredient[name] = [_parse_bid(b) for b in bid_list]
+    by_restaurant: dict[str, list[Bid]] = {}
+    for name, bid_list in data.get("by_restaurant", {}).items():
+        by_restaurant[name] = [_parse_bid(b) for b in bid_list]
+    s = data.get("summary", {})
+    return BidHistory(
+        ts=data.get("ts", ""),
+        turn_id=data.get("turn_id"),
+        data=bids,
+        by_ingredient=by_ingredient,
+        by_restaurant=by_restaurant,
+        summary=BidHistorySummary(
+            total=s.get("total", 0),
+            by_status=s.get("by_status", {}),
+            unique_ingredients=s.get("unique_ingredients", 0),
+            unique_restaurants=s.get("unique_restaurants", 0),
+            total_spent=s.get("total_spent", 0),
+        ),
+    )
+
+
+def _parse_meals_history(data: dict) -> MealsHistory:
+    series = []
+    for snap in data.get("series", []):
+        by_dish = {}
+        for name, d in snap.get("by_dish", {}).items():
+            by_dish[name] = MealsSnapshotDish(
+                count=d.get("count", 0),
+                statuses=d.get("statuses", {}),
+            )
+        series.append(MealsSnapshot(
+            ts=snap.get("ts", ""),
+            turn_id=snap.get("turn_id"),
+            total=snap.get("total", 0),
+            new_count=snap.get("new_count", 0),
+            by_status=snap.get("by_status", {}),
+            by_dish=by_dish,
+            unique_dishes=snap.get("unique_dishes", 0),
+            meals=[_parse_meal(m) for m in snap.get("meals", [])],
+        ))
+    return MealsHistory(
+        restaurant_id=str(data.get("restaurant_id", "")),
+        count=data.get("count", 0),
+        series=series,
+    )
+
+
+def _parse_meals_entries(data: dict) -> MealsEntries:
+    s = data.get("summary", {})
+    return MealsEntries(
+        total=data.get("total", 0),
+        summary=MealsEntriesSummary(
+            by_status=s.get("by_status", {}),
+            by_dish=s.get("by_dish", {}),
+        ),
+        entries=[_parse_meal(m) for m in data.get("entries", [])],
+    )
+
+
+def _parse_bids_history(data: dict) -> BidsHistory:
+    series = []
+    for snap in data.get("series", []):
+        by_ingredient = {}
+        for name, d in snap.get("by_ingredient", {}).items():
+            by_ingredient[name] = BidIngredientAgg(
+                count=d.get("count", 0),
+                total_qty=d.get("total_qty", 0),
+                total_spent=d.get("total_spent", 0),
+            )
+        by_restaurant = {}
+        for name, d in snap.get("by_restaurant", {}).items():
+            by_restaurant[name] = BidRestaurantAgg(
+                count=d.get("count", 0),
+                total_spent=d.get("total_spent", 0),
+            )
+        series.append(BidsSnapshot(
+            ts=snap.get("ts", ""),
+            turn_id=snap.get("turn_id"),
+            total=snap.get("total", 0),
+            new_count=snap.get("new_count", 0),
+            by_status=snap.get("by_status", {}),
+            by_ingredient=by_ingredient,
+            by_restaurant=by_restaurant,
+            total_spent=snap.get("total_spent", 0),
+            bids=[_parse_bid(b) for b in snap.get("bids", [])],
+        ))
+    return BidsHistory(
+        count=data.get("count", 0),
+        series=series,
+    )
+
+
+def _parse_bids_entries(data: dict) -> BidsEntries:
+    s = data.get("summary", {})
+    return BidsEntries(
+        total=data.get("total", 0),
+        summary=BidsEntriesSummary(
+            by_status=s.get("by_status", {}),
+            by_ingredient=s.get("by_ingredient", {}),
+            by_restaurant=s.get("by_restaurant", {}),
+            total_spent=s.get("total_spent", 0),
+        ),
+        entries=[_parse_bid(b) for b in data.get("entries", [])],
+    )
 
 # ── Client ────────────────────────────────────────────────────────────────────
 
@@ -716,6 +1051,75 @@ class HistoryClient:
         """Get the current turn_id from the server."""
         return self._get("/api/turn").get("turn_id")
 
+    # ── Meals (current snapshot) ──────────────────────────────────────
+
+    def meals(self, status: str | None = None) -> Meals:
+        """Get meals from the latest dump, optionally filtered by status."""
+        params = {}
+        if status:
+            params["status"] = status
+        data = self._get("/api/meals", params)
+        return _parse_meals(data)
+
+    def bid_history(
+            self,
+            restaurant_id: str | None = None,
+            ingredient: str | None = None,
+            status: str | None = None,
+    ) -> BidHistory:
+        """Get bid history from the latest dump, with optional filters."""
+        params = {}
+        if restaurant_id:
+            params["restaurant_id"] = restaurant_id
+        if ingredient:
+            params["ingredient"] = ingredient
+        if status:
+            params["status"] = status
+        data = self._get("/api/bid_history", params)
+        return _parse_bid_history(data)
+
+    # ── Meals & Bids (history) ────────────────────────────────────────
+
+    def meals_history(self, limit: int = 200) -> MealsHistory:
+        """Per-dump aggregated meal snapshots."""
+        data = self._get("/api/history/meals", {"limit": limit})
+        return _parse_meals_history(data)
+
+    def meals_entries(
+            self, status: str | None = None, dish: str | None = None, limit: int = 200
+    ) -> MealsEntries:
+        """Deduplicated meal entries with status tracking."""
+        params: dict = {"limit": limit}
+        if status:
+            params["status"] = status
+        if dish:
+            params["dish"] = dish
+        data = self._get("/api/history/meals/entries", params)
+        return _parse_meals_entries(data)
+
+    def bids_history(self, limit: int = 200) -> BidsHistory:
+        """Per-dump aggregated bid snapshots."""
+        data = self._get("/api/history/bids", {"limit": limit})
+        return _parse_bids_history(data)
+
+    def bids_entries(
+            self,
+            status: str | None = None,
+            ingredient: str | None = None,
+            restaurant_id: str | None = None,
+            limit: int = 200,
+    ) -> BidsEntries:
+        """Deduplicated bid entries with status tracking."""
+        params: dict = {"limit": limit}
+        if status:
+            params["status"] = status
+        if ingredient:
+            params["ingredient"] = ingredient
+        if restaurant_id:
+            params["restaurant_id"] = restaurant_id
+        data = self._get("/api/history/bids/entries", params)
+        return _parse_bids_entries(data)
+
     def close(self):
         self.client.close()
 
@@ -741,6 +1145,8 @@ if __name__ == "__main__":
         print(c.dish_history("Cosmic Synchrony: Il Destino di Pulsar"))
 
         print(c.ingredient_history("Essenza di Tachioni"))
+
+        print(c.bids_history())
         # ── List all ingredients ──────────────────────────────────────
         # ingredients = c.market_ingredients()
         # print(f"\n{'='*60}")
