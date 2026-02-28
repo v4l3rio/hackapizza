@@ -35,11 +35,15 @@ class HttpClient:
 
     async def get_meals(self, turn_id: int = 0) -> list[dict[str, Any]]:
         """Active meals / current orders."""
-        data = await self._get(f"/meals?turn_id={turn_id}&restaurant_id={self.team_id}")
+        params = f"restaurant_id={self.team_id}"
+        if turn_id > 0:
+            params += f"&turn_id={turn_id}"
+        data = await self._get(f"/meals?{params}")
         return data if isinstance(data, list) else data.get("meals", [])
 
     async def get_bid_history(self, turn_id: int = 0) -> list[dict[str, Any]]:
-        data = await self._get(f"/bid_history?turn_id={turn_id}")
+        path = f"/bid_history?turn_id={turn_id}" if turn_id > 0 else "/bid_history"
+        data = await self._get(path)
         return data if isinstance(data, list) else data.get("bid_history", [])
 
     async def get_market_entries(self) -> list[dict[str, Any]]:
