@@ -40,7 +40,7 @@ class BiddingAgent(Agent):
 
     def __init__(self) -> None:
         self._state: GameState | None = None
-        self._memory: StrategyMemory | None = None
+        self._strat: StrategyMemory | None = None
         self._mcp: MCPClient | None = None
         super().__init__(client=get_llm_client(), max_steps=3)
 
@@ -77,7 +77,7 @@ class BiddingAgent(Agent):
         mcp: MCPClient,
     ) -> None:
         self._state = state
-        self._memory = memory
+        self._strat = memory
         self._mcp = mcp
 
         with tracer.start_as_current_span("bidding_agent.execute") as span:

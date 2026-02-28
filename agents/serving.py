@@ -38,7 +38,7 @@ class ServingAgent(Agent):
 
     def __init__(self) -> None:
         self._state: GameState | None = None
-        self._memory: StrategyMemory | None = None
+        self._strat: StrategyMemory | None = None
         self._mcp: MCPClient | None = None
         self._pending_orders: dict[str, dict[str, Any]] = {}  # client_id -> {dish, client_id}
         super().__init__(client=get_llm_client(), max_steps=3)
@@ -92,7 +92,7 @@ class ServingAgent(Agent):
     ) -> None:
         """Register SSE handlers. Call once at startup."""
         self._state = state
-        self._memory = memory
+        self._strat = memory
         self._mcp = mcp
         sse.on("client_spawned", self._on_client_spawned)
         sse.on("preparation_complete", self._on_preparation_complete)
@@ -105,7 +105,7 @@ class ServingAgent(Agent):
     ) -> None:
         """Called when the serving phase starts — opens the restaurant."""
         self._state = state
-        self._memory = memory
+        self._strat = memory
         self._mcp = mcp
 
         with tracer.start_as_current_span("serving_agent.execute") as span:

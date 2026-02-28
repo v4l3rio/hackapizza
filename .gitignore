@@ -74,6 +74,7 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+datapizza-ai/
 
 # -----------------------------
 # 📦 UV
