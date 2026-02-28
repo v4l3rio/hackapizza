@@ -20,7 +20,7 @@ SSE_URL: str = f"{BASE_URL}/events/{TEAM_ID}"
 MCP_URL: str = f"{BASE_URL}/mcp"
 
 REGOLO_BASE_URL: str = "https://api.regolo.ai/v1"
-REGOLO_MODEL: str = "meta-llama/Llama-3.3-70B-Instruct"
+REGOLO_MODEL: str = "gpt-oss-120b"
 
 # Bidding strategy
 DEFAULT_BID_FLAT: int = 50          # flat bid per ingredient on turn 1

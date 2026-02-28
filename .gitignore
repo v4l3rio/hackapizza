@@ -1,11 +1,80 @@
-.env
+# -----------------------------
+# 🐍 Python
+# -----------------------------
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -----------------------------
+# 🧪 Virtual Environments
+# -----------------------------
 .venv/
 venv/
-*.egg-info/
-dist/
-.pytest_cache/
-.DS_Store
+env/
+ENV/
+
+# -----------------------------
+# 📦 Poetry
+# -----------------------------
 poetry.lock
+
+# (Keep poetry.lock if building an application, remove this line if it's a library)
+# For applications: you may WANT to commit poetry.lock
+
+# -----------------------------
+# 🔐 Environment Variables
+# -----------------------------
+.env
+.secrets
+*.env
+
+# Kaggle
+.kaggle/
+
+# -----------------------------
+# 🧠 ML / Data / Experiments
+# -----------------------------
+data/
+datasets/
+outputs/
+models/
+checkpoints/
+logs/
+wandb/
+mlruns/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# -----------------------------
+# 🖥 IDE (Generic)
+# -----------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -----------------------------
+# 🖥 OS
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# 🧪 Testing
+# -----------------------------
+.coverage
+htmlcov/
+.pytest_cache/
+
+# -----------------------------
+# 📦 UV
+# -----------------------------
+uv.lock
