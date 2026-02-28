@@ -7,3 +7,5 @@ venv/
 *.egg-info/
 dist/
 .pytest_cache/
+.DS_Store
+poetry.lock
