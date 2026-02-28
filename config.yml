@@ -1,0 +1,12 @@
+BASE_URL: https://hackapizza.datapizza.tech
+REGOLO_BASE_URL: https://api.regolo.ai/v1
+REGOLO_MODEL_BIG: gpt-oss-120b
+
+# Bidding strategy
+DEFAULT_BID_FLAT: 50          # flat bid per ingredient on turn 1
+BID_CLEARING_MULTIPLIER: 1.1  # bid = clearing_price * multiplier
+MAX_BID_BALANCE_FRACTION: 0.6  # cap: max 60% of balance in bids
+BID_SERVINGS_MULTIPLIER: 2
+
+# Menu pricing
+MENU_MARKUP: 2.5            # dish price = ingredient cost * markup
