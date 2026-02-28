@@ -1110,3 +1110,207 @@ def history_ingredient_prices(
         },
         "timeline": timeline,
     }
+
+
+# ── DISH PRICE HISTORY ────────────────────────────────────────────────────────
+#
+# Scans all dumps and extracts menu item prices across all restaurants over time.
+# Append this to the bottom of server.py.
+
+
+@app.get("/api/history/dishes")
+def history_dishes(limit: int = 200, restaurant_id: str = None):
+    """
+    Price history for every dish across all restaurants and dumps.
+
+    Returns a dict keyed by dish name, each containing a chronological list
+    of observations: timestamp, restaurant, price.
+
+    Query params:
+        limit         — dumps to scan (default 200)
+        restaurant_id — filter to a single restaurant
+
+    Examples:
+        GET /api/history/dishes
+        GET /api/history/dishes?restaurant_id=5
+        GET /api/history/dishes?limit=50
+    """
+    all_dumps = iter_dumps(limit)
+    if not all_dumps:
+        raise HTTPException(404, "No dumps found on disk")
+
+    # dish_name → list of {ts, restaurant_id, restaurant_name, price}
+    dishes: dict[str, list[dict]] = {}
+
+    for dump in all_dumps:
+        ts = dump["ts"]
+        restaurants = (dump.get("data") or {}).get("restaurants") or []
+
+        for r in restaurants:
+            rid = str(r.get("id", ""))
+            if restaurant_id and rid != str(restaurant_id):
+                continue
+            rname = r.get("name", f"Ristorante #{rid}")
+            menu = r.get("menu") or {}
+            items = menu.get("items") or []
+
+            for item in items:
+                name = item.get("name")
+                price = item.get("price")
+                if name is None or price is None:
+                    continue
+                dishes.setdefault(name, []).append({
+                    "ts": ts,
+                    "restaurant_id": rid,
+                    "restaurant_name": rname,
+                    "price": price,
+                })
+
+    # Build per-dish summaries
+    result = {}
+    for name, observations in sorted(dishes.items()):
+        prices = [o["price"] for o in observations]
+        restaurants_seen = list({o["restaurant_name"] for o in observations})
+
+        # Deduplicate consecutive identical prices per restaurant
+        # to highlight only actual changes
+        changes = []
+        last_by_restaurant: dict[str, float] = {}
+        for o in observations:
+            key = o["restaurant_id"]
+            if last_by_restaurant.get(key) != o["price"]:
+                changes.append(o)
+                last_by_restaurant[key] = o["price"]
+
+        result[name] = {
+            "observations": observations,
+            "changes": changes,
+            "summary": {
+                "total_observations": len(observations),
+                "total_changes": len(changes),
+                "restaurants": restaurants_seen,
+                "restaurant_count": len(restaurants_seen),
+                "min_price": round(min(prices), 2),
+                "max_price": round(max(prices), 2),
+                "avg_price": round(sum(prices) / len(prices), 2),
+                "first_seen": observations[0]["ts"],
+                "last_seen": observations[-1]["ts"],
+                "current_price": observations[-1]["price"],
+            },
+        }
+
+    return {
+        "dish_count": len(result),
+        "restaurant_filter": restaurant_id,
+        "dumps_scanned": len(all_dumps),
+        "dishes": result,
+    }
+
+
+@app.get("/api/history/dish/{dish_name:path}")
+def history_dish(dish_name: str, limit: int = 200, restaurant_id: str = None):
+    """
+    Price history for a single dish (case-insensitive, partial match).
+
+    Query params:
+        limit         — dumps to scan (default 200)
+        restaurant_id — filter to a single restaurant
+
+    Examples:
+        GET /api/history/dish/Nebulosa Galattica
+        GET /api/history/dish/nebulosa
+        GET /api/history/dish/nebulosa?restaurant_id=7
+    """
+    all_dumps = iter_dumps(limit)
+    if not all_dumps:
+        raise HTTPException(404, "No dumps found on disk")
+
+    resolved_name = None
+    observations: list[dict] = []
+
+    for dump in all_dumps:
+        ts = dump["ts"]
+        restaurants = (dump.get("data") or {}).get("restaurants") or []
+
+        for r in restaurants:
+            rid = str(r.get("id", ""))
+            if restaurant_id and rid != str(restaurant_id):
+                continue
+            rname = r.get("name", f"Ristorante #{rid}")
+            menu = r.get("menu") or {}
+            items = menu.get("items") or []
+
+            for item in items:
+                name = item.get("name", "")
+                price = item.get("price")
+                if price is None:
+                    continue
+
+                # Resolve canonical name on first match
+                if resolved_name is None:
+                    if name.lower() == dish_name.lower() or dish_name.lower() in name.lower():
+                        resolved_name = name
+                    else:
+                        continue
+
+                if name != resolved_name:
+                    continue
+
+                observations.append({
+                    "ts": ts,
+                    "restaurant_id": rid,
+                    "restaurant_name": rname,
+                    "price": price,
+                })
+
+    if resolved_name is None:
+        raise HTTPException(404, f"Dish '{dish_name}' not found in any dump")
+
+    prices = [o["price"] for o in observations]
+    restaurants_seen = list({o["restaurant_name"] for o in observations})
+
+    # Price changes only (deduplicated consecutive same price per restaurant)
+    changes = []
+    last_by_restaurant: dict[str, float] = {}
+    for o in observations:
+        key = o["restaurant_id"]
+        if last_by_restaurant.get(key) != o["price"]:
+            changes.append(o)
+            last_by_restaurant[key] = o["price"]
+
+    # Per-restaurant breakdown
+    by_restaurant: dict[str, list[dict]] = {}
+    for o in observations:
+        by_restaurant.setdefault(o["restaurant_name"], []).append(o)
+
+    per_restaurant = {}
+    for rname, obs in by_restaurant.items():
+        rprices = [o["price"] for o in obs]
+        per_restaurant[rname] = {
+            "observations": len(obs),
+            "min_price": round(min(rprices), 2),
+            "max_price": round(max(rprices), 2),
+            "avg_price": round(sum(rprices) / len(rprices), 2),
+            "current_price": obs[-1]["price"],
+            "price_history": obs,
+        }
+
+    return {
+        "dish": resolved_name,
+        "restaurant_filter": restaurant_id,
+        "dumps_scanned": len(all_dumps),
+        "summary": {
+            "total_observations": len(observations),
+            "total_changes": len(changes),
+            "restaurants": restaurants_seen,
+            "restaurant_count": len(restaurants_seen),
+            "min_price": round(min(prices), 2),
+            "max_price": round(max(prices), 2),
+            "avg_price": round(sum(prices) / len(prices), 2),
+            "first_seen": observations[0]["ts"],
+            "last_seen": observations[-1]["ts"],
+        },
+        "changes": changes,
+        "by_restaurant": per_restaurant,
+        "observations": observations,
+    }
