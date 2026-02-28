@@ -10,6 +10,7 @@ from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
 from infrastructure.llm_factory import get_llm_client
+from utils.ingredient_data import get_ingredient_data
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
@@ -122,7 +123,13 @@ class BiddingAgent(Agent):
     # ------------------------------------------------------------------ helpers
 
     def _compute_needed(self, state: GameState, focus_recipes: list[str]) -> dict[str, int]:
-        """Find shortfall per ingredient for BID_SERVINGS_MULTIPLIER servings of focus recipes."""
+        """Find shortfall per ingredient for BID_SERVINGS_MULTIPLIER servings of focus recipes.
+
+        Only considers ingredients present in ingredient_frequencies.yaml to guard against
+        typos or unknown ingredient names coming from the game server.
+        """
+        valid_ingredients = get_ingredient_data()
+
         recipes = state.recipes
         if focus_recipes:
             focus_set = set(focus_recipes)
@@ -131,6 +138,9 @@ class BiddingAgent(Agent):
         needed: dict[str, int] = {}
         for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
+                if ing not in valid_ingredients:
+                    log("closed_bid", state.turn_id, "agent", f"Skipping unknown ingredient: {ing!r}")
+                    continue
                 have = state.inventory.get(ing, 0)
                 shortfall = max(0, qty * BID_SERVINGS_MULTIPLIER - have)
                 if shortfall > 0:
