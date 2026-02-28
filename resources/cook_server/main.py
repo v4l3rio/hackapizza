@@ -18,6 +18,14 @@ from datetime import datetime, timezone
 from typing import Any
 from dotenv import load_dotenv
 
+import sys
+from pathlib import Path
+
+# Add project root to path so we can import from there
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from config import BASE_URL
+
 # ── LOAD .env ─────────────────────────────────────────────────────────────────
 
 load_dotenv()  # reads .env from cwd or project root automatically
@@ -25,8 +33,8 @@ load_dotenv()  # reads .env from cwd or project root automatically
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 
 CONFIG = {
-    "base_url":           os.environ.get("BASE_URL", "").rstrip("/"),
-    "api_key":            os.environ.get("API_KEY",  ""),
+    "base_url":           BASE_URL, #os.environ.get("BASE_URL", "").rstrip("/"),
+    "api_key":            os.getenv("TEAM_API_KEY", ""), #os.environ.get("API_KEY",  ""),
     "my_restaurant_id":   os.environ.get("MY_RESTAURANT_ID", "5"),
     "refresh_interval":   int(os.environ.get("REFRESH_INTERVAL", "30")),
     "port":               int(os.environ.get("PORT", "8765")),
@@ -1018,59 +1026,87 @@ def history_ingredient_entries(
     }
 
 
-@app.get("/api/history/ingredients")
-def history_all_ingredients(limit: int = 50):
+@app.get("/api/history/ingredient-prices/{ingredient_name:path}")
+def history_ingredient_prices(
+    ingredient_name: str,
+    limit: int = 100,
+    side: str = None,
+):
     """
-    Summary of ALL ingredients that have appeared in the market across recent dumps.
-    Shows price trend, total appearances, and last seen timestamp for each.
+    Complete price timeline for an ingredient: one record per (dump, entry),
+    so you see every price observation across the entire history.
 
-    Example:
-        GET /api/history/ingredients
-        GET /api/history/ingredients?limit=20
+    This is different from /history/ingredient (aggregated stats per dump) and
+    /history/ingredient-entries (deduplicated by entry ID). Here every row is
+    a raw price snapshot, giving you the full price series for charting or analysis.
+
+    Query params:
+        limit — dumps to scan (default 100)
+        side  — filter by BUY or SELL
+
+    Examples:
+        GET /api/history/ingredient-prices/Alghe Bioluminescenti
+        GET /api/history/ingredient-prices/alghe?side=BUY&limit=200
     """
     all_dumps = iter_dumps(limit)
     if not all_dumps:
         raise HTTPException(404, "No dumps found on disk")
 
-    # ingredient_name → list of (ts, avg_unit_price, volume)
-    ingredient_data: dict[str, list] = {}
+    side_filter = side.upper() if side else None
+    resolved_name = None
+    timeline = []
 
     for dump in all_dumps:
         market = (dump.get("data") or {}).get("market") or []
-        grouped: dict[str, list] = {}
-        for e in market:
-            name = (e.get("ingredient") or {}).get("name") or f"#{e.get('ingredientId')}"
-            grouped.setdefault(name, []).append(e)
 
-        for name, entries in grouped.items():
-            prices = [e.get("unit_price") or (e["totalPrice"] / max(e["quantity"], 1)) for e in entries]
-            ingredient_data.setdefault(name, []).append({
-                "ts":        dump["ts"],
-                "avg_price": round(sum(prices) / len(prices), 4),
-                "volume":    sum(e.get("quantity", 0) for e in entries),
-                "entries":   len(entries),
+        if resolved_name is None:
+            for e in market:
+                candidate = (e.get("ingredient") or {}).get("name") or ""
+                if candidate.lower() == ingredient_name.lower() or ingredient_name.lower() in candidate.lower():
+                    resolved_name = candidate
+                    break
+
+        if resolved_name is None:
+            continue
+
+        for e in market:
+            if (e.get("ingredient") or {}).get("name") != resolved_name:
+                continue
+            if side_filter and e.get("side") != side_filter:
+                continue
+
+            unit_price = e.get("unit_price") or round(e["totalPrice"] / max(e["quantity"], 1), 4)
+            timeline.append({
+                "ts":                dump["ts"],
+                "entry_id":          e["id"],
+                "side":              e.get("side"),
+                "unit_price":        unit_price,
+                "total_price":       e.get("totalPrice"),
+                "quantity":          e.get("quantity"),
+                "status":            e.get("status"),
+                "restaurant_name":   e.get("restaurant_name"),
+                "restaurant_id":     e.get("createdByRestaurantId"),
+                "is_mine":           e.get("is_mine", False),
             })
 
-    summary = []
-    for name, points in sorted(ingredient_data.items()):
-        prices = [p["avg_price"] for p in points]
-        summary.append({
-            "ingredient":    name,
-            "appearances":   len(points),
-            "last_seen":     points[-1]["ts"],
-            "latest_price":  prices[-1],
-            "min_price":     round(min(prices), 4),
-            "max_price":     round(max(prices), 4),
-            "avg_price":     round(sum(prices) / len(prices), 4),
-            "price_trend": (
-                "rising"  if len(prices) >= 2 and prices[-1] > prices[0] else
-                "falling" if len(prices) >= 2 and prices[-1] < prices[0] else
-                "stable"
-            ),
-        })
+    if resolved_name is None:
+        raise HTTPException(404, f"Ingredient '{ingredient_name}' not found in any dump")
+
+    timeline.sort(key=lambda r: (r["ts"], r["entry_id"]))
+
+    all_prices = [r["unit_price"] for r in timeline]
 
     return {
-        "count":   len(summary),
-        "dumps_scanned": len(all_dumps),
-        "ingredients": summary,
+        "ingredient":  resolved_name,
+        "side_filter": side_filter,
+        "total":       len(timeline),
+        "summary": {
+            "min_price": round(min(all_prices), 4) if all_prices else None,
+            "max_price": round(max(all_prices), 4) if all_prices else None,
+            "avg_price": round(sum(all_prices) / len(all_prices), 4) if all_prices else None,
+            "first_ts":  timeline[0]["ts"] if timeline else None,
+            "last_ts":   timeline[-1]["ts"] if timeline else None,
+            "dumps_scanned": len(all_dumps),
+        },
+        "timeline": timeline,
     }

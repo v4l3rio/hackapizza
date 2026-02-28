@@ -5,10 +5,14 @@ import yaml
 load_dotenv()
 
 def load_yaml(filename: str):
-    with open(f"./{filename}.yml", "r") as f:
+    with open(f"{filename}.yml", "r") as f:
         return yaml.safe_load(f)
 
-config = load_yaml('config')
+from pathlib import Path
+
+ROOT = Path(__file__).parent  # always the project root, regardless of where you run from
+
+config = load_yaml(ROOT / 'config')
 
 TEAM_ID: int = int(os.getenv("TEAM_ID", "0"))
 TEAM_API_KEY: str = os.getenv("TEAM_API_KEY", "")
