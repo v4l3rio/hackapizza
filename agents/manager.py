@@ -161,11 +161,6 @@ class AgentManager:
 
                 elif phase == "stopped":
                     log("manager", self.state.turn_id, "phase", "Game stopped / turn ended")
-                    try:
-                        await self.mcp.update_restaurant_is_open(False)
-                        log("manager", self.state.turn_id, "phase", "Restaurant closed")
-                    except Exception as exc:
-                        log_error("manager", self.state.turn_id, "open", f"Failed to close restaurant: {exc}")
                     if self.state.turn_id > 0:
                         try:
                             await self.memory.consolidate(self.http, self.state.turn_id)
