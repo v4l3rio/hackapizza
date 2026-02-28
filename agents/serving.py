@@ -12,6 +12,9 @@ from infrastructure.mcp_client import MCPClient
 from infrastructure.sse_listener import SSEListener
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
+from utils.tracing import get_tracer
+
+tracer = get_tracer(__name__)
 
 
 class ServingAgent(Agent):
@@ -105,22 +108,26 @@ class ServingAgent(Agent):
         self._memory = memory
         self._mcp = mcp
 
-        log("serving", state.turn_id, "agent", "ServingAgent started")
-        log(
-            "serving",
-            state.turn_id,
-            "state",
-            f"Balance={state.balance:.2f} | Inventory={state.inventory}",
-        )
+        with tracer.start_as_current_span("serving_agent.execute") as span:
+            span.set_attribute("turn_id", state.turn_id)
 
-        task = (
-            "The serving phase has begun. Open the restaurant so clients can arrive. "
-            "Call open_restaurant now."
-        )
-        try:
-            await self.a_run(task, tool_choice="required_first")
-        except Exception as exc:
-            log_error("serving", state.turn_id, "agent", f"ServingAgent open failed: {exc}")
+            log("serving", state.turn_id, "agent", "ServingAgent started")
+            log(
+                "serving",
+                state.turn_id,
+                "state",
+                f"Balance={state.balance:.2f} | Inventory={state.inventory}",
+            )
+
+            task = (
+                "The serving phase has begun. Open the restaurant so clients can arrive. "
+                "Call open_restaurant now."
+            )
+            try:
+                await self.a_run(task, tool_choice="required_first")
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("serving", state.turn_id, "agent", f"ServingAgent open failed: {exc}")
 
     # ------------------------------------------------------------------ SSE handlers
 
@@ -134,38 +141,43 @@ class ServingAgent(Agent):
 
         log("serving", self._state.turn_id, "client", f"Client {client_id} wants: '{order_text}'")
 
-        # Let LLM pick best matching dish and call prepare_dish
-        task = (
-            f"Client '{client_id}' has arrived.\n"
-            f"Their order: \"{order_text}\"\n"
-            f"Their dietary intolerances/allergies: {json.dumps(intolerances)}\n\n"
-            f"Current menu: {json.dumps(self._state.menu_items)}\n"
-            f"Recipes with ingredients: {json.dumps(self._state.recipes)}\n\n"
-            "Select the best matching menu item for this client. "
-            "IMPORTANT: exclude any dish that contains an ingredient the client is intolerant to. "
-            "If there is a good match, call prepare_dish with the exact dish name. "
-            "If no safe dish is available, do nothing."
-        )
+        with tracer.start_as_current_span("serving_agent.client_spawned") as span:
+            span.set_attribute("client_id", client_id)
+            span.set_attribute("turn_id", self._state.turn_id)
 
-        try:
-            result = await self.a_run(task, tool_choice="required_first")
-            # Record which dish we're preparing for this client
-            if result:
-                for tool_call in result.tools_used:
-                    if tool_call.name == "prepare_dish":
-                        dish_name = tool_call.arguments.get("dish_name", "")
-                        self._pending_orders[client_id] = {
-                            "dish": dish_name,
-                            "client_id": client_id,
-                        }
-                        log(
-                            "serving",
-                            self._state.turn_id,
-                            "kitchen",
-                            f"Preparing '{dish_name}' for client {client_id}",
-                        )
-        except Exception as exc:
-            log_error("serving", self._state.turn_id, "client", f"_on_client_spawned failed: {exc}")
+            # Let LLM pick best matching dish and call prepare_dish
+            task = (
+                f"Client '{client_id}' has arrived.\n"
+                f"Their order: \"{order_text}\"\n"
+                f"Their dietary intolerances/allergies: {json.dumps(intolerances)}\n\n"
+                f"Current menu: {json.dumps(self._state.menu_items)}\n"
+                f"Recipes with ingredients: {json.dumps(self._state.recipes)}\n\n"
+                "Select the best matching menu item for this client. "
+                "IMPORTANT: exclude any dish that contains an ingredient the client is intolerant to. "
+                "If there is a good match, call prepare_dish with the exact dish name. "
+                "If no safe dish is available, do nothing."
+            )
+
+            try:
+                result = await self.a_run(task, tool_choice="required_first")
+                # Record which dish we're preparing for this client
+                if result:
+                    for tool_call in result.tools_used:
+                        if tool_call.name == "prepare_dish":
+                            dish_name = tool_call.arguments.get("dish_name", "")
+                            self._pending_orders[client_id] = {
+                                "dish": dish_name,
+                                "client_id": client_id,
+                            }
+                            log(
+                                "serving",
+                                self._state.turn_id,
+                                "kitchen",
+                                f"Preparing '{dish_name}' for client {client_id}",
+                            )
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("serving", self._state.turn_id, "client", f"_on_client_spawned failed: {exc}")
 
     async def _on_preparation_complete(self, data: dict[str, Any]) -> None:
         if self._state is None or self._mcp is None:

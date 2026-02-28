@@ -13,7 +13,9 @@ from agents.menu import MenuAgent
 from agents.market import MarketAgent
 from agents.serving import ServingAgent
 from utils.logger import log, log_error
+from utils.tracing import get_tracer
 
+tracer = get_tracer(__name__)
 
 KNOWN_PHASES = {"speaking", "closed_bid", "waiting", "serving", "stopped"}
 
@@ -92,40 +94,44 @@ class AgentManager:
         await self._dispatch(phase)
 
     async def _dispatch(self, phase: str) -> None:
-        try:
-            if phase == "speaking":
-                await self._speaking.execute(self.state, self.memory, self.mcp)
+        with tracer.start_as_current_span(f"manager.dispatch.{phase}") as span:
+            span.set_attribute("phase", phase)
+            span.set_attribute("turn_id", self.state.turn_id)
+            try:
+                if phase == "speaking":
+                    await self._speaking.execute(self.state, self.memory, self.mcp)
 
-            elif phase == "closed_bid":
-                # Consolidate memory from previous turns before bidding
-                try:
-                    await self.memory.consolidate(self.http)
-                except Exception as exc:
-                    log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
+                elif phase == "closed_bid":
+                    # Consolidate memory from previous turns before bidding
+                    try:
+                        await self.memory.consolidate(self.http)
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 
-                await self._bidding.execute(self.state, self.memory, self.mcp)
+                    await self._bidding.execute(self.state, self.memory, self.mcp)
 
-            elif phase == "waiting":
-                await self._menu.execute(self.state, self.memory, self.mcp)
-                await self._market.execute_waiting(self.state, self.memory, self.mcp)
+                elif phase == "waiting":
+                    await self._menu.execute(self.state, self.memory, self.mcp)
+                    await self._market.execute_waiting(self.state, self.memory, self.mcp)
 
-            elif phase == "serving":
-                await self._serving.execute(self.state, self.memory, self.mcp)
-                await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
+                elif phase == "serving":
+                    await self._serving.execute(self.state, self.memory, self.mcp)
+                    await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 
-            elif phase == "stopped":
-                log("manager", self.state.turn_id, "phase", "Game stopped / turn ended")
-                try:
-                    await self.mcp.update_restaurant_is_open(False)
-                except Exception:
-                    pass
-                try:
-                    await self.memory.consolidate(self.http)
-                except Exception as exc:
-                    log_error("manager", self.state.turn_id, "memory", f"Final consolidate failed: {exc}")
+                elif phase == "stopped":
+                    log("manager", self.state.turn_id, "phase", "Game stopped / turn ended")
+                    try:
+                        await self.mcp.update_restaurant_is_open(False)
+                    except Exception:
+                        pass
+                    try:
+                        await self.memory.consolidate(self.http)
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "memory", f"Final consolidate failed: {exc}")
 
-            else:
-                log("manager", self.state.turn_id, "phase", f"Unknown phase '{phase}' — ignoring")
+                else:
+                    log("manager", self.state.turn_id, "phase", f"Unknown phase '{phase}' — ignoring")
 
-        except Exception as exc:
-            log_error("manager", self.state.turn_id, "dispatch", f"Agent error in phase '{phase}': {exc}")
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("manager", self.state.turn_id, "dispatch", f"Agent error in phase '{phase}': {exc}")

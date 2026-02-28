@@ -7,6 +7,14 @@ TEAM_ID: int = int(os.getenv("TEAM_ID", "0"))
 TEAM_API_KEY: str = os.getenv("TEAM_API_KEY", "")
 REGOLO_API_KEY: str = os.getenv("REGOLO_API_KEY", "")
 
+# Datapizza monitoring
+DATAPIZZA_MONITORING_API_KEY: str = os.getenv("DATAPIZZA_MONITORING_API_KEY", "")
+DATAPIZZA_MONITORING_PROJECT_ID: str = os.getenv("DATAPIZZA_MONITORING_PROJECT_ID", "")
+DATAPIZZA_MONITORING_OTLP_ENDPOINT: str = os.getenv(
+    "DATAPIZZA_MONITORING_OTLP_ENDPOINT",
+    "https://datapizza-monitoring.datapizza.tech/gateway/v1/traces",
+)
+
 BASE_URL: str = os.getenv("BASE_URL", "https://hackapizza.datapizza.tech")
 SSE_URL: str = f"{BASE_URL}/events/{TEAM_ID}"
 MCP_URL: str = f"{BASE_URL}/mcp"

@@ -12,6 +12,9 @@ from infrastructure.mcp_client import MCPClient
 from infrastructure.http_client import HttpClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
+from utils.tracing import get_tracer
+
+tracer = get_tracer(__name__)
 
 
 class MarketAgent(Agent):
@@ -112,27 +115,31 @@ class MarketAgent(Agent):
         self._memory = memory
         self._mcp = mcp
 
-        log("waiting", state.turn_id, "market", "MarketAgent: checking surplus to sell")
+        with tracer.start_as_current_span("market_agent.execute_waiting") as span:
+            span.set_attribute("turn_id", state.turn_id)
 
-        surplus = self._compute_surplus(state)
-        if not surplus:
-            log("waiting", state.turn_id, "market", "No surplus to sell")
-            return
+            log("waiting", state.turn_id, "market", "MarketAgent: checking surplus to sell")
 
-        task = (
-            f"Current inventory: {json.dumps(state.inventory)}\n"
-            f"Recipes and their ingredient requirements: {json.dumps(state.recipes)}\n"
-            f"Surplus ingredients (beyond what we need): {json.dumps(surplus)}\n"
-            f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
-            "List each surplus ingredient for sale at clearing_price * 1.05 "
-            "(or 10.0 if no clearing price). "
-            "Call list_ingredient_for_sale once per surplus ingredient."
-        )
+            surplus = self._compute_surplus(state)
+            if not surplus:
+                log("waiting", state.turn_id, "market", "No surplus to sell")
+                return
 
-        try:
-            await self.a_run(task, tool_choice="required_first")
-        except Exception as exc:
-            log_error("waiting", state.turn_id, "market", f"MarketAgent waiting failed: {exc}")
+            task = (
+                f"Current inventory: {json.dumps(state.inventory)}\n"
+                f"Recipes and their ingredient requirements: {json.dumps(state.recipes)}\n"
+                f"Surplus ingredients (beyond what we need): {json.dumps(surplus)}\n"
+                f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
+                "List each surplus ingredient for sale at clearing_price * 1.05 "
+                "(or 10.0 if no clearing price). "
+                "Call list_ingredient_for_sale once per surplus ingredient."
+            )
+
+            try:
+                await self.a_run(task, tool_choice="required_first")
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("waiting", state.turn_id, "market", f"MarketAgent waiting failed: {exc}")
 
     async def execute_serving(
         self,
@@ -147,28 +154,32 @@ class MarketAgent(Agent):
         self._mcp = mcp
         self._http = http
 
-        log("serving", state.turn_id, "market", "MarketAgent: scanning market for good buys")
+        with tracer.start_as_current_span("market_agent.execute_serving") as span:
+            span.set_attribute("turn_id", state.turn_id)
 
-        needed = self._compute_needed(state)
-        if not needed:
-            log("serving", state.turn_id, "market", "No ingredients needed from market")
-            return
+            log("serving", state.turn_id, "market", "MarketAgent: scanning market for good buys")
 
-        task = (
-            f"Current inventory: {json.dumps(state.inventory)}\n"
-            f"Needed ingredients (shortfall): {json.dumps(needed)}\n"
-            f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n"
-            f"Our team_id (do not buy our own listings): {state.__class__.__name__}\n\n"
-            "First call get_market_listings to see what is available. "
-            "Then buy any listing where the ingredient is needed AND price <= clearing_price. "
-            "Skip listings for ingredients we don't need or that are too expensive. "
-            "Call buy_market_entry for each good purchase."
-        )
+            needed = self._compute_needed(state)
+            if not needed:
+                log("serving", state.turn_id, "market", "No ingredients needed from market")
+                return
 
-        try:
-            await self.a_run(task, tool_choice="required_first")
-        except Exception as exc:
-            log_error("serving", state.turn_id, "market", f"MarketAgent serving failed: {exc}")
+            task = (
+                f"Current inventory: {json.dumps(state.inventory)}\n"
+                f"Needed ingredients (shortfall): {json.dumps(needed)}\n"
+                f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n"
+                f"Our team_id (do not buy our own listings): {state.__class__.__name__}\n\n"
+                "First call get_market_listings to see what is available. "
+                "Then buy any listing where the ingredient is needed AND price <= clearing_price. "
+                "Skip listings for ingredients we don't need or that are too expensive. "
+                "Call buy_market_entry for each good purchase."
+            )
+
+            try:
+                await self.a_run(task, tool_choice="required_first")
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("serving", state.turn_id, "market", f"MarketAgent serving failed: {exc}")
 
     # ------------------------------------------------------------------ helpers
 

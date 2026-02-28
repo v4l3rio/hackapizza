@@ -10,7 +10,10 @@ from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
+from utils.tracing import get_tracer
 from config import MENU_MARKUP
+
+tracer = get_tracer(__name__)
 
 
 class MenuAgent(Agent):
@@ -75,35 +78,39 @@ class MenuAgent(Agent):
         self._memory = memory
         self._mcp = mcp
 
-        log("waiting", state.turn_id, "agent", "MenuAgent started")
-        log(
-            "waiting",
-            state.turn_id,
-            "state",
-            f"Balance={state.balance:.2f} | Inventory={state.inventory}",
-        )
+        with tracer.start_as_current_span("menu_agent.execute") as span:
+            span.set_attribute("turn_id", state.turn_id)
 
-        cookable = state.cookable_dishes()
-        if not cookable:
-            log("waiting", state.turn_id, "menu", "No cookable dishes — skipping menu update")
-            return
+            log("waiting", state.turn_id, "agent", "MenuAgent started")
+            log(
+                "waiting",
+                state.turn_id,
+                "state",
+                f"Balance={state.balance:.2f} | Inventory={state.inventory}",
+            )
 
-        # Pre-compute costs to guide LLM pricing
-        costs = {
-            recipe.get("name", "Unknown"): state.ingredient_cost(recipe)
-            for recipe in cookable
-        }
+            cookable = state.cookable_dishes()
+            if not cookable:
+                log("waiting", state.turn_id, "menu", "No cookable dishes — skipping menu update")
+                return
 
-        task = (
-            f"Cookable dishes (we have all ingredients): {json.dumps(cookable)}\n"
-            f"Estimated ingredient costs per dish: {json.dumps(costs)}\n"
-            f"Target price markup: {MENU_MARKUP}x ingredient cost.\n\n"
-            "Create the menu: for each cookable dish set a price (~markup * cost) "
-            "and write a short, enticing description. "
-            "Then call set_menu once with the complete JSON array."
-        )
+            # Pre-compute costs to guide LLM pricing
+            costs = {
+                recipe.get("name", "Unknown"): state.ingredient_cost(recipe)
+                for recipe in cookable
+            }
 
-        try:
-            await self.a_run(task, tool_choice="required_first")
-        except Exception as exc:
-            log_error("waiting", state.turn_id, "agent", f"MenuAgent failed: {exc}")
+            task = (
+                f"Cookable dishes (we have all ingredients): {json.dumps(cookable)}\n"
+                f"Estimated ingredient costs per dish: {json.dumps(costs)}\n"
+                f"Target price markup: {MENU_MARKUP}x ingredient cost.\n\n"
+                "Create the menu: for each cookable dish set a price (~markup * cost) "
+                "and write a short, enticing description. "
+                "Then call set_menu once with the complete JSON array."
+            )
+
+            try:
+                await self.a_run(task, tool_choice="required_first")
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("waiting", state.turn_id, "agent", f"MenuAgent failed: {exc}")

@@ -10,6 +10,9 @@ from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
+from utils.tracing import get_tracer
+
+tracer = get_tracer(__name__)
 
 
 class SpeakingAgent(Agent):
@@ -73,37 +76,41 @@ class SpeakingAgent(Agent):
         self._memory = memory
         self._mcp = mcp
 
-        log("speaking", state.turn_id, "agent", "SpeakingAgent started")
-        log(
-            "speaking",
-            state.turn_id,
-            "state",
-            f"Balance={state.balance:.2f} | Inventory={state.inventory}",
-        )
+        with tracer.start_as_current_span("speaking_agent.execute") as span:
+            span.set_attribute("turn_id", state.turn_id)
 
-        # Compute what we need
-        needed: dict[str, int] = {}
-        for recipe in state.recipes:
-            for ing, qty in recipe.get("ingredients", {}).items():
-                have = state.inventory.get(ing, 0)
-                shortfall = max(0, qty - have)
-                if shortfall > 0:
-                    needed[ing] = max(needed.get(ing, 0), shortfall)
+            log("speaking", state.turn_id, "agent", "SpeakingAgent started")
+            log(
+                "speaking",
+                state.turn_id,
+                "state",
+                f"Balance={state.balance:.2f} | Inventory={state.inventory}",
+            )
 
-        task = (
-            f"Current inventory: {json.dumps(state.inventory)}\n"
-            f"Ingredients we need (shortfall): {json.dumps(needed)}\n"
-            f"Our recipes: {json.dumps(state.recipes)}\n"
-            f"Other restaurants in the game: {json.dumps(state.restaurants)}\n"
-            f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
-            "Decide whether to negotiate with any other restaurant. "
-            "If we need ingredients and others might have surplus (based on their menus), "
-            "send a targeted message proposing a trade. "
-            "Keep messages short and business-like. "
-            "Only send messages if there is a clear strategic benefit."
-        )
+            # Compute what we need
+            needed: dict[str, int] = {}
+            for recipe in state.recipes:
+                for ing, qty in recipe.get("ingredients", {}).items():
+                    have = state.inventory.get(ing, 0)
+                    shortfall = max(0, qty - have)
+                    if shortfall > 0:
+                        needed[ing] = max(needed.get(ing, 0), shortfall)
 
-        try:
-            await self.a_run(task)
-        except Exception as exc:
-            log_error("speaking", state.turn_id, "agent", f"SpeakingAgent failed: {exc}")
+            task = (
+                f"Current inventory: {json.dumps(state.inventory)}\n"
+                f"Ingredients we need (shortfall): {json.dumps(needed)}\n"
+                f"Our recipes: {json.dumps(state.recipes)}\n"
+                f"Other restaurants in the game: {json.dumps(state.restaurants)}\n"
+                f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
+                "Decide whether to negotiate with any other restaurant. "
+                "If we need ingredients and others might have surplus (based on their menus), "
+                "send a targeted message proposing a trade. "
+                "Keep messages short and business-like. "
+                "Only send messages if there is a clear strategic benefit."
+            )
+
+            try:
+                await self.a_run(task)
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("speaking", state.turn_id, "agent", f"SpeakingAgent failed: {exc}")

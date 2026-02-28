@@ -6,6 +6,7 @@ Bootstraps config, creates all components, and starts the SSE event loop.
 import asyncio
 
 import config
+from datapizza.tracing import DatapizzaMonitoringInstrumentor
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.sse_listener import SSEListener
@@ -13,6 +14,14 @@ from infrastructure.http_client import HttpClient
 from infrastructure.mcp_client import MCPClient
 from agents.manager import AgentManager
 from utils.logger import log
+
+instrumentor = DatapizzaMonitoringInstrumentor(
+    api_key=config.DATAPIZZA_MONITORING_API_KEY,
+    project_id=config.DATAPIZZA_MONITORING_PROJECT_ID,
+    endpoint=config.DATAPIZZA_MONITORING_OTLP_ENDPOINT,
+)
+instrumentor.instrument()
+tracer = instrumentor.get_tracer(__name__)
 
 
 async def main() -> None:
@@ -52,6 +61,7 @@ async def main() -> None:
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        with tracer.start_as_current_span("hackapizza_session"):
+            asyncio.run(main())
     except KeyboardInterrupt:
         print("\n[main] Interrupted by user. Goodbye!")

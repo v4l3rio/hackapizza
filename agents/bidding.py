@@ -10,6 +10,9 @@ from state.memory import StrategyMemory
 from infrastructure.mcp_client import MCPClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
+from utils.tracing import get_tracer
+
+tracer = get_tracer(__name__)
 from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER
 
 
@@ -77,39 +80,44 @@ class BiddingAgent(Agent):
         self._memory = memory
         self._mcp = mcp
 
-        log("closed_bid", state.turn_id, "agent", "BiddingAgent started")
-        log(
-            "closed_bid",
-            state.turn_id,
-            "state",
-            f"Balance={state.balance:.2f} | Inventory={state.inventory}",
-        )
+        with tracer.start_as_current_span("bidding_agent.execute") as span:
+            span.set_attribute("turn_id", state.turn_id)
+            span.set_attribute("balance", state.balance)
 
-        budget = state.balance * MAX_BID_BALANCE_FRACTION
-        needed = self._compute_needed(state)
+            log("closed_bid", state.turn_id, "agent", "BiddingAgent started")
+            log(
+                "closed_bid",
+                state.turn_id,
+                "state",
+                f"Balance={state.balance:.2f} | Inventory={state.inventory}",
+            )
 
-        if not needed:
-            log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
-            return
+            budget = state.balance * MAX_BID_BALANCE_FRACTION
+            needed = self._compute_needed(state)
 
-        task = (
-            f"Current balance: {state.balance:.2f}\n"
-            f"Budget cap ({int(MAX_BID_BALANCE_FRACTION * 100)}% of balance): {budget:.2f}\n"
-            f"Current inventory: {json.dumps(state.inventory)}\n"
-            f"All recipes: {json.dumps(state.recipes)}\n"
-            f"Pre-computed needed ingredients (max shortfall per ingredient): {json.dumps(needed)}\n"
-            f"Last known clearing prices: {json.dumps(memory.clearing_prices)}\n"
-            f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if available, "
-            f"else flat default = {DEFAULT_BID_FLAT}.\n"
-            f"Total bid spend MUST NOT exceed {budget:.2f}.\n\n"
-            "Compute the best bids for each needed ingredient, respect the budget cap, "
-            "then call submit_bids once with the complete JSON array."
-        )
+            if not needed:
+                log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
+                return
 
-        try:
-            await self.a_run(task, tool_choice="required_first")
-        except Exception as exc:
-            log_error("closed_bid", state.turn_id, "agent", f"BiddingAgent failed: {exc}")
+            task = (
+                f"Current balance: {state.balance:.2f}\n"
+                f"Budget cap ({int(MAX_BID_BALANCE_FRACTION * 100)}% of balance): {budget:.2f}\n"
+                f"Current inventory: {json.dumps(state.inventory)}\n"
+                f"All recipes: {json.dumps(state.recipes)}\n"
+                f"Pre-computed needed ingredients (max shortfall per ingredient): {json.dumps(needed)}\n"
+                f"Last known clearing prices: {json.dumps(memory.clearing_prices)}\n"
+                f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if available, "
+                f"else flat default = {DEFAULT_BID_FLAT}.\n"
+                f"Total bid spend MUST NOT exceed {budget:.2f}.\n\n"
+                "Compute the best bids for each needed ingredient, respect the budget cap, "
+                "then call submit_bids once with the complete JSON array."
+            )
+
+            try:
+                await self.a_run(task, tool_choice="required_first")
+            except Exception as exc:
+                span.record_exception(exc)
+                log_error("closed_bid", state.turn_id, "agent", f"BiddingAgent failed: {exc}")
 
     # ------------------------------------------------------------------ helpers
 
