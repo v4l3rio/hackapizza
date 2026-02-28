@@ -23,7 +23,7 @@ class ServingAgent(Agent):
 
     Registers SSE handlers for:
       - client_spawned: LLM picks the best matching dish (respecting intolerances) and prepares it.
-      - preparation_complete: directly serves the ready dish to the waiting client.
+      - preparation_complete: serves the ready dish to the waiting client.
     """
 
     name = "serving_agent"
@@ -45,18 +45,10 @@ class ServingAgent(Agent):
         self._state: GameState | None = None
         self._mcp = mcp
         self._http: HttpClient | None = None
-        self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_id, ...]
+        self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_name, ...]
         super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=3)
 
-    # ------------------------------------------------------------------ phase entry
-
-    def register(
-        self,
-        sse: SSEListener,
-        state: GameState,
-        mcp: MCPClient,
-        http: HttpClient,
-    ) -> None:
+    def register(self, sse: SSEListener, state: GameState, mcp: MCPClient, http: HttpClient) -> None:
         """Register SSE handlers. Call once at startup."""
         self._state = state
         self._mcp = mcp
@@ -65,192 +57,108 @@ class ServingAgent(Agent):
         sse.on("preparation_complete", self._on_preparation_complete)
 
     async def execute(self, state: GameState) -> None:
-        """Called when the serving phase starts — restaurant already opened in waiting phase."""
+        """Called when the serving phase starts."""
         self._state = state
         self._pending_orders.clear()
-
         with tracer.start_as_current_span("serving_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
             log("serving", state.turn_id, "agent", "ServingAgent started — restaurant already open")
-            log(
-                "serving",
-                state.turn_id,
-                "state",
-                f"Balance={state.balance:.2f} | Inventory={state.inventory}",
-            )
+            log("serving", state.turn_id, "state", f"Balance={state.balance:.2f} | Inventory={state.inventory}")
 
     # ------------------------------------------------------------------ SSE handlers
 
     async def _on_client_spawned(self, data: dict[str, Any]) -> None:
-        if self._state is None or self._mcp is None:
+        if self._state is None or self._state.phase != "serving":
             return
 
-        client_id = str(data.get("clientName") or data.get("client_id") or data.get("id", "unknown"))
+        client_name = str(data.get("clientName") or data.get("client_id") or data.get("id", "unknown"))
         order_text = str(data.get("orderText") or data.get("order") or data.get("text", ""))
         intolerances = data.get("intolerances") or data.get("allergies") or []
 
-        log("serving", self._state.turn_id, "client", f"Client {client_id} wants: '{order_text}'")
+        log("serving", self._state.turn_id, "client", f"Client {client_name} wants: '{order_text}'")
+
+        menu_names = {item.get("name") for item in self._state.menu_items}
+        cookable = self._state.cookable_dishes()
+        menu_recipes = [r for r in cookable if r.get("name") in menu_names]
+
+        task = (
+            f"Il cliente '{client_name}' è arrivato.\n"
+            f"Il suo ordine: \"{order_text}\"\n"
+            f"Le sue intolleranze/allergie alimentari: {json.dumps(intolerances)}\n\n"
+            "Identifica l'archetipo del cliente dal suo nome e dal testo dell'ordine:\n"
+            "  - Galactic Explorer → prezzo più basso + meno ingredienti (preparazione veloce)\n"
+            "  - Astrobaron → prezzo più alto + meno ingredienti (preparazione veloce)\n"
+            "  - Space Sage → ingredienti più rari/prestigiosi\n"
+            "  - Orbital Family → miglior rapporto prezzo-qualità\n\n"
+            f"Menu attuale (nome, prezzo): {json.dumps(self._state.menu_items)}\n"
+            f"Ricette con ingredienti (per controllo intolleranze): {json.dumps(menu_recipes)}\n\n"
+            "Seleziona il piatto che corrisponde meglio all'archetipo evitando ingredienti a cui il cliente è intollerante. "
+            "Se disponibile, chiama prepare_dish con il nome esatto. Se nessun piatto sicuro è disponibile, non fare nulla."
+        )
 
         with tracer.start_as_current_span("serving_agent.client_spawned") as span:
-            span.set_attribute("client_id", client_id)
+            span.set_attribute("client_name", client_name)
             span.set_attribute("turn_id", self._state.turn_id)
-
-            # Filter recipes to only those on the menu AND cookable (have all ingredients in stock)
-            menu_names = {item.get("name") for item in self._state.menu_items}
-            cookable = self._state.cookable_dishes()
-            menu_recipes = [r for r in cookable if r.get("name") in menu_names]
-
-            # Let LLM pick best matching dish and call prepare_dish
-            task = (
-                f"Il cliente '{client_id}' è arrivato.\n"
-                f"Il suo ordine: \"{order_text}\"\n"
-                f"Le sue intolleranze/allergie alimentari: {json.dumps(intolerances)}\n\n"
-                "Identifica l'archetipo del cliente dal suo nome e dal testo dell'ordine:\n"
-                "  - Galactic Explorer → prezzo più basso + meno ingredienti (preparazione veloce)\n"
-                "  - Astrobaron → prezzo più alto + meno ingredienti (preparazione veloce)\n"
-                "  - Space Sage → ingredienti più rari/prestigiosi\n"
-                "  - Orbital Family → miglior rapporto prezzo-qualità\n\n"
-                f"Menu attuale (nome, prezzo, descrizione): {json.dumps(self._state.menu_items)}\n"
-                f"Ricette con ingredienti (per controllo intolleranze): {json.dumps(menu_recipes)}\n\n"
-                "Seleziona il piatto del menu che corrisponde meglio usando i criteri dell'archetipo sopra. "
-                "IMPORTANTE: escludi qualsiasi piatto contenente un ingrediente a cui il cliente è intollerante. "
-                "Se c'è una buona corrispondenza, chiama prepare_dish con il nome esatto del piatto. "
-                "Se nessun piatto sicuro è disponibile, non fare nulla."
-            )
-
             try:
                 result = await self.a_run(task)
-                # Record which dish we're preparing for this client
                 if result:
-                    for tool_call in result.tools_used:
-                        if tool_call.name == "prepare_dish":
-                            dish_name = tool_call.arguments.get("dish_name", "")
-                            if dish_name:
-                                self._pending_orders.setdefault(dish_name, []).append(client_id)
-                                log(
-                                    "serving",
-                                    self._state.turn_id,
-                                    "kitchen",
-                                    f"Preparing '{dish_name}' for client {client_id}",
-                                )
+                    for tc in result.tools_used:
+                        if tc.name == "prepare_dish":
+                            dish = tc.arguments.get("dish_name", "")
+                            if dish:
+                                self._pending_orders.setdefault(dish, []).append(client_name)
+                                log("serving", self._state.turn_id, "kitchen", f"Preparing '{dish}' for {client_name}")
             except Exception as exc:
                 span.record_exception(exc)
                 log_error("serving", self._state.turn_id, "client", f"_on_client_spawned failed: {exc}")
 
     async def _on_preparation_complete(self, data: dict[str, Any]) -> None:
-        if self._state is None or self._mcp is None:
+        if self._state is None or self._state.phase != "serving":
             return
 
-        dish_name = data.get("dish") or data.get("name", "")
+        dish_name = data.get("dish")
         log("serving", self._state.turn_id, "kitchen", f"Preparation complete: '{dish_name}'")
 
-        # _pending_orders maps dish_name -> [customer_name, ...] (customer.name, not id)
-        customers = self._pending_orders.get(dish_name, [])
-
-        target_customer_name: str = ""
-        if customers:
-            target_customer_name = customers.pop(0)
-            if not customers:
-                del self._pending_orders[dish_name]
-
-            # Resolve customer name -> customerId via /meals
-            try:
-                target_customer_id = await self._lookup_customer_id_from_meals(target_customer_name)
-            except Exception as exc:
-                log_error(
-                    "serving",
-                    self._state.turn_id,
-                    "meal_lookup",
-                    f"Failed to lookup customerId for '{target_customer_name}': {exc}",
-                )
-                return
-        else:
-            # Dish name mismatch between prepare_dish call and preparation_complete event —
-            # fall back to /meals to find the first unserved customer in this turn.
-            log(
-                "serving",
-                self._state.turn_id,
-                "kitchen",
-                f"No pending order found for '{dish_name}' — falling back to /meals lookup",
-            )
-            try:
-                target_customer_id = await self._lookup_any_unserved_customer()
-            except Exception as exc:
-                log_error(
-                    "serving",
-                    self._state.turn_id,
-                    "meal_lookup",
-                    f"Fallback lookup failed for '{dish_name}': {exc}",
-                )
-                return
+        pending = self._pending_orders.get(dish_name, [])
+        client_name: str | None = pending.pop(0) if pending else None
+        if not pending and dish_name in self._pending_orders:
+            del self._pending_orders[dish_name]
 
         try:
-            result = await self._mcp.call_tool(
-                "serve_dish",
-                {"dish_name": dish_name, "client_id": str(target_customer_id)},
-            )
-            log(
-                "serving",
-                self._state.turn_id,
-                "serve",
-                f"Served '{dish_name}' to customer {target_customer_id} ('{target_customer_name}'): {result}",
-            )
+            customer_id = await self._resolve_customer_id(client_name)
+            await self._mcp.call_tool("serve_dish", {"dish_name": dish_name, "client_id": str(customer_id)})
+            log("serving", self._state.turn_id, "serve", f"Served '{dish_name}' to customer {customer_id} ('{client_name}')")
         except Exception as exc:
-            log_error(
-                "serving",
-                self._state.turn_id,
-                "serve",
-                f"serve_dish failed for customer {target_customer_id} ('{target_customer_name}'): {exc}",
-            )
+            log_error("serving", self._state.turn_id, "serve", f"serve_dish failed for '{dish_name}': {exc}")
 
-    async def _lookup_any_unserved_customer(self) -> int:
-        if self._state is None:
-            raise RuntimeError("Missing state")
+    async def _resolve_customer_id(self, client_name: str | None) -> int:
+        """Resolve client name to numeric customer ID via /meals.
+
+        If name is provided, matches by name first. Falls back to first unserved customer.
+        """
+        if self._state is None or self._http is None:
+            raise RuntimeError("ServingAgent not registered")
 
         turn_id = self._state.turn_id
-        restaurant_id = self._http.team_id
+        meals = await self._http.get_meals(turn_id=turn_id, restaurant_id=self._http.team_id)
+        active = [
+            m for m in meals
+            if not m.get("executed")
+            and (m.get("status") or "").lower() not in ("cancelled", "canceled")
+            and m.get("servedDishId") is None
+        ]
 
-        meals = await self._http.get_meals(turn_id=turn_id, restaurant_id=restaurant_id)
+        if client_name:
+            key = client_name.strip().lower()
+            for m in active:
+                if ((m.get("customer") or {}).get("name") or "").strip().lower() == key:
+                    return m["customerId"]
+            log("serving", turn_id, "meal_lookup", f"Name '{client_name}' not found — falling back to first unserved")
 
-        for m in meals:
-            if (
-                not m.get("executed", False)
-                and (m.get("status") or "").lower() not in ("cancelled", "canceled")
-                and m.get("servedDishId") is None
-            ):
-                cid = m.get("customerId")
-                if cid is not None:
-                    name = ((m.get("customer") or {}).get("name") or "")
-                    log("serving", turn_id, "meal_lookup", f"Fallback: serving customer '{name}' (id={cid})")
-                    return int(cid)
+        if active:
+            m = active[0]
+            name = ((m.get("customer") or {}).get("name") or "")
+            log("serving", turn_id, "meal_lookup", f"Serving first unserved customer '{name}' (id={m['customerId']})")
+            return m["customerId"]
 
         raise LookupError(f"No unserved customer found in /meals (turn_id={turn_id})")
-
-    async def _lookup_customer_id_from_meals(self, customer_name: str) -> int:
-        if self._state is None:
-            raise RuntimeError("Missing state")
-
-        turn_id = self._state.turn_id
-        restaurant_id = self._http.team_id
-
-        meals = await self._http.get_meals(turn_id=turn_id, restaurant_id=restaurant_id)
-
-        key = customer_name.strip().lower()
-
-        # Prefer non-executed, non-cancelled meals
-        preferred = [
-            m for m in meals
-            if not m.get("executed", False)
-            and (m.get("status") or "").lower() not in ("cancelled", "canceled")
-        ]
-        haystack = preferred or meals
-
-        for m in haystack:
-            name = ((m.get("customer") or {}).get("name") or "").strip().lower()
-            if name == key:
-                cid = m.get("customerId")
-                if cid is None:
-                    raise RuntimeError(f"Found '{customer_name}' but customerId missing in meal id={m.get('id')}")
-                return int(cid)
-
-        raise LookupError(f"customerId not found for customer.name='{customer_name}' (turn_id={turn_id})")
