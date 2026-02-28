@@ -2,186 +2,496 @@ ingredients:
   Carne di Balena spaziale:
     frequency: 65
     avg_prestige: 63.75
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9071.63
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.15
+    global_avg_ingredient_count: 6.86
   Carne di Kraken:
     frequency: 62
     avg_prestige: 63.02
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8849.08
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.24
+    global_avg_ingredient_count: 6.86
   Pane di Luce:
     frequency: 61
     avg_prestige: 59.38
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9221.43
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.59
+    global_avg_ingredient_count: 6.86
   Teste di Idra:
     frequency: 56
     avg_prestige: 66.25
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9026.27
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.25
+    global_avg_ingredient_count: 6.86
   Fibra di Sintetex:
     frequency: 54
     avg_prestige: 64.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9264.19
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.69
+    global_avg_ingredient_count: 6.86
   Carne di Drago:
     frequency: 54
     avg_prestige: 60.83
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9363.59
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.46
+    global_avg_ingredient_count: 6.86
   Uova di Fenice:
     frequency: 53
     avg_prestige: 65.72
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9447.34
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.51
+    global_avg_ingredient_count: 6.86
   Pane degli Abissi:
     frequency: 48
     avg_prestige: 63.12
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9093.56
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.21
+    global_avg_ingredient_count: 6.86
   Carne di Xenodonte:
     frequency: 47
     avg_prestige: 63.38
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8197.4
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.0
+    global_avg_ingredient_count: 6.86
   Amido di Stellarion:
     frequency: 47
     avg_prestige: 63.43
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9029.47
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.6
+    global_avg_ingredient_count: 6.86
   Riso di Cassandra:
     frequency: 47
     avg_prestige: 65.85
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9085.74
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.34
+    global_avg_ingredient_count: 6.86
   Carne di Mucca:
     frequency: 46
     avg_prestige: 65.63
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9156.93
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.76
+    global_avg_ingredient_count: 6.86
   Farina di Nettuno:
     frequency: 46
     avg_prestige: 62.41
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9786.33
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.63
+    global_avg_ingredient_count: 6.86
   Lattuga Namecciana:
     frequency: 46
     avg_prestige: 59.76
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9426.91
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.02
+    global_avg_ingredient_count: 6.86
   Granuli di Nebbia Arcobaleno:
     frequency: 45
     avg_prestige: 64.64
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8958.96
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.24
+    global_avg_ingredient_count: 6.86
   Colonia di Mycoflora:
     frequency: 45
     avg_prestige: 64.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8751.04
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.22
+    global_avg_ingredient_count: 6.86
   Radici di Singolarità:
     frequency: 45
     avg_prestige: 62.78
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9882.93
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.78
+    global_avg_ingredient_count: 6.86
   Baccacedro:
     frequency: 44
     avg_prestige: 60.77
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8460.3
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.36
+    global_avg_ingredient_count: 6.86
   Biscotti della Galassia:
     frequency: 43
     avg_prestige: 64.91
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9869.44
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.3
+    global_avg_ingredient_count: 6.86
   Spaghi del Sole:
     frequency: 43
     avg_prestige: 64.95
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9431.26
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.81
+    global_avg_ingredient_count: 6.86
   Foglie di Nebulosa:
     frequency: 42
     avg_prestige: 62.14
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9156.83
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.69
+    global_avg_ingredient_count: 6.86
   Radici di Gravità:
     frequency: 39
     avg_prestige: 62.13
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8844.1
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.33
+    global_avg_ingredient_count: 6.86
   Nettare di Sirena:
     frequency: 39
     avg_prestige: 59.72
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8995.69
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.77
+    global_avg_ingredient_count: 6.86
   Fusilli del Vento:
     frequency: 39
     avg_prestige: 61.92
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8786.95
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.28
+    global_avg_ingredient_count: 6.86
   Gnocchi del Crepuscolo:
     frequency: 38
     avg_prestige: 67.16
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8790.29
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.21
+    global_avg_ingredient_count: 6.86
   Lacrime di Unicorno:
     frequency: 36
     avg_prestige: 61.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8286.75
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.42
+    global_avg_ingredient_count: 6.86
   Foglie di Mandragora:
     frequency: 34
     avg_prestige: 61.35
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8916.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.68
+    global_avg_ingredient_count: 6.86
   Muffa Lunare:
     frequency: 32
     avg_prestige: 64.53
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8820.34
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.06
+    global_avg_ingredient_count: 6.86
   Alghe Bioluminescenti:
     frequency: 31
     avg_prestige: 60.77
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8606.1
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.26
+    global_avg_ingredient_count: 6.86
   Essenza di Tachioni:
     frequency: 31
     avg_prestige: 68.16
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8110.81
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.87
+    global_avg_ingredient_count: 6.86
   Liane di Plasmodio:
     frequency: 31
     avg_prestige: 62.26
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9262.61
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.45
+    global_avg_ingredient_count: 6.86
   Funghi dell’Etere:
     frequency: 29
     avg_prestige: 59.59
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9209.83
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.76
+    global_avg_ingredient_count: 6.86
   Funghi Orbitali:
     frequency: 29
     avg_prestige: 61.52
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9555.55
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.17
+    global_avg_ingredient_count: 6.86
   Essenza di Speziaria:
     frequency: 29
     avg_prestige: 59.07
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9257.59
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.24
+    global_avg_ingredient_count: 6.86
   Shard di Materia Oscura:
     frequency: 29
     avg_prestige: 66.31
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8625.31
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.79
+    global_avg_ingredient_count: 6.86
   Essenza di Vuoto:
     frequency: 29
     avg_prestige: 63.41
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 7964.07
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.17
+    global_avg_ingredient_count: 6.86
   Lacrime di Andromeda:
     frequency: 28
     avg_prestige: 70.25
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9660.93
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.46
+    global_avg_ingredient_count: 6.86
   Nduja Fritta Tanto:
     frequency: 28
     avg_prestige: 64.96
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9759.75
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.14
+    global_avg_ingredient_count: 6.86
   Petali di Eco:
     frequency: 28
     avg_prestige: 64.75
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8766.29
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.11
+    global_avg_ingredient_count: 6.86
   Polvere di Stelle:
     frequency: 28
     avg_prestige: 67.14
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9636.86
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.21
+    global_avg_ingredient_count: 6.86
   Sale Temporale:
     frequency: 27
     avg_prestige: 66.19
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8802.59
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.07
+    global_avg_ingredient_count: 6.86
   Vero Ghiaccio:
     frequency: 27
     avg_prestige: 61.44
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8770.04
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.26
+    global_avg_ingredient_count: 6.86
   Polvere di Pulsar:
     frequency: 26
     avg_prestige: 61.04
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8115.62
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.81
+    global_avg_ingredient_count: 6.86
   Polvere di Crononite:
     frequency: 26
     avg_prestige: 71.81
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 7897.81
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.15
+    global_avg_ingredient_count: 6.86
   Salsa Szechuan:
     frequency: 26
     avg_prestige: 54.46
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9790.69
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.0
+    global_avg_ingredient_count: 6.86
   Plasma Vitale:
     frequency: 25
     avg_prestige: 62.56
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8974.76
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.12
+    global_avg_ingredient_count: 6.86
   Frammenti di Supernova:
     frequency: 25
     avg_prestige: 64.84
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9812.16
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.56
+    global_avg_ingredient_count: 6.86
   Shard di Prisma Stellare:
     frequency: 24
     avg_prestige: 70.88
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8847.88
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.08
+    global_avg_ingredient_count: 6.86
   Erba Pipa:
     frequency: 23
     avg_prestige: 62.74
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 8450.91
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.39
+    global_avg_ingredient_count: 6.86
   Cristalli di Memoria:
     frequency: 23
     avg_prestige: 62.26
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 10151.22
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.65
+    global_avg_ingredient_count: 6.86
   Cristalli di Nebulite:
     frequency: 22
     avg_prestige: 56.05
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9194.5
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.18
+    global_avg_ingredient_count: 6.86
   Frutti del Diavolo:
     frequency: 21
     avg_prestige: 68.62
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 10346.67
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 6.81
+    global_avg_ingredient_count: 6.86
   Spore Quantiche:
     frequency: 19
     avg_prestige: 66.42
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 9479.16
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.0
+    global_avg_ingredient_count: 6.86
   Spezie Melange:
     frequency: 1
     avg_prestige: 79.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 5014.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 9.0
+    global_avg_ingredient_count: 6.86
   Cioccorane:
     frequency: 1
     avg_prestige: 94.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 5056.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 10.0
+    global_avg_ingredient_count: 6.86
   Burrobirra:
     frequency: 1
     avg_prestige: 80.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 5098.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.0
+    global_avg_ingredient_count: 6.86
   Slurm:
     frequency: 1
     avg_prestige: 81.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 5140.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 7.0
+    global_avg_ingredient_count: 6.86
   Sashimi di Magikarp:
     frequency: 1
     avg_prestige: 59.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 14203.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 8.0
+    global_avg_ingredient_count: 6.86
   Pickle Rick Croccante:
     frequency: 1
     avg_prestige: 70.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 14245.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 9.0
+    global_avg_ingredient_count: 6.86
   Chocobo Wings:
     frequency: 1
     avg_prestige: 59.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 14287.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 8.0
+    global_avg_ingredient_count: 6.86
   Latte+:
     frequency: 1
     avg_prestige: 55.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 14329.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 9.0
+    global_avg_ingredient_count: 6.86
   Ravioli al Vaporeon:
     frequency: 1
     avg_prestige: 83.0
+    global_avg_prestige: 62.77
+    avg_preparation_time_ms: 14371.0
+    global_avg_preparation_time_ms: 9000.0
+    avg_ingredient_count: 10.0
+    global_avg_ingredient_count: 6.86
