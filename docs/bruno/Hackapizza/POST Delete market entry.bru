@@ -1,0 +1,35 @@
+meta {
+  name: POST Delete market entry
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/mcp
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "delete_market_entry",
+      "arguments": {
+        "market_entry_id": 0
+      }
+    },
+    "id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

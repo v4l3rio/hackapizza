@@ -1,0 +1,36 @@
+meta {
+  name: POST Serve dish
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/mcp
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "serve_dish",
+      "arguments": {
+        "dish_name": "Sinfonia Cosmica di Proteine Interstellari",
+        "client_id": "giorgio"
+      }
+    },
+    "id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
