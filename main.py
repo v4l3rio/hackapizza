@@ -83,8 +83,7 @@ if __name__ == "__main__":
         if args.only_sse:
             asyncio.run(sse_only())
         else:
-            with tracer.start_as_current_span("hackapizza_session"):
-                asyncio.run(main())
+            asyncio.run(main())
     except KeyboardInterrupt:
         print("\n[main] Interrupted by user. Goodbye!")
     finally:
