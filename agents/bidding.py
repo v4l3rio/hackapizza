@@ -73,10 +73,10 @@ class BiddingAgent:
             # so we never blindly over-commit with the flat default.
             if not memory.clearing_prices:
                 total_units = sum(needed.values())
-                effective_flat = min(
+                effective_flat = max(1, int(min(
                     DEFAULT_BID_FLAT,
                     budget / total_units if total_units > 0 else DEFAULT_BID_FLAT,
-                )
+                )))
                 log(
                     "closed_bid",
                     state.turn_id,
@@ -98,7 +98,7 @@ class BiddingAgent:
                     boost = 1.0 + 0.25 * importance
                 else:
                     boost = 1.0
-                bid_price = round(base_bid * boost, 2)
+                bid_price = max(1, int(round(base_bid * boost)))
                 bids.append({"ingredient": ing, "quantity": qty, "bid": bid_price})
 
             # Safety: proportionally scale down if total still exceeds budget
@@ -109,11 +109,11 @@ class BiddingAgent:
                     {
                         "ingredient": b["ingredient"],
                         "quantity": b["quantity"],
-                        "bid": round(b["bid"] * scale, 2),
+                        "bid": max(1, int(round(b["bid"] * scale))),
                     }
                     for b in bids
                 ]
-                total_spend = budget
+                total_spend = sum(b["bid"] * b["quantity"] for b in bids)
 
             log(
                 "closed_bid",
