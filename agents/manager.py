@@ -113,6 +113,11 @@ class AgentManager:
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory, self.mcp)
                     await self._market.execute_waiting(self.state, self.memory, self.mcp)
+                    try:
+                        await self.mcp.update_restaurant_is_open(True)
+                        log("manager", self.state.turn_id, "phase", "Restaurant opened")
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
                     await self._serving.execute(self.state, self.memory, self.mcp)
