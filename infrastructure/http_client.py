@@ -1,0 +1,78 @@
+from __future__ import annotations
+
+from typing import Any
+
+import aiohttp
+
+from utils.logger import log, log_error
+
+
+class HttpClient:
+    def __init__(self, base_url: str, team_id: int, api_key: str) -> None:
+        self.base_url = base_url.rstrip("/")
+        self.team_id = team_id
+        self._headers = {
+            "x-api-key": api_key,
+            "Content-Type": "application/json",
+        }
+
+    async def _get(self, path: str) -> Any:
+        url = f"{self.base_url}{path}"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=self._headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+
+    # --- Endpoints ---
+
+    async def get_recipes(self) -> list[dict[str, Any]]:
+        data = await self._get(f"/recipes")
+        return data if isinstance(data, list) else data.get("recipes", [])
+
+    async def get_restaurants(self) -> list[dict[str, Any]]:
+        data = await self._get(f"/restaurants")
+        return data if isinstance(data, list) else data.get("restaurants", [])
+
+    async def get_meals(self) -> list[dict[str, Any]]:
+        """Active meals / current orders."""
+        data = await self._get(f"/meals")
+        return data if isinstance(data, list) else data.get("meals", [])
+
+    async def get_bid_history(self) -> list[dict[str, Any]]:
+        data = await self._get(f"/bid_history")
+        return data if isinstance(data, list) else data.get("bid_history", [])
+
+    async def get_market_entries(self) -> list[dict[str, Any]]:
+        data = await self._get(f"/market/entries")
+        return data if isinstance(data, list) else data.get("entries", [])
+
+    async def get_restaurant_info(self) -> dict[str, Any]:
+        """Fetch own restaurant info including balance and inventory."""
+        return await self._get(f"/restaurants/{self.team_id}")
+
+    async def get_all(self) -> dict[str, Any]:
+        """Fetch all relevant state in parallel."""
+        import asyncio
+        results = await asyncio.gather(
+            self.get_restaurant_info(),
+            self.get_recipes(),
+            self.get_meals(),
+            self.get_restaurants(),
+            return_exceptions=True,
+        )
+
+        info, recipes, meals, restaurants = results
+
+        out: dict[str, Any] = {}
+
+        if isinstance(info, dict):
+            out["balance"] = info.get("balance", 0.0)
+            out["inventory"] = info.get("inventory", {})
+        else:
+            log_error("HTTP", "?", "get_all", f"get_restaurant_info failed: {info}")
+
+        out["recipes"] = recipes if isinstance(recipes, list) else []
+        out["active_meals"] = meals if isinstance(meals, list) else []
+        out["restaurants"] = restaurants if isinstance(restaurants, list) else []
+
+        return out
