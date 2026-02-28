@@ -75,7 +75,7 @@ async def main() -> None:
     await sse.listen()
 
 
-MOCK_PORT = 8765
+MOCK_PORT = 8764
 
 
 async def test_mode(speed: float) -> None:

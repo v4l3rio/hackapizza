@@ -12,7 +12,6 @@ def _ensure_cook_server_venv():
         cwd=COOK_SERVER_DIR,
         check=True
     )
-    # Ask poetry directly where the venv is
     result = subprocess.run(
         ["poetry", "env", "info", "--executable"],
         cwd=COOK_SERVER_DIR,
@@ -24,6 +23,9 @@ def _ensure_cook_server_venv():
     print(f"Using cook_server python: {python_path}")
     return python_path
 
+def _main_args():
+    return sys.argv[1:]
+
 def run_with_webapp():
     cook_python = _ensure_cook_server_venv()
     server = subprocess.Popen(
@@ -31,7 +33,7 @@ def run_with_webapp():
         cwd=COOK_SERVER_DIR
     )
     try:
-        subprocess.run([sys.executable, "main.py"], check=True)
+        subprocess.run([sys.executable, "main.py"] + _main_args(), check=True)
     finally:
         server.terminate()
 
@@ -42,10 +44,10 @@ def run_webapp_only():
         cwd=COOK_SERVER_DIR
     )
     try:
-        server.wait()  # block until process exits or Ctrl+C
+        server.wait()
     except KeyboardInterrupt:
         print("\nShutting down webapp...")
         server.terminate()
 
 def run_without_webapp():
-    subprocess.run([sys.executable, "main.py"], check=True)
+    subprocess.run([sys.executable, "main.py"] + _main_args(), check=True)
