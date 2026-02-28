@@ -104,14 +104,14 @@ class MCPClient:
         """Start preparing a dish. Triggers 'preparation_complete' SSE when done."""
         return await self._call_tool(
             "prepare_dish",
-            {"name": name},
+            {"dish_name": name},
         )
 
     async def serve_dish(self, name: str, client_id: str) -> Any:
         """Serve a prepared dish to a client."""
         return await self._call_tool(
             "serve_dish",
-            {"name": name, "client_id": client_id},
+            {"dish_name": name, "client_id": client_id},
         )
 
     # --- Restaurant ---
