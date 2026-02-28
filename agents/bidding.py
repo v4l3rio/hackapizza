@@ -51,8 +51,8 @@ class BiddingAgent(Agent):
         description=(
             "Submit all ingredient bids for this auction round. "
             "Accepts a JSON array of bid objects, each with keys: "
-            "ingredient (str), quantity (int), price (float). "
-            'Example: [{"ingredient": "flour", "quantity": 5, "price": 55.0}]'
+            "ingredient (str), quantity (int), bid (float). "
+            'Example: [{"ingredient": "flour", "quantity": 5, "bid": 55.0}]'
         ),
     )
     async def submit_bids(self, bids_json: str) -> str:

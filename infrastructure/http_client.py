@@ -33,13 +33,13 @@ class HttpClient:
         data = await self._get(f"/restaurants")
         return data if isinstance(data, list) else data.get("restaurants", [])
 
-    async def get_meals(self) -> list[dict[str, Any]]:
+    async def get_meals(self, turn_id: int = 0) -> list[dict[str, Any]]:
         """Active meals / current orders."""
-        data = await self._get(f"/meals")
+        data = await self._get(f"/meals?turn_id={turn_id}&restaurant_id={self.team_id}")
         return data if isinstance(data, list) else data.get("meals", [])
 
-    async def get_bid_history(self) -> list[dict[str, Any]]:
-        data = await self._get(f"/bid_history")
+    async def get_bid_history(self, turn_id: int = 0) -> list[dict[str, Any]]:
+        data = await self._get(f"/bid_history?turn_id={turn_id}")
         return data if isinstance(data, list) else data.get("bid_history", [])
 
     async def get_market_entries(self) -> list[dict[str, Any]]:
@@ -50,18 +50,24 @@ class HttpClient:
         """Fetch own restaurant info including balance and inventory."""
         return await self._get(f"/restaurant/{self.team_id}")
 
-    async def get_all(self) -> dict[str, Any]:
+    async def get_restaurant_menu(self) -> list[dict[str, Any]]:
+        """Fetch current menu for own restaurant."""
+        data = await self._get(f"/restaurant/{self.team_id}/menu")
+        return data if isinstance(data, list) else data.get("menu", data.get("items", []))
+
+    async def get_all(self, turn_id: int = 0) -> dict[str, Any]:
         """Fetch all relevant state in parallel."""
         import asyncio
         results = await asyncio.gather(
             self.get_restaurant_info(),
             self.get_recipes(),
-            self.get_meals(),
+            self.get_meals(turn_id),
             self.get_restaurants(),
+            self.get_restaurant_menu(),
             return_exceptions=True,
         )
 
-        info, recipes, meals, restaurants = results
+        info, recipes, meals, restaurants, menu = results
 
         out: dict[str, Any] = {}
 
@@ -74,5 +80,6 @@ class HttpClient:
         out["recipes"] = recipes if isinstance(recipes, list) else []
         out["active_meals"] = meals if isinstance(meals, list) else []
         out["restaurants"] = restaurants if isinstance(restaurants, list) else []
+        out["menu_items"] = menu if isinstance(menu, list) else []
 
         return out

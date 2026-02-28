@@ -22,25 +22,39 @@ class MCPClient:
         }
 
     async def _call_tool(self, tool: str, params: dict[str, Any]) -> Any:
-        url = f"{self.mcp_url}/tools/{tool}"
+        url = self.mcp_url
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "tools/call",
+            "params": {
+                "name": tool,
+                "arguments": params,
+            },
+            "id": 1,
+        }
         log("MCP", "?", "call", f"→ {tool}({params})")
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, json=params, headers=self._headers) as resp:
-                body = await resp.json()
+            async with session.post(url, json=payload, headers=self._headers) as resp:
+                response = await resp.json()
                 if not resp.ok:
-                    log_error("MCP", "?", tool, f"HTTP {resp.status}: {body}")
+                    log_error("MCP", "?", tool, f"HTTP {resp.status}: {response}")
                     resp.raise_for_status()
-                log("MCP", "?", "result", f"← {tool}: {body}")
-                return body
+                tool_result = response.get("result", {})
+                if tool_result.get("isError"):
+                    error_text = (tool_result.get("content") or [{}])[0].get("text", "unknown error")
+                    log_error("MCP", "?", tool, f"Tool error: {error_text}")
+                    raise RuntimeError(f"MCP tool error ({tool}): {error_text}")
+                log("MCP", "?", "result", f"← {tool}: {tool_result}")
+                return tool_result
 
     # --- Auction ---
 
     async def closed_bid(self, bids: list[dict[str, Any]]) -> Any:
         """
         Submit closed bids for ingredients.
-        bids: list of {"ingredient": str, "quantity": int, "price": float}
+        bids: list of {"ingredient": str, "quantity": int, "bid": float}
         """
-        return await self._call_tool("closed_bid", {"bids": bids, "team_id": self.team_id})
+        return await self._call_tool("closed_bid", {"bids": bids})
 
     # --- Menu ---
 
@@ -49,7 +63,7 @@ class MCPClient:
         Set the restaurant menu.
         items: list of {"name": str, "price": float, "description": str}
         """
-        return await self._call_tool("save_menu", {"items": items, "team_id": self.team_id})
+        return await self._call_tool("save_menu", {"items": items})
 
     # --- Market ---
 
@@ -66,7 +80,6 @@ class MCPClient:
                 "ingredient": ingredient,
                 "quantity": quantity,
                 "price": price,
-                "team_id": self.team_id,
             },
         )
 
@@ -74,14 +87,14 @@ class MCPClient:
         """Buy a market entry by ID."""
         return await self._call_tool(
             "execute_transaction",
-            {"entry_id": entry_id, "team_id": self.team_id},
+            {"entry_id": entry_id},
         )
 
     async def delete_market_entry(self, entry_id: str) -> Any:
         """Remove own market listing."""
         return await self._call_tool(
             "delete_market_entry",
-            {"entry_id": entry_id, "team_id": self.team_id},
+            {"entry_id": entry_id},
         )
 
     # --- Kitchen ---
@@ -90,14 +103,14 @@ class MCPClient:
         """Start preparing a dish. Triggers 'preparation_complete' SSE when done."""
         return await self._call_tool(
             "prepare_dish",
-            {"name": name, "team_id": self.team_id},
+            {"name": name},
         )
 
     async def serve_dish(self, name: str, client_id: str) -> Any:
         """Serve a prepared dish to a client."""
         return await self._call_tool(
             "serve_dish",
-            {"name": name, "client_id": client_id, "team_id": self.team_id},
+            {"name": name, "client_id": client_id},
         )
 
     # --- Restaurant ---
@@ -106,7 +119,7 @@ class MCPClient:
         """Open or close the restaurant."""
         return await self._call_tool(
             "update_restaurant_is_open",
-            {"is_open": is_open, "team_id": self.team_id},
+            {"is_open": is_open},
         )
 
     # --- Communication ---
@@ -115,5 +128,5 @@ class MCPClient:
         """Send a message to another restaurant."""
         return await self._call_tool(
             "send_message",
-            {"recipient_id": recipient_id, "text": text, "team_id": self.team_id},
+            {"recipient_id": recipient_id, "text": text},
         )

@@ -104,7 +104,7 @@ class AgentManager:
                 elif phase == "closed_bid":
                     # Consolidate memory from previous turns before bidding
                     try:
-                        await self.memory.consolidate(self.http)
+                        await self.memory.consolidate(self.http, self.state.turn_id)
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 
@@ -125,7 +125,7 @@ class AgentManager:
                     except Exception:
                         pass
                     try:
-                        await self.memory.consolidate(self.http)
+                        await self.memory.consolidate(self.http, self.state.turn_id)
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Final consolidate failed: {exc}")
 

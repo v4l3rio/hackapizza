@@ -20,7 +20,7 @@ class GameState:
 
     async def refresh_all(self, http: "HttpClient") -> None:
         """Refresh all state from the game server."""
-        results = await http.get_all()
+        results = await http.get_all(self.turn_id)
         self.balance = results.get("balance", self.balance)
         self.inventory = results.get("inventory", self.inventory)
         self.recipes = results.get("recipes", self.recipes)
