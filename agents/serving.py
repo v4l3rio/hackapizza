@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
@@ -68,6 +69,9 @@ class ServingAgent(Agent):
     # ------------------------------------------------------------------ SSE handlers
 
     async def _on_client_spawned(self, data: dict[str, Any]) -> None:
+        asyncio.create_task(self._process_client_spawned(data))
+
+    async def _process_client_spawned(self, data: dict[str, Any]) -> None:
         if self._state is None or self._state.phase != "serving":
             return
 
