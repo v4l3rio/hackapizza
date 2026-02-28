@@ -87,9 +87,13 @@ class SpeakingAgent(Agent):
                 f"Balance={state.balance:.2f} | Inventory={state.inventory}",
             )
 
-            # Compute what we need
+            # Compute shortfall restricted to focus recipes
             needed: dict[str, int] = {}
-            for recipe in state.recipes:
+            recipes = state.recipes
+            if memory.focus_recipes:
+                focus_set = set(memory.focus_recipes)
+                recipes = [r for r in state.recipes if r.get("name") in focus_set]
+            for recipe in recipes:
                 for ing, qty in recipe.get("ingredients", {}).items():
                     have = state.inventory.get(ing, 0)
                     shortfall = max(0, qty - have)
@@ -98,7 +102,8 @@ class SpeakingAgent(Agent):
 
             task = (
                 f"Current inventory: {json.dumps(state.inventory)}\n"
-                f"Ingredients we need (shortfall): {json.dumps(needed)}\n"
+                f"Focus recipes we're targeting: {json.dumps(memory.focus_recipes)}\n"
+                f"Ingredients we need for focus recipes (shortfall): {json.dumps(needed)}\n"
                 f"Other restaurants in the game: {json.dumps(state.restaurants)}\n"
                 f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n\n"
                 "Decide whether to negotiate with any other restaurant. "

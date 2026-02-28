@@ -94,9 +94,9 @@ class MenuAgent(Agent):
                 log("waiting", state.turn_id, "menu", "No cookable dishes — skipping menu update")
                 return
 
-            # Pre-compute costs to guide LLM pricing
+            # Pre-compute costs using real clearing prices if available
             costs = {
-                recipe.get("name", "Unknown"): state.ingredient_cost(recipe)
+                recipe.get("name", "Unknown"): state.ingredient_cost(recipe, memory.clearing_prices or None)
                 for recipe in cookable
             }
 

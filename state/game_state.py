@@ -41,6 +41,9 @@ class GameState:
                 cookable.append(recipe)
         return cookable
 
-    def ingredient_cost(self, recipe: dict[str, Any]) -> float:
-        """Estimate ingredient cost for a recipe (placeholder: 1 unit/ingredient)."""
-        return float(len(recipe.get("ingredients", {})))
+    def ingredient_cost(self, recipe: dict[str, Any], clearing_prices: dict[str, float] | None = None) -> float:
+        """Estimate ingredient cost using clearing prices if available, else 50/unit default."""
+        ingredients = recipe.get("ingredients", {})
+        if clearing_prices:
+            return sum(clearing_prices.get(ing, 50.0) * qty for ing, qty in ingredients.items())
+        return float(len(ingredients)) * 50.0

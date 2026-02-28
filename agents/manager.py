@@ -78,7 +78,8 @@ class AgentManager:
     async def _run_strategy(self) -> None:
         """Run RecipeStrategyAgent to pick focus recipes for this game session."""
         try:
-            strategy = await self._strategy.execute()
+            clearing_prices = self.memory.clearing_prices if self.memory.clearing_prices else None
+            strategy = await self._strategy.execute(clearing_prices=clearing_prices)
             self.memory.focus_recipes = [r["name"] for r in strategy if r.get("name")]
             log("manager", self.state.turn_id, "strategy", f"Focus recipes: {self.memory.focus_recipes}")
         except Exception as exc:

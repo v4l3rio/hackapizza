@@ -13,7 +13,7 @@ from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
-from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER
+from config import DEFAULT_BID_FLAT, MAX_BID_BALANCE_FRACTION, BID_CLEARING_MULTIPLIER, BID_SERVINGS_MULTIPLIER
 
 
 class BiddingAgent(Agent):
@@ -104,7 +104,7 @@ class BiddingAgent(Agent):
                 f"Current balance: {state.balance:.2f}\n"
                 f"Budget cap ({int(MAX_BID_BALANCE_FRACTION * 100)}% of balance): {budget:.2f}\n"
                 f"Focus recipes: {json.dumps(focus_label)}\n"
-                f"Needed ingredients for focus recipes (shortfall per ingredient): {json.dumps(needed)}\n"
+                f"Needed ingredients for focus recipes ({BID_SERVINGS_MULTIPLIER} servings each, shortfall): {json.dumps(needed)}\n"
                 f"Last known clearing prices: {json.dumps(memory.clearing_prices)}\n"
                 f"Bid pricing rule: clearing_price * {BID_CLEARING_MULTIPLIER} if history exists, "
                 f"else flat default = {DEFAULT_BID_FLAT}.\n"
@@ -122,7 +122,7 @@ class BiddingAgent(Agent):
     # ------------------------------------------------------------------ helpers
 
     def _compute_needed(self, state: GameState, focus_recipes: list[str]) -> dict[str, int]:
-        """Find max shortfall per ingredient, restricted to focus recipes if set."""
+        """Find shortfall per ingredient for BID_SERVINGS_MULTIPLIER servings of focus recipes."""
         recipes = state.recipes
         if focus_recipes:
             focus_set = set(focus_recipes)
@@ -132,7 +132,7 @@ class BiddingAgent(Agent):
         for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
                 have = state.inventory.get(ing, 0)
-                shortfall = max(0, qty - have)
+                shortfall = max(0, qty * BID_SERVINGS_MULTIPLIER - have)
                 if shortfall > 0:
                     needed[ing] = max(needed.get(ing, 0), shortfall)
         return needed

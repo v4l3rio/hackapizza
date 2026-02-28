@@ -40,7 +40,7 @@ class ServingAgent(Agent):
         self._state: GameState | None = None
         self._strat: StrategyMemory | None = None
         self._mcp: MCPClient | None = None
-        self._pending_orders: dict[str, dict[str, Any]] = {}  # client_id -> {dish, client_id}
+        self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_id, ...]
         super().__init__(client=get_llm_client(), max_steps=3)
 
     # ------------------------------------------------------------------ tools
@@ -107,6 +107,7 @@ class ServingAgent(Agent):
         self._state = state
         self._strat = memory
         self._mcp = mcp
+        self._pending_orders.clear()
 
         with tracer.start_as_current_span("serving_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
@@ -169,16 +170,14 @@ class ServingAgent(Agent):
                     for tool_call in result.tools_used:
                         if tool_call.name == "prepare_dish":
                             dish_name = tool_call.arguments.get("dish_name", "")
-                            self._pending_orders[client_id] = {
-                                "dish": dish_name,
-                                "client_id": client_id,
-                            }
-                            log(
-                                "serving",
-                                self._state.turn_id,
-                                "kitchen",
-                                f"Preparing '{dish_name}' for client {client_id}",
-                            )
+                            if dish_name:
+                                self._pending_orders.setdefault(dish_name, []).append(client_id)
+                                log(
+                                    "serving",
+                                    self._state.turn_id,
+                                    "kitchen",
+                                    f"Preparing '{dish_name}' for client {client_id}",
+                                )
             except Exception as exc:
                 span.record_exception(exc)
                 log_error("serving", self._state.turn_id, "client", f"_on_client_spawned failed: {exc}")
@@ -190,14 +189,9 @@ class ServingAgent(Agent):
         dish_name = data.get("dish") or data.get("name", "")
         log("serving", self._state.turn_id, "kitchen", f"Preparation complete: '{dish_name}'")
 
-        # Find the client waiting for this dish
-        target_client_id = None
-        for cid, order in list(self._pending_orders.items()):
-            if order["dish"] == dish_name:
-                target_client_id = cid
-                break
-
-        if target_client_id is None:
+        # Find the first client waiting for this dish
+        clients = self._pending_orders.get(dish_name, [])
+        if not clients:
             log(
                 "serving",
                 self._state.turn_id,
@@ -206,7 +200,9 @@ class ServingAgent(Agent):
             )
             return
 
-        self._pending_orders.pop(target_client_id, None)
+        target_client_id = clients.pop(0)
+        if not clients:
+            del self._pending_orders[dish_name]
 
         # Serve directly — this is deterministic, no LLM needed
         try:

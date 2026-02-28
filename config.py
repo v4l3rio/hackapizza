@@ -24,8 +24,9 @@ REGOLO_MODEL: str = "gpt-oss-120b"
 
 # Bidding strategy
 DEFAULT_BID_FLAT: int = 50          # flat bid per ingredient on turn 1
-BID_CLEARING_MULTIPLIER: float = 1.1  # bid = clearing_price * multiplier
+BID_CLEARING_MULTIPLIER: float = 1.15  # bid = clearing_price * multiplier (was 1.1)
 MAX_BID_BALANCE_FRACTION: float = 0.6  # cap: max 60% of balance in bids
+BID_SERVINGS_MULTIPLIER: int = 2   # bid for N servings of each focus recipe per turn
 
 # Menu pricing
 MENU_MARKUP: float = 2.5            # dish price = ingredient cost * markup

@@ -158,7 +158,7 @@ class RecipeStrategyAgent(Agent):
 
     # ------------------------------------------------------------------ entry point
 
-    async def execute(self) -> list[dict[str, Any]]:
+    async def execute(self, clearing_prices: dict[str, float] | None = None) -> list[dict[str, Any]]:
         """
         Run the full strategy-selection loop.
 
@@ -166,11 +166,20 @@ class RecipeStrategyAgent(Agent):
         """
         log("strategy", 0, "agent", "RecipeStrategyAgent started")
 
+        prices_ctx = (
+            f"Known ingredient clearing prices from past turns: {json.dumps(clearing_prices)}\n"
+            "Use these to estimate auction cost per recipe (sum of price * qty for each ingredient).\n"
+            if clearing_prices
+            else "No clearing price history yet (first turn) — assume ~50 per ingredient unit.\n"
+        )
+
         task = (
             "Please analyse our recipe options and decide which 2-4 recipes "
             "we should focus on throughout the competition.\n\n"
-            "Step 1: call fetch_recipes to see what is available.\n"
-            "Step 2: reason about ingredient cost, prep time, and client fit.\n"
+            + prices_ctx
+            + "Step 1: call fetch_recipes to see what is available.\n"
+            "Step 2: for each recipe estimate auction cost (clearing_price * qty per ingredient), "
+            "prep time, and fit for multiple client archetypes.\n"
             "Step 3: call set_strategy with your prioritised list and reasoning."
         )
 

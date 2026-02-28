@@ -13,6 +13,8 @@ from infrastructure.http_client import HttpClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
+import config
+from config import BID_SERVINGS_MULTIPLIER
 
 tracer = get_tracer(__name__)
 
@@ -120,7 +122,7 @@ class MarketAgent(Agent):
 
             log("waiting", state.turn_id, "market", "MarketAgent: checking surplus to sell")
 
-            surplus = self._compute_surplus(state)
+            surplus = self._compute_surplus(state, memory.focus_recipes)
             if not surplus:
                 log("waiting", state.turn_id, "market", "No surplus to sell")
                 return
@@ -159,7 +161,7 @@ class MarketAgent(Agent):
 
             log("serving", state.turn_id, "market", "MarketAgent: scanning market for good buys")
 
-            needed = self._compute_needed(state)
+            needed = self._compute_needed(state, memory.focus_recipes)
             if not needed:
                 log("serving", state.turn_id, "market", "No ingredients needed from market")
                 return
@@ -168,7 +170,7 @@ class MarketAgent(Agent):
                 f"Current inventory: {json.dumps(state.inventory)}\n"
                 f"Needed ingredients (shortfall): {json.dumps(needed)}\n"
                 f"Last clearing prices: {json.dumps(memory.clearing_prices)}\n"
-                f"Our team_id (do not buy our own listings): {state.__class__.__name__}\n\n"
+                f"Our team_id (do not buy our own listings): {config.TEAM_ID}\n\n"
                 "First call get_market_listings to see what is available. "
                 "Then buy any listing where the ingredient is needed AND price <= clearing_price. "
                 "Skip listings for ingredients we don't need or that are too expensive. "
@@ -183,12 +185,16 @@ class MarketAgent(Agent):
 
     # ------------------------------------------------------------------ helpers
 
-    def _compute_surplus(self, state: GameState) -> dict[str, int]:
-        """Ingredients we have beyond what all recipes need."""
+    def _compute_surplus(self, state: GameState, focus_recipes: list[str] | None = None) -> dict[str, int]:
+        """Ingredients beyond what focus recipes need for BID_SERVINGS_MULTIPLIER servings."""
         needed: dict[str, int] = {}
-        for recipe in state.recipes:
+        recipes = state.recipes
+        if focus_recipes:
+            focus_set = set(focus_recipes)
+            recipes = [r for r in recipes if r.get("name") in focus_set]
+        for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
-                needed[ing] = max(needed.get(ing, 0), qty)
+                needed[ing] = max(needed.get(ing, 0), qty * BID_SERVINGS_MULTIPLIER)
 
         surplus: dict[str, int] = {}
         for ing, have in state.inventory.items():
@@ -197,10 +203,14 @@ class MarketAgent(Agent):
                 surplus[ing] = have - need
         return surplus
 
-    def _compute_needed(self, state: GameState) -> dict[str, int]:
-        """Ingredients still missing to cook recipes we can't cook yet."""
+    def _compute_needed(self, state: GameState, focus_recipes: list[str] | None = None) -> dict[str, int]:
+        """Ingredients still missing for focus recipes."""
         needed: dict[str, int] = {}
-        for recipe in state.recipes:
+        recipes = state.recipes
+        if focus_recipes:
+            focus_set = set(focus_recipes)
+            recipes = [r for r in recipes if r.get("name") in focus_set]
+        for recipe in recipes:
             for ing, qty in recipe.get("ingredients", {}).items():
                 have = state.inventory.get(ing, 0)
                 shortfall = max(0, qty - have)
