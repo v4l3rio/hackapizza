@@ -61,7 +61,7 @@ class AgentManager:
 
     async def _on_heartbeat(self, data: dict[str, Any]) -> None:
         turn_id = data.get("turn_id", 0)
-        log("manager", int(turn_id), "heartbeat", f"Heartbeat received")
+        # log("manager", int(turn_id), "heartbeat", f"Heartbeat received")
 
 
     async def _on_game_started(self, data: dict[str, Any]) -> None:
@@ -157,7 +157,7 @@ class AgentManager:
                         log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
-                    await self._serving.execute(self.state, self.memory, self.mcp, self.http)
+                    await self._serving.execute(self.state, self.memory, self.mcp)
                     await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 
                 elif phase == "stopped":

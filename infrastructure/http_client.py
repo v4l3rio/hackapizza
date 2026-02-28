@@ -33,9 +33,9 @@ class HttpClient:
         data = await self._get(f"/restaurants")
         return data if isinstance(data, list) else data.get("restaurants", [])
 
-    async def get_meals(self, turn_id: int = 0) -> list[dict[str, Any]]:
+    async def get_meals(self, turn_id: int = 0, restaurant_id:int = 0) -> list[dict[str, Any]]:
         """Active meals / current orders."""
-        params = f"restaurant_id={self.team_id}"
+        params = f"restaurant_id={restaurant_id}"
         params += f"&turn_id={turn_id}"
         data = await self._get(f"/meals?{params}")
         return data if isinstance(data, list) else data.get("meals", [])

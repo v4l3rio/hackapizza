@@ -97,11 +97,13 @@ class ServingAgent(Agent):
         state: GameState,
         memory: StrategyMemory,
         mcp: MCPClient,
+        http: HttpClient,
     ) -> None:
         """Register SSE handlers. Call once at startup."""
         self._state = state
         self._strat = memory
         self._mcp = mcp
+        self._http = http
         sse.on("client_spawned", self._on_client_spawned)
         sse.on("preparation_complete", self._on_preparation_complete)
 
