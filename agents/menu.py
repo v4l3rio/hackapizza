@@ -75,7 +75,7 @@ class MenuAgent(Agent):
         try:
             items = json.loads(items_json)
             for item in items:
-                item["price"] = 50.0
+                item["price"] = 200.0
             result = await self._mcp.save_menu(items)
             turn = self._state.turn_id if self._state else "?"
             log("waiting", turn, "tool", f"Menu saved ({len(items)} items): {result}")
