@@ -19,6 +19,7 @@ uv = "^0.10.7"
 [tool.poetry.scripts]
 run-with-webapp = "hackapizza.launcher:run_with_webapp"
 run-without-webapp = "hackapizza.launcher:run_without_webapp"
+run-webapp-only = "hackapizza.launcher:run_webapp_only"
 
 [build-system]
 requires = ["poetry-core"]

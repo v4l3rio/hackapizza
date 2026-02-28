@@ -35,5 +35,17 @@ def run_with_webapp():
     finally:
         server.terminate()
 
+def run_webapp_only():
+    cook_python = _ensure_cook_server_venv()
+    server = subprocess.Popen(
+        [cook_python, "-m", "uvicorn", "main:app", "--reload", "--port", "8765"],
+        cwd=COOK_SERVER_DIR
+    )
+    try:
+        server.wait()  # block until process exits or Ctrl+C
+    except KeyboardInterrupt:
+        print("\nShutting down webapp...")
+        server.terminate()
+
 def run_without_webapp():
     subprocess.run([sys.executable, "main.py"], check=True)
