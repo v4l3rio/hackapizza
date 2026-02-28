@@ -155,12 +155,12 @@ class NewsWatcherAgent(Agent):
     system_prompt = _SYSTEM_PROMPT
 
     def __init__(self) -> None:
+        super().__init__(client=get_llm_client(), max_steps=3)
         self._seen_urls: set[str] = set()           # URL già analizzati
         self._seen_headlines: set[str] = set()      # headline normalizzati già salvati (anti-duplicati)
         self._insights: list[dict[str, Any]] = []   # insights raccolti durante la sessione
-        self._memory: Any | None = None             # StrategyMemory condivisa (opzionale)
+        self._strategy_memory: Any | None = None    # StrategyMemory condivisa (opzionale)
         self._polling_task: asyncio.Task | None = None
-        super().__init__(client=get_llm_client(), max_steps=3)
 
     @staticmethod
     def _normalize_headline(headline: str) -> str:
@@ -215,8 +215,8 @@ class NewsWatcherAgent(Agent):
         }
         self._insights.append(insight)
         # Propaga anche alla StrategyMemory condivisa (se disponibile)
-        if self._memory is not None:
-            self._memory.news_insights.append(insight)
+        if self._strategy_memory is not None:
+            self._strategy_memory.news_insights.append(insight)
 
         log(
             "news", "—", "insight",
@@ -349,7 +349,7 @@ class NewsWatcherAgent(Agent):
                     propagato in memory.news_insights (disponibile a tutti gli agenti).
         """
         if memory is not None:
-            self._memory = memory
+            self._strategy_memory = memory
         if self._polling_task and not self._polling_task.done():
             return self._polling_task
         self._polling_task = asyncio.create_task(self.run_loop())
