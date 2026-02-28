@@ -28,5 +28,12 @@ BID_CLEARING_MULTIPLIER: float = 1.15  # bid = clearing_price * multiplier (was 
 MAX_BID_BALANCE_FRACTION: float = 0.6  # cap: max 60% of balance in bids
 BID_SERVINGS_MULTIPLIER: int = 2   # bid for N servings of each focus recipe per turn
 
-# Menu pricing
-MENU_MARKUP: float = 2.5            # dish price = ingredient cost * markup
+# Menu pricing — tiered by dish prestige score (see utils/ingredient_data.py)
+MENU_MARKUP: float = 2.5            # default fallback markup
+MENU_MARKUP_BUDGET: float = 2.0     # low-prestige dishes  → Galactic Explorer
+MENU_MARKUP_STANDARD: float = 2.5   # mid-prestige dishes  → Orbital Family / Astrobaron
+MENU_MARKUP_PRESTIGE: float = 4.5   # high-prestige dishes → Space Sage (unlimited budget)
+
+# Prestige score thresholds (score = weighted_avg_prestige + rarity_bonus, see ingredient_data.py)
+MENU_PRESTIGE_SCORE_HIGH: float = 75.0   # score >= this → PRESTIGE tier
+MENU_PRESTIGE_SCORE_LOW: float = 62.0    # score <  this → BUDGET  tier
