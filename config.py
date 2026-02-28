@@ -4,6 +4,7 @@ import yaml
 
 load_dotenv()
 
+
 def load_yaml(filename: str):
     with open(f"{filename}.yml", "r") as f:
         return yaml.safe_load(f)
@@ -26,7 +27,7 @@ DATAPIZZA_MONITORING_OTLP_ENDPOINT: str = os.getenv(
     "https://datapizza-monitoring.datapizza.tech/gateway/v1/traces",
 )
 
-BASE_URL: str = config["BASE_URL"]
+BASE_URL: str = os.getenv("BASE_URL", "https://hackapizza.datapizza.tech")
 SSE_URL: str = f"{BASE_URL}/events/{TEAM_ID}"
 MCP_URL: str = f"{BASE_URL}/mcp"
 
@@ -45,3 +46,12 @@ MARKET_MAX_BUY_FLAT: int = config['MARKET_MAX_BUY_FLAT']
 
 # Menu pricing
 MENU_MARKUP: float = config['MENU_MARKUP']            # dish price = ingredient cost * markup
+# Menu pricing — tiered by dish prestige score (see utils/ingredient_data.py)
+MENU_MARKUP: float = 2.5            # default fallback markup
+MENU_MARKUP_BUDGET: float = 2.0     # low-prestige dishes  → Galactic Explorer
+MENU_MARKUP_STANDARD: float = 2.5   # mid-prestige dishes  → Orbital Family / Astrobaron
+MENU_MARKUP_PRESTIGE: float = 4.5   # high-prestige dishes → Space Sage (unlimited budget)
+
+# Prestige score thresholds (score = weighted_avg_prestige + rarity_bonus, see ingredient_data.py)
+MENU_PRESTIGE_SCORE_HIGH: float = 75.0   # score >= this → PRESTIGE tier
+MENU_PRESTIGE_SCORE_LOW: float = 62.0    # score <  this → BUDGET  tier

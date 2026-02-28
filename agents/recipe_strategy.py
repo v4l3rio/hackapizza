@@ -124,22 +124,18 @@ class RecipeStrategyAgent(Agent):
         name="set_strategy",
         description=(
             "Record the final recipe strategy after analysis. "
-            "Accepts a JSON object with keys: "
-            "'recipes' (list of recipe names to focus on, in priority order) "
+            "Parameters: "
+            "'recipes' (list of recipe name strings to focus on, in priority order) "
             "and 'reasoning' (short explanation of the choices). "
-            'Example: {"recipes": ["Pasta Nebulare", "Zuppa Cosmica"], '
-            '"reasoning": "Few ingredients, fast prep, wide client appeal."}'
+            'Example: recipes=["Pasta Nebulare", "Zuppa Cosmica"], '
+            'reasoning="Few ingredients, fast prep, wide client appeal."'
         ),
     )
-    async def set_strategy(self, strategy_json: str) -> str:
+    async def set_strategy(self, recipes: list, reasoning: str = "") -> str:
         """Persist the LLM's recipe prioritisation decision."""
         try:
-            data = json.loads(strategy_json)
-            chosen_names: list[str] = data.get("recipes", [])
-            self.reasoning = data.get("reasoning", "")
-
-            # Cross-reference names with full recipe objects (if already fetched)
-            # We store names for now; callers can enrich later.
+            chosen_names: list[str] = [str(n) for n in recipes]
+            self.reasoning = reasoning
             self.strategy = [{"name": n} for n in chosen_names]
 
             log(

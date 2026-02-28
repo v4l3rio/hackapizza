@@ -11,7 +11,14 @@ from infrastructure.mcp_client import MCPClient
 from infrastructure.llm_factory import get_llm_client
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
-from config import MENU_MARKUP
+from utils.ingredient_data import dish_prestige_score, dish_avg_prep_time_ms
+from config import (
+    MENU_MARKUP_BUDGET,
+    MENU_MARKUP_STANDARD,
+    MENU_MARKUP_PRESTIGE,
+    MENU_PRESTIGE_SCORE_HIGH,
+    MENU_PRESTIGE_SCORE_LOW,
+)
 
 tracer = get_tracer(__name__)
 
@@ -20,19 +27,28 @@ class MenuAgent(Agent):
     """
     Handles menu construction during the 'waiting' phase using LLM reasoning.
 
-    Strategy:
-      - Identifies cookable dishes (all ingredients available)
-      - Sets price = ingredient cost * MENU_MARKUP
-      - Writes appealing dish descriptions
-      - Calls save_menu
+    Pricing policy (tiered by dish prestige score):
+      - PRESTIGE: score >= MENU_PRESTIGE_SCORE_HIGH → MENU_MARKUP_PRESTIGE × cost
+        Rare/high-prestige ingredients → targets Space Sage (unlimited budget).
+      - STANDARD: MENU_PRESTIGE_SCORE_LOW <= score < HIGH → MENU_MARKUP_STANDARD × cost
+        Typical ingredients → targets Orbital Family / Astrobaron.
+      - BUDGET: score < MENU_PRESTIGE_SCORE_LOW → MENU_MARKUP_BUDGET × cost
+        Common/cheap ingredients → targets Galactic Explorer (price-sensitive).
+
+    Prestige score = weighted_avg_prestige(ingredients) + rarity_bonus,
+    computed from ingredient_frequencies.yaml (see utils/ingredient_data.py).
     """
 
     name = "menu_agent"
     system_prompt = (
-        "You are the menu agent for our restaurant. "
+        "You are the menu agent for our restaurant in a sci-fi gastronomic multiverse. "
         "Your job is to craft an appealing menu from the dishes we can currently cook. "
-        "Set prices at roughly the specified markup over ingredient cost. "
-        "Write short, enticing descriptions for each dish. "
+        "Each dish has a pre-computed tier (BUDGET / STANDARD / PRESTIGE) and a suggested_price. "
+        "Use the suggested_price — you may adjust by up to 10% if it makes strategic sense. "
+        "Write a short description that matches the tier:\n"
+        "  - BUDGET: 'quick, affordable, satisfying' — appeals to Galactic Explorer.\n"
+        "  - STANDARD: 'balanced quality and value' — appeals to Orbital Family and Astrobaron.\n"
+        "  - PRESTIGE: 'rare, exquisite, extraordinary' — appeals to Space Sage (unlimited budget).\n"
         "Call set_menu exactly once with all menu items as a JSON array."
     )
 
@@ -94,18 +110,58 @@ class MenuAgent(Agent):
                 log("waiting", state.turn_id, "menu", "No cookable dishes — skipping menu update")
                 return
 
-            # Pre-compute costs using real clearing prices if available
-            costs = {
-                recipe.get("name", "Unknown"): state.ingredient_cost(recipe, memory.clearing_prices or None)
-                for recipe in cookable
-            }
+            clearing = memory.clearing_prices if memory.clearing_prices else None
+
+            # Pre-compute pricing profiles — deterministic, no LLM involvement
+            dish_profiles: list[dict] = []
+            for recipe in cookable:
+                name = recipe.get("name", "Unknown")
+                cost = state.ingredient_cost(recipe, clearing)
+                prestige_score = dish_prestige_score(recipe)
+                avg_prep_ms = dish_avg_prep_time_ms(recipe)
+
+                if prestige_score >= MENU_PRESTIGE_SCORE_HIGH:
+                    tier = "PRESTIGE"
+                    markup = MENU_MARKUP_PRESTIGE
+                elif prestige_score < MENU_PRESTIGE_SCORE_LOW:
+                    tier = "BUDGET"
+                    markup = MENU_MARKUP_BUDGET
+                else:
+                    tier = "STANDARD"
+                    markup = MENU_MARKUP_STANDARD
+
+                suggested_price = round(cost * markup, 2)
+                dish_profiles.append({
+                    "name": name,
+                    "estimated_cost": round(cost, 2),
+                    "prestige_score": round(prestige_score, 1),
+                    "avg_prep_time_ms": round(avg_prep_ms),
+                    "tier": tier,
+                    "markup": markup,
+                    "suggested_price": suggested_price,
+                })
+
+            profile_summary = ", ".join(
+                f"{p['name']} [{p['tier']}] {p['suggested_price']}" for p in dish_profiles
+            )
+            log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
-                f"Cookable dishes (we have all ingredients): {json.dumps(cookable)}\n"
-                f"Estimated ingredient costs per dish: {json.dumps(costs)}\n"
-                f"Target price markup: {MENU_MARKUP}x ingredient cost.\n\n"
-                "Create the menu: for each cookable dish set a price (~markup * cost) "
-                "and write a short, enticing description. "
+                f"Cookable dishes (full recipe data): {json.dumps(cookable)}\n\n"
+                f"Pricing profiles (pre-computed — use suggested_price as base):\n"
+                f"{json.dumps(dish_profiles, indent=2)}\n\n"
+                f"Tier rules:\n"
+                f"  BUDGET   (prestige_score < {MENU_PRESTIGE_SCORE_LOW}) "
+                f"→ {MENU_MARKUP_BUDGET}x markup — common ingredients, cheap & fast, "
+                f"appeals to Galactic Explorer.\n"
+                f"  STANDARD ({MENU_PRESTIGE_SCORE_LOW}–{MENU_PRESTIGE_SCORE_HIGH}) "
+                f"→ {MENU_MARKUP_STANDARD}x markup — balanced quality, "
+                f"appeals to Orbital Family and Astrobaron.\n"
+                f"  PRESTIGE (prestige_score >= {MENU_PRESTIGE_SCORE_HIGH}) "
+                f"→ {MENU_MARKUP_PRESTIGE}x markup — rare/exotic ingredients, "
+                f"appeals to Space Sage (unlimited budget, seeks the extraordinary).\n\n"
+                "For each dish: use the suggested_price (±10% adjustment allowed), "
+                "write a short description that matches the tier and the dish's ingredient profile. "
                 "Then call set_menu once with the complete JSON array."
             )
 
