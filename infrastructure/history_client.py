@@ -706,6 +706,16 @@ class HistoryClient:
 
         return results
 
+    def set_turn(self, turn_id: int) -> int:
+        """Set the current turn_id on the server (triggers a fresh dump)."""
+        resp = self.client.post(self.base_url + "/api/turn", json={"turn_id": turn_id})
+        resp.raise_for_status()
+        return resp.json().get("turn_id")
+
+    def get_turn(self) -> int | None:
+        """Get the current turn_id from the server."""
+        return self._get("/api/turn").get("turn_id")
+
     def close(self):
         self.client.close()
 
