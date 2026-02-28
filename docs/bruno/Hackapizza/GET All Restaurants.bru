@@ -1,0 +1,16 @@
+meta {
+  name: GET All Restaurants
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/restaurants
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

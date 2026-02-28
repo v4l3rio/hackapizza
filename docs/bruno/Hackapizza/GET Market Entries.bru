@@ -1,0 +1,16 @@
+meta {
+  name: GET Market Entries
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/market/entries
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
