@@ -80,3 +80,5 @@ datapizza-ai/
 # 📦 UV
 # -----------------------------
 uv.lock
+
+resources/cook_server/dumps

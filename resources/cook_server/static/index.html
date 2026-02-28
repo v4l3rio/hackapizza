@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ristorante Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
       --cream: #f5f0e8;
@@ -651,7 +652,66 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* ── SCROLLBAR ── */
+    /* ── CHARTS SECTION ── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .chart-card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .chart-card-header {
+      padding: 1rem 1.3rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--paper);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .chart-card-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .chart-card-meta {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+    }
+
+    .chart-card-body {
+      padding: 1rem 1.2rem;
+      position: relative;
+      height: 220px;
+    }
+
+    .chart-card-body canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .chart-stat-row {
+      display: flex;
+      gap: 1.5rem;
+      padding: 0.6rem 1.3rem 0.9rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .chart-stat { display: flex; flex-direction: column; gap: 0.1rem; }
+    .chart-stat-label { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .chart-stat-val { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 500; color: var(--espresso); }
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -705,6 +765,7 @@
   <a href="#market">Mercato</a>
   <a href="#competitors">Concorrenti</a>
   <a href="#recipes">Ricettario</a>
+  <a href="#charts">Andamento</a>
 </nav>
 
 <main>
@@ -773,6 +834,23 @@
       </div>
     </div>
     <div id="recipes-content">
+      <div class="state-msg">Configura Base URL per iniziare</div>
+    </div>
+  </section>
+
+  <!-- ══ SECTION 5: CHARTS ══ -->
+  <section id="charts">
+    <div class="section-header">
+      <div class="section-title">
+        <span>Andamento</span>
+        Statistiche nel tempo
+      </div>
+      <div class="section-status">
+        <span class="dot" id="dot-charts"></span>
+        <span id="status-charts">In attesa…</span>
+      </div>
+    </div>
+    <div id="charts-content">
       <div class="state-msg">Configura Base URL per iniziare</div>
     </div>
   </section>
@@ -1092,9 +1170,17 @@ async function fetchAll() {
     try { renderRecipes(data.recipes); setDot('recipes','ok'); setStatus('recipes', `${(data.recipes||[]).length} ricette`); }
     catch(e) { setDot('recipes','error'); setStatus('recipes', e.message); }
 
+    // Charts — fetch timeseries from server
+    try {
+      setDot('charts', 'loading');
+      await renderCharts();
+      setDot('charts','ok');
+      setStatus('charts', 'aggiornato ' + tsFmt);
+    } catch(e) { setDot('charts','error'); setStatus('charts', e.message); }
+
     document.getElementById('cfgServerStatus').textContent = `dump ${tsFmt}${prev_ts ? ' prev ' + new Date(prev_ts).toLocaleTimeString('it-IT') : ''}`;
   } catch(e) {
-    ['restaurant','market','restaurants','recipes'].forEach(id => { setDot(id,'error'); setStatus(id,'Server non raggiungibile'); });
+    ['restaurant','market','restaurants','recipes','charts'].forEach(id => { setDot(id,'error'); setStatus(id,'Server non raggiungibile'); });
     document.getElementById('cfgServerStatus').textContent = 'Server offline';
   }
 }
@@ -1156,6 +1242,185 @@ updateDate();
     setTimeout(fetchAll, 800);
   }
 })();
+
+// ── CHARTS ────────────────────────────────────────────────
+const chartInstances = {};
+
+function destroyChart(id) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+function fmtTs(ts) {
+  return new Date(ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function makeChart(id, type, labels, datasets, extraOptions) {
+  extraOptions = extraOptions || {};
+  destroyChart(id);
+  const ctx = document.getElementById(id) && document.getElementById(id).getContext('2d');
+  if (!ctx) return;
+  const FONT = { family: "'DM Mono', monospace" };
+  chartInstances[id] = new Chart(ctx, {
+    type: type,
+    data: { labels: labels, datasets: datasets },
+    options: Object.assign({
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 350 },
+      plugins: {
+        legend: { display: datasets.length > 1, labels: { font: Object.assign({}, FONT, {size:10}), color: '#8a7d6e', boxWidth: 10 } },
+        tooltip: { backgroundColor: '#1a1209', titleFont: Object.assign({}, FONT, {size:10}), bodyFont: Object.assign({}, FONT, {size:11}), padding: 8 },
+      },
+      scales: {
+        x: { ticks: { font: Object.assign({}, FONT, {size:9}), color: '#8a7d6e', maxRotation: 45 }, grid: { color: 'rgba(0,0,0,0.04)' } },
+        y: { ticks: { font: Object.assign({}, FONT, {size:9}), color: '#8a7d6e' }, grid: { color: 'rgba(0,0,0,0.06)' } },
+      },
+    }, extraOptions),
+  });
+}
+
+function statRow(items) {
+  return '<div class="chart-stat-row">' + items.map(function(item) {
+    var label = item[0], val = item[1], color = item[2];
+    return '<div class="chart-stat"><span class="chart-stat-label">' + label + '</span><span class="chart-stat-val" style="' + (color ? 'color:' + color : '') + '">' + (val != null ? val : '-') + '</span></div>';
+  }).join('') + '</div>';
+}
+
+async function renderCharts() {
+  var LIMIT = 60;
+  var results = await Promise.all([
+    localGet('/api/dump/timeseries?field=restaurant.balance&limit=' + LIMIT),
+    localGet('/api/dump/timeseries?field=restaurant.reputation&limit=' + LIMIT),
+    localGet('/api/dump/timeseries?field=restaurant.isOpen&limit=' + LIMIT),
+    localGet('/api/dump/timeseries?field=market&limit=' + LIMIT),
+  ]);
+  var balRes = results[0], repRes = results[1], openRes = results[2], mktRes = results[3];
+  var labels = balRes.series.map(function(p) { return fmtTs(p.ts); });
+
+  document.getElementById('charts-content').innerHTML = [
+    '<div class="charts-grid">',
+    '  <div class="chart-card">',
+    '    <div class="chart-card-header"><span class="chart-card-title">Saldo</span><span class="chart-card-meta">&euro; nel tempo</span></div>',
+    '    <div class="chart-card-body"><canvas id="chart-balance"></canvas></div>',
+    '    <div id="stats-balance"></div>',
+    '  </div>',
+    '  <div class="chart-card">',
+    '    <div class="chart-card-header"><span class="chart-card-title">Reputazione</span><span class="chart-card-meta">punti nel tempo</span></div>',
+    '    <div class="chart-card-body"><canvas id="chart-reputation"></canvas></div>',
+    '    <div id="stats-reputation"></div>',
+    '  </div>',
+    '  <div class="chart-card">',
+    '    <div class="chart-card-header"><span class="chart-card-title">Stato Apertura</span><span class="chart-card-meta">aperto / chiuso nel tempo</span></div>',
+    '    <div class="chart-card-body"><canvas id="chart-open"></canvas></div>',
+    '    <div id="stats-open"></div>',
+    '  </div>',
+    '  <div class="chart-card">',
+    '    <div class="chart-card-header"><span class="chart-card-title">Voci di Mercato</span><span class="chart-card-meta">BUY vs SELL nel tempo</span></div>',
+    '    <div class="chart-card-body"><canvas id="chart-market"></canvas></div>',
+    '    <div id="stats-market"></div>',
+    '  </div>',
+    '  <div class="chart-card" style="grid-column:1/-1">',
+    '    <div class="chart-card-header"><span class="chart-card-title">Variazione Saldo</span><span class="chart-card-meta">delta tra dump consecutivi</span></div>',
+    '    <div class="chart-card-body" style="height:180px"><canvas id="chart-balance-delta"></canvas></div>',
+    '    <div id="stats-balance-delta"></div>',
+    '  </div>',
+    '</div>',
+  ].join('\n');
+
+  // BALANCE
+  var balVals = balRes.series.map(function(p) { return p.value; });
+  var validBal = balVals.filter(function(v) { return v !== null; });
+  var balLast = balVals[balVals.length-1];
+  var balFirst = balVals.find(function(v) { return v !== null; });
+  var balChange = balLast - balFirst;
+  makeChart('chart-balance', 'line', labels, [{
+    label: 'Saldo (€)', data: balVals,
+    borderColor: '#c4511a', backgroundColor: 'rgba(196,81,26,0.08)',
+    borderWidth: 2, pointRadius: balVals.length > 20 ? 0 : 3, pointHoverRadius: 5, tension: 0.3, fill: true,
+  }]);
+  document.getElementById('stats-balance').innerHTML = statRow([
+    ['Attuale', '\u20ac' + (balLast||0).toLocaleString('it-IT'), 'var(--rust)'],
+    ['Min', '\u20ac' + Math.min.apply(null,validBal).toLocaleString('it-IT')],
+    ['Max', '\u20ac' + Math.max.apply(null,validBal).toLocaleString('it-IT')],
+    ['Variazione totale', (balChange>=0?'+':'') + '\u20ac' + balChange.toLocaleString('it-IT'), balChange>=0?'var(--sage)':'var(--rust)'],
+    ['Campioni', balVals.length],
+  ]);
+
+  // REPUTATION
+  var repVals = repRes.series.map(function(p) { return p.value; });
+  var validRep = repVals.filter(function(v) { return v !== null; });
+  var repLast = repVals[repVals.length-1];
+  var repFirst = repVals.find(function(v) { return v !== null; });
+  var repChange = repLast - repFirst;
+  makeChart('chart-reputation', 'line', labels, [{
+    label: 'Reputazione', data: repVals,
+    borderColor: '#d4922a', backgroundColor: 'rgba(212,146,42,0.08)',
+    borderWidth: 2, pointRadius: repVals.length > 20 ? 0 : 3, pointHoverRadius: 5, tension: 0.3, fill: true,
+  }]);
+  document.getElementById('stats-reputation').innerHTML = statRow([
+    ['Attuale', repLast, 'var(--gold)'],
+    ['Min', Math.min.apply(null,validRep)],
+    ['Max', Math.max.apply(null,validRep)],
+    ['Variazione', (repChange>=0?'+':'') + repChange, repChange>=0?'var(--sage)':'var(--rust)'],
+  ]);
+
+  // OPEN STATUS
+  var openVals = openRes.series.map(function(p) { return p.value === true ? 1 : 0; });
+  var openPct = openVals.length ? Math.round(openVals.filter(function(v){return v===1;}).length / openVals.length * 100) : 0;
+  makeChart('chart-open', 'bar', labels, [{
+    label: 'Stato', data: openVals,
+    backgroundColor: openVals.map(function(v){ return v===1?'rgba(107,124,92,0.7)':'rgba(196,81,26,0.35)'; }),
+    borderColor:     openVals.map(function(v){ return v===1?'#6b7c5c':'#c4511a'; }),
+    borderWidth: 1, borderRadius: 2,
+  }], {
+    scales: {
+      x: { ticks: { font:{family:"'DM Mono',monospace",size:9}, color:'#8a7d6e', maxRotation:45 }, grid:{color:'rgba(0,0,0,0.04)'} },
+      y: { min:0, max:1, ticks: { callback: function(v){ return v===1?'Aperto':'Chiuso'; }, font:{family:"'DM Mono',monospace",size:9}, color:'#8a7d6e' }, grid:{color:'rgba(0,0,0,0.06)'} },
+    },
+  });
+  document.getElementById('stats-open').innerHTML = statRow([
+    ['Stato attuale', openVals[openVals.length-1]===1?'Aperto':'Chiuso', openVals[openVals.length-1]===1?'var(--sage)':'var(--rust)'],
+    ['% tempo aperto', openPct + '%'],
+    ['Osservazioni', openVals.length],
+  ]);
+
+  // MARKET BUY vs SELL
+  var mktLabels = mktRes.series.map(function(p){ return fmtTs(p.ts); });
+  var buyCounts  = mktRes.series.map(function(p){ return (p.value||[]).filter(function(e){return e.side==='BUY';}).length; });
+  var sellCounts = mktRes.series.map(function(p){ return (p.value||[]).filter(function(e){return e.side==='SELL';}).length; });
+  var totalCounts = buyCounts.map(function(b,i){ return b + sellCounts[i]; });
+  makeChart('chart-market', 'line', mktLabels, [
+    { label:'BUY',  data:buyCounts,  borderColor:'#c4511a', backgroundColor:'rgba(196,81,26,0.06)',  borderWidth:2, pointRadius:buyCounts.length>20?0:3,  tension:0.3, fill:true },
+    { label:'SELL', data:sellCounts, borderColor:'#d4922a', backgroundColor:'rgba(212,146,42,0.06)', borderWidth:2, pointRadius:sellCounts.length>20?0:3, tension:0.3, fill:true },
+  ]);
+  document.getElementById('stats-market').innerHTML = statRow([
+    ['BUY attivi',    buyCounts[buyCounts.length-1],   'var(--rust)'],
+    ['SELL attivi',   sellCounts[sellCounts.length-1], 'var(--gold)'],
+    ['Totale',        totalCounts[totalCounts.length-1]],
+    ['Max osservato', Math.max.apply(null, totalCounts)],
+  ]);
+
+  // BALANCE DELTA
+  var deltaVals = balVals.slice(1).map(function(v,i){
+    return (v!==null && balVals[i]!==null) ? v - balVals[i] : null;
+  });
+  var deltaLabels = labels.slice(1);
+  makeChart('chart-balance-delta', 'bar', deltaLabels, [{
+    label: 'Delta Saldo', data: deltaVals,
+    backgroundColor: deltaVals.map(function(v){ return v>=0?'rgba(107,124,92,0.65)':'rgba(196,81,26,0.55)'; }),
+    borderColor:     deltaVals.map(function(v){ return v>=0?'#6b7c5c':'#c4511a'; }),
+    borderWidth: 1, borderRadius: 2,
+  }]);
+  var pos = deltaVals.filter(function(v){return v>0;});
+  var neg = deltaVals.filter(function(v){return v<0;});
+  document.getElementById('stats-balance-delta').innerHTML = statRow([
+    ['Guadagni totali',  pos.length ? '+\u20ac' + pos.reduce(function(a,b){return a+b;},0).toLocaleString('it-IT') : '-', 'var(--sage)'],
+    ['Perdite totali',   neg.length ? '\u20ac'  + neg.reduce(function(a,b){return a+b;},0).toLocaleString('it-IT') : '-', 'var(--rust)'],
+    ['Delta max',        pos.length ? '+\u20ac' + Math.max.apply(null,pos).toLocaleString('it-IT') : '-', 'var(--sage)'],
+    ['Delta min',        neg.length ? '\u20ac'  + Math.min.apply(null,neg).toLocaleString('it-IT') : '-', 'var(--rust)'],
+  ]);
+}
+
 </script>
 </body>
 </html>
