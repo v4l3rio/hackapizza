@@ -31,6 +31,12 @@ class ServingAgent(Agent):
         "You are the serving agent for our restaurant. "
         "When a client arrives, identify the best dish from our menu that matches their order "
         "and avoids any ingredients they are intolerant to. "
+        "Use the client's archetype to guide your choice:\n"
+        "  - Galactic Explorer: low budget, short time → pick the CHEAPEST and FASTEST dish.\n"
+        "  - Astrobaron: high budget, short time → pick the most PREMIUM and FASTEST dish.\n"
+        "  - Space Sage: unlimited budget, long time → pick the most PRESTIGIOUS or RARE dish.\n"
+        "  - Orbital Family: balanced → pick the best QUALITY-TO-PRICE ratio dish.\n"
+        "If no archetype is explicit, infer it from the order text and client name. "
         "Then prepare the dish using the prepare_dish tool. "
         "When asked to open the restaurant, call open_restaurant. "
         "Act decisively — always call a tool to take action."
@@ -103,7 +109,7 @@ class ServingAgent(Agent):
         memory: StrategyMemory,
         mcp: MCPClient,
     ) -> None:
-        """Called when the serving phase starts — opens the restaurant."""
+        """Called when the serving phase starts — restaurant already opened in waiting phase."""
         self._state = state
         self._strat = memory
         self._mcp = mcp
@@ -111,24 +117,13 @@ class ServingAgent(Agent):
 
         with tracer.start_as_current_span("serving_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
-
-            log("serving", state.turn_id, "agent", "ServingAgent started")
+            log("serving", state.turn_id, "agent", "ServingAgent started — restaurant already open")
             log(
                 "serving",
                 state.turn_id,
                 "state",
                 f"Balance={state.balance:.2f} | Inventory={state.inventory}",
             )
-
-            task = (
-                "The serving phase has begun. Open the restaurant so clients can arrive. "
-                "Call open_restaurant now."
-            )
-            try:
-                await self.a_run(task, tool_choice="required_first")
-            except Exception as exc:
-                span.record_exception(exc)
-                log_error("serving", state.turn_id, "agent", f"ServingAgent open failed: {exc}")
 
     # ------------------------------------------------------------------ SSE handlers
 
@@ -146,19 +141,25 @@ class ServingAgent(Agent):
             span.set_attribute("client_id", client_id)
             span.set_attribute("turn_id", self._state.turn_id)
 
-            # Filter recipes to only those currently on the menu
+            # Filter recipes to only those on the menu AND cookable (have all ingredients in stock)
             menu_names = {item.get("name") for item in self._state.menu_items}
-            menu_recipes = [r for r in self._state.recipes if r.get("name") in menu_names]
+            cookable = self._state.cookable_dishes()
+            menu_recipes = [r for r in cookable if r.get("name") in menu_names]
 
             # Let LLM pick best matching dish and call prepare_dish
             task = (
                 f"Client '{client_id}' has arrived.\n"
                 f"Their order: \"{order_text}\"\n"
                 f"Their dietary intolerances/allergies: {json.dumps(intolerances)}\n\n"
-                f"Current menu: {json.dumps(self._state.menu_items)}\n"
+                "Identify the client's archetype from their name and order text:\n"
+                "  - Galactic Explorer → cheapest + fewest ingredients (fast prep)\n"
+                "  - Astrobaron → highest price + fewest ingredients (fast prep)\n"
+                "  - Space Sage → rarest/most prestigious ingredients\n"
+                "  - Orbital Family → best price-to-quality ratio\n\n"
+                f"Current menu (name, price, description): {json.dumps(self._state.menu_items)}\n"
                 f"Recipes with ingredients (for intolerance checking): {json.dumps(menu_recipes)}\n\n"
-                "Select the best matching menu item for this client. "
-                "IMPORTANT: exclude any dish that contains an ingredient the client is intolerant to. "
+                "Select the best matching menu item using the archetype criteria above. "
+                "IMPORTANT: exclude any dish containing an ingredient the client is intolerant to. "
                 "If there is a good match, call prepare_dish with the exact dish name. "
                 "If no safe dish is available, do nothing."
             )
