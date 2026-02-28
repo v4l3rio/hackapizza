@@ -49,7 +49,7 @@ class AgentManager:
         self._strategy = RecipeStrategyAgent(http)
 
         # Register persistent SSE handlers (serving events span the whole session)
-        self._serving.register(sse, state, memory, mcp)
+        self._serving.register(sse, state, memory, mcp, http)
 
         # Register game lifecycle handlers
         sse.on("heartbeat", self._on_heartbeat)
@@ -57,6 +57,7 @@ class AgentManager:
         sse.on("game_phase_changed", self._on_phase_changed)
         sse.on("game_reset", self._on_game_reset)
         sse.on("message", self._on_message)
+        sse.on("new_message", self._on_new_message)
 
     async def _on_heartbeat(self, data: dict[str, Any]) -> None:
         turn_id = data.get("turn_id", 0)
@@ -86,9 +87,23 @@ class AgentManager:
             log_error("manager", self.state.turn_id, "strategy", f"Strategy selection failed: {exc}")
 
     async def _on_message(self, data: dict[str, Any]) -> None:
+        """Broadcast message (e.g. market entry created by another team)."""
         sender = data.get("sender", "unknown")
         text = data.get("payload", "")
-        log("manager", self.state.turn_id, "message", f"Incoming from {sender}: {text}")
+        log("manager", self.state.turn_id, "message", f"Broadcast from {sender}: {text}")
+
+    async def _on_new_message(self, data: dict[str, Any]) -> None:
+        """Direct private message from another team (new_message SSE event)."""
+        sender_id = data.get("senderId", "?")
+        sender_name = data.get("senderName", "unknown")
+        text = data.get("text", "")
+        msg_id = data.get("messageId", "")
+        log(
+            "manager",
+            self.state.turn_id,
+            "new_message",
+            f"DM from {sender_name} (id={sender_id}, msgId={msg_id}): {text}",
+        )
 
     async def _on_phase_changed(self, data: dict[str, Any]) -> None:
         phase = data.get("phase", "unknown")
@@ -142,7 +157,7 @@ class AgentManager:
                         log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
-                    await self._serving.execute(self.state, self.memory, self.mcp)
+                    await self._serving.execute(self.state, self.memory, self.mcp, self.http)
                     await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 
                 elif phase == "stopped":

@@ -9,6 +9,7 @@ from datapizza.tools import tool
 
 from state.game_state import GameState
 from state.memory import StrategyMemory
+from infrastructure.http_client import HttpClient
 from infrastructure.mcp_client import MCPClient
 from infrastructure.sse_listener import SSEListener
 from infrastructure.llm_factory import get_llm_client
@@ -38,53 +39,49 @@ class ServingAgent(Agent):
         "  - Space Sage: unlimited budget, long time → pick the most PRESTIGIOUS or RARE dish.\n"
         "  - Orbital Family: balanced → pick the best QUALITY-TO-PRICE ratio dish.\n"
         "If no archetype is explicit, infer it from the order text and client name. "
-        "Then prepare the dish using the prepare_dish tool. "
-        "When asked to open the restaurant, call open_restaurant. "
-        "Act decisively — always call a tool to take action."
+        "Call prepare_dish with the best matching dish. "
+        "If no suitable dish is available, call prepare_dish with the closest available option. "
+        "Always call prepare_dish exactly once — do not call open_restaurant or any other tool."
     )
 
     def __init__(self) -> None:
         self._state: GameState | None = None
         self._strat: StrategyMemory | None = None
         self._mcp: MCPClient | None = None
+        self._http: HttpClient | None = None
         self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_id, ...]
-        super().__init__(client=get_llm_client(), max_steps=3)
+        super().__init__(client=get_llm_client(), max_steps=1)
 
     # ------------------------------------------------------------------ tools
-
-    @tool(
-        name="open_restaurant",
-        description="Open the restaurant so clients can be served.",
-    )
-    async def open_restaurant(self) -> str:
-        """Mark the restaurant as open for business."""
-        try:
-            result = await self._mcp.update_restaurant_is_open(True)
-            turn = self._state.turn_id if self._state else "?"
-            log("serving", turn, "tool", f"Restaurant opened: {result}")
-            return f"Restaurant is now open: {result}"
-        except Exception as exc:
-            turn = self._state.turn_id if self._state else "?"
-            log_error("serving", turn, "tool", f"open_restaurant failed: {exc}")
-            return f"Error opening restaurant: {exc}"
 
     @tool(
         name="prepare_dish",
         description=(
             "Start preparing a dish in the kitchen for a specific client. "
             "dish_name must exactly match one of the items on our current menu. "
-            "client_id is the clientName received in the order event. "
+            "client_id is the meal ID provided in the task (a server-issued identifier). "
             "This triggers a 'preparation_complete' event when the dish is ready."
         ),
     )
     async def prepare_dish(self, dish_name: str, client_id: str) -> str:
-        """Begin kitchen preparation and register the client immediately."""
+        """Begin kitchen preparation, register the client, and update local inventory."""
         turn = self._state.turn_id if self._state else "?"
         try:
             result = await self._mcp.prepare_dish(dish_name)
-            # Register the client->dish mapping HERE, at call time,
-            # so preparation_complete can serve it without relying on result.tools_used.
+
+            # Register the client->dish mapping atomically so preparation_complete can serve it.
             self._pending_orders.setdefault(dish_name, []).append(client_id)
+
+            # Update local inventory immediately to prevent double-booking when clients
+            # arrive concurrently and state hasn't been refreshed yet.
+            if self._state:
+                for recipe in self._state.recipes:
+                    if recipe.get("name") == dish_name:
+                        for ing, qty in recipe.get("ingredients", {}).items():
+                            current = self._state.inventory.get(ing, 0)
+                            self._state.inventory[ing] = max(0, current - qty)
+                        break
+
             log("serving", turn, "tool", f"Preparing '{dish_name}' for {client_id}: {result}")
             return f"Preparation started for '{dish_name}' (client: {client_id}): {result}"
         except Exception as exc:
@@ -99,11 +96,13 @@ class ServingAgent(Agent):
         state: GameState,
         memory: StrategyMemory,
         mcp: MCPClient,
+        http: HttpClient,
     ) -> None:
         """Register SSE handlers. Call once at startup."""
         self._state = state
         self._strat = memory
         self._mcp = mcp
+        self._http = http
         sse.on("client_spawned", self._on_client_spawned)
         sse.on("preparation_complete", self._on_preparation_complete)
 
@@ -112,11 +111,13 @@ class ServingAgent(Agent):
         state: GameState,
         memory: StrategyMemory,
         mcp: MCPClient,
+        http: HttpClient,
     ) -> None:
         """Called when the serving phase starts — restaurant already opened in waiting phase."""
         self._state = state
         self._strat = memory
         self._mcp = mcp
+        self._http = http
         self._pending_orders.clear()
 
         with tracer.start_as_current_span("serving_agent.execute") as span:
@@ -128,6 +129,50 @@ class ServingAgent(Agent):
                 "state",
                 f"Balance={state.balance:.2f} | Inventory={state.inventory}",
             )
+
+    # ------------------------------------------------------------------ helpers
+
+    async def _lookup_meal_id(self, client_name: str) -> str | None:
+        """
+        Fetch /meals for the current turn and return the meal ID for this client.
+
+        The server's serve_dish tool requires the internal meal ID (not the display name).
+        We retry briefly in case the meal record hasn't been written yet when the SSE fires.
+        Returns None if not found after retries (caller falls back to clientName).
+        """
+        if self._http is None or self._state is None:
+            return None
+        turn_id = self._state.turn_id
+        for attempt in range(3):
+            try:
+                meals = await self._http.get_meals(turn_id)
+                for meal in meals:
+                    name = meal.get("clientName") or meal.get("client_name") or meal.get("name")
+                    if name == client_name and not meal.get("executed", False):
+                        meal_id = (
+                            meal.get("id")
+                            or meal.get("mealId")
+                            or meal.get("meal_id")
+                        )
+                        if meal_id is not None:
+                            log(
+                                "serving",
+                                turn_id,
+                                "meal_lookup",
+                                f"Resolved '{client_name}' → meal_id={meal_id}",
+                            )
+                            return str(meal_id)
+            except Exception as exc:
+                log_error("serving", turn_id, "meal_lookup", f"Attempt {attempt+1} failed: {exc}")
+            if attempt < 2:
+                await asyncio.sleep(0.5)
+        log_error(
+            "serving",
+            turn_id,
+            "meal_lookup",
+            f"Could not resolve meal_id for '{client_name}' — falling back to clientName",
+        )
+        return None
 
     # ------------------------------------------------------------------ SSE handlers
 
@@ -142,14 +187,18 @@ class ServingAgent(Agent):
         if self._state is None or self._mcp is None:
             return
 
-        client_id = str(data.get("clientName") or data.get("client_id") or data.get("id", "unknown"))
+        client_name = str(data.get("clientName") or data.get("client_id") or data.get("id", "unknown"))
         order_text = str(data.get("orderText") or data.get("order") or data.get("text", ""))
         intolerances = data.get("intolerances") or data.get("allergies") or []
 
-        log("serving", self._state.turn_id, "client", f"Client {client_id} wants: '{order_text}'")
+        log("serving", self._state.turn_id, "client", f"Client {client_name} wants: '{order_text}'")
+
+        # Resolve the actual meal ID that serve_dish needs — fall back to clientName if not found.
+        meal_id = await self._lookup_meal_id(client_name)
+        serve_client_id = meal_id if meal_id else client_name
 
         with tracer.start_as_current_span("serving_agent.client_spawned") as span:
-            span.set_attribute("client_id", client_id)
+            span.set_attribute("client_id", serve_client_id)
             span.set_attribute("turn_id", self._state.turn_id)
 
             # Filter recipes to only those on the menu AND cookable (have all ingredients in stock)
@@ -157,11 +206,15 @@ class ServingAgent(Agent):
             cookable = self._state.cookable_dishes()
             menu_recipes = [r for r in cookable if r.get("name") in menu_names]
 
+            if not menu_recipes:
+                log("serving", self._state.turn_id, "client", f"No cookable menu items — skipping {client_name}")
+                return
+
             # Let LLM pick best matching dish and call prepare_dish.
-            # NOTE: prepare_dish tool now takes both dish_name AND client_id so it can
+            # NOTE: prepare_dish tool takes both dish_name AND client_id (meal ID) so it can
             # register the pending order atomically — no reliance on result.tools_used.
             task = (
-                f"Client '{client_id}' has arrived.\n"
+                f"Client '{client_name}' has arrived (meal_id={serve_client_id}).\n"
                 f"Their order: \"{order_text}\"\n"
                 f"Their dietary intolerances/allergies: {json.dumps(intolerances)}\n\n"
                 "Identify the client's archetype from their name and order text:\n"
@@ -169,13 +222,11 @@ class ServingAgent(Agent):
                 "  - Astrobaron → highest price + fewest ingredients (fast prep)\n"
                 "  - Space Sage → rarest/most prestigious ingredients\n"
                 "  - Orbital Family → best price-to-quality ratio\n\n"
-                f"Current menu (name, price, description): {json.dumps(self._state.menu_items)}\n"
-                f"Recipes with ingredients (for intolerance checking): {json.dumps(menu_recipes)}\n\n"
-                "Select the best matching menu item using the archetype criteria above. "
+                f"Available menu items we can cook right now (name, price, description):\n{json.dumps(self._state.menu_items)}\n"
+                f"Cookable recipes with ingredients (for intolerance check):\n{json.dumps(menu_recipes)}\n\n"
+                "Pick the best dish using archetype criteria. "
                 "IMPORTANT: exclude any dish containing an ingredient the client is intolerant to. "
-                f"If there is a good match, call prepare_dish with dish_name=<exact menu name> "
-                f"and client_id='{client_id}'. "
-                "If no safe dish is available, do nothing."
+                f"Call prepare_dish with dish_name=<exact menu name> and client_id='{serve_client_id}'."
             )
 
             try:
