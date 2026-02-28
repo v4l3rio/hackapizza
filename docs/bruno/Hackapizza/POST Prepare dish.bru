@@ -1,0 +1,35 @@
+meta {
+  name: POST Prepare dish
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{baseUrl}}/mcp
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "prepare_dish",
+      "arguments": {
+        "dish_name": "Sinfonia Cosmica di Proteine Interstellari"
+      }
+    },
+    "id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
