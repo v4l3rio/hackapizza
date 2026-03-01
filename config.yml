@@ -11,6 +11,8 @@ BID_CLEARING_MULTIPLIER: 1.1  # bid = clearing_price * multiplier
 MAX_BID_BALANCE_FRACTION: 0.6  # cap: max 60% of balance in bids
 BID_SERVINGS_MULTIPLIER: 2
 
+MAX_RECIPES: 20
+
 MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION: 0.3 # Lower bound of fraction of dish to be able to fulfill before closing
 
 # Market strategy

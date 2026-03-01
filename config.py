@@ -46,6 +46,8 @@ MAX_BID_BALANCE_FRACTION: float = config['MAX_BID_BALANCE_FRACTION']  # cap: max
 BID_SERVINGS_MULTIPLIER: int = config['BID_SERVINGS_MULTIPLIER']   # bid for N servings of each focus recipe per turn
 MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION: float = config['MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION']
 
+MAX_RECIPES: int = config['MAX_RECIPES']
+
 # Market strategy
 MARKET_MAX_BUY_MULTIPLIER: float = config['MARKET_MAX_BUY_MULTIPLIER']
 MARKET_MAX_BUY_FLAT: int = config['MARKET_MAX_BUY_FLAT']
