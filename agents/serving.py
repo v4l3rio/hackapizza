@@ -86,7 +86,7 @@ class ServingAgent(Agent):
     async def execute(self, state: GameState, memory: Any | None = None) -> None:
         """Called when the serving phase starts."""
         # FALLBACK IF NO INGREDIENT: CLOSE RESTAURANT
-        if (not state.inventory):
+        if not state.inventory:
             log("serving", state.turn_id, "close_check", "NO INGREDIENT IN INVENTORY: CLOSING RESTAURANT")
             try:
                 await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
@@ -136,19 +136,28 @@ class ServingAgent(Agent):
         menu_recipes = [r for r in cookable if r.get("name") in menu_names]
         _log.debug("menu_names=%s | cookable_total=%d | menu_recipes=%d", menu_names, len(cookable), len(menu_recipes))
 
+        dishes_info = []
+        for r in menu_recipes:
+            name = r.get("name", "?")
+            ings = list(r.get("ingredients", {}).keys())
+            dishes_info.append(f'- "{name}": {", ".join(ings)}')
+        dishes_text = "\n".join(dishes_info) if dishes_info else "(nessun piatto disponibile)"
+
         task = (
-            f"Il cliente '{client_name}' è arrivato.\n"
-            f"Il suo ordine: \"{order_text}\"\n"
-            f"Le sue intolleranze/allergie alimentari: {json.dumps(intolerances)}\n\n"
-            f"Archetipo rilevato: {archetype}\n"
-            "  - galactic_explorer → prezzo più basso + meno ingredienti (preparazione veloce)\n"
-            "  - astrobaron → prezzo più alto + meno ingredienti (preparazione veloce)\n"
-            "  - space_sage → ingredienti più rari/prestigiosi\n"
-            "  - orbital_family → miglior rapporto prezzo-qualità\n\n"
-            f"Menu attuale (nome, prezzo): {json.dumps(self._state.menu_items)}\n"
-            f"Ricette con ingredienti (per controllo intolleranze): {json.dumps(menu_recipes)}\n\n"
-            "Seleziona il piatto che corrisponde meglio all'archetipo evitando ingredienti a cui il cliente è intollerante. "
-            "Se disponibile, chiama prepare_dish con il nome esatto. Se nessun piatto sicuro è disponibile, non fare nulla."
+            f"CLIENTE: '{client_name}'\n"
+            f'"RICHIESTA DEL CLIENTE: {order_text}"\n\n'
+            f"Intolleranze: {json.dumps(intolerances)}\n"
+            f"Archetipo: {archetype}\n\n"
+            f"PIATTI DISPONIBILI (nome: ingredienti):\n{dishes_text}\n\n"
+            f"INGREDIENTI DISPONIBILI: {self._state.inventory}"
+            "ISTRUZIONI:\n"
+            "0. Filtra i piatti disponibili in base alla disponibilità di ingredienti (con quantità necessarie alla ricetta)"
+            "1. Confronta gli ingredienti menzionati dal cliente con quelli di OGNI piatto.\n"
+            "2. Scegli il piatto con il MAGGIOR NUMERO di ingredienti in comune con la richiesta.\n"
+            "3. Escludi piatti che contengono ingredienti a cui il cliente è intollerante.\n"
+            "4. A parità, preferisci in base all'archetipo (astrobaron→premium, galactic_explorer→economico, "
+            "space_sage→prestigioso, orbital_family→equilibrato).\n"
+            "5. Chiama prepare_dish con il nome esatto. Se nessun piatto ha ingredienti in comune, non fare nulla."
         )
 
         with tracer.start_as_current_span("serving_agent.client_spawned") as span:

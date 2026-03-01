@@ -577,6 +577,100 @@ class DashboardClient:
                     seen[bid]["status"] = b.get("status")
         return sorted(seen.values(), key=lambda e: e["id"])
 
+    # ── BID PRICE CONTEXT FOR LLM ────────────────────────────────────────
+
+    def get_bid_context_for_llm(
+        self,
+        target_ingredients: list[str] | None = None,
+        limit: int = 10,
+    ) -> str:
+        """
+        Build a human-readable summary of bid history across recent dumps,
+        designed to be consumed by an LLM for autonomous pricing decisions.
+
+        For each ingredient returns: clearing price per turn, number of bidders,
+        our bid price/status, and competitor price distribution.
+        """
+        from collections import defaultdict
+
+        all_dumps = self.load_dumps(limit)
+        if not all_dumps:
+            return "Nessun dato storico disponibile — è il primo turno."
+
+        # Per ingredient → list of per-turn stats (ordered chronologically)
+        ingredient_turns: dict[str, list[dict]] = defaultdict(list)
+
+        for dump in all_dumps:
+            turn_id = dump.get("turn_id", "?")
+            bids = (dump.get("data") or {}).get("bid_history") or []
+            if not bids:
+                continue
+
+            by_ing: dict[str, list[dict]] = defaultdict(list)
+            for b in bids:
+                name = (b.get("ingredient") or {}).get("name")
+                if name:
+                    by_ing[name].append(b)
+
+            for name, entries in by_ing.items():
+                if target_ingredients and name not in target_ingredients:
+                    continue
+
+                completed = [e for e in entries if e.get("status") == "COMPLETED"]
+                cancelled = [e for e in entries if e.get("status") == "CANCELLED"]
+                completed_prices = sorted([e["priceForEach"] for e in completed])
+                cancelled_prices = sorted([e["priceForEach"] for e in cancelled])
+
+                our = [e for e in entries if str(e.get("restaurantId")) == self.my_restaurant_id]
+                our_price = our[0]["priceForEach"] if our else None
+                our_qty = our[0]["quantity"] if our else None
+                our_status = our[0].get("status") if our else None
+
+                ingredient_turns[name].append({
+                    "turn": turn_id,
+                    "clearing_price": min(completed_prices) if completed_prices else None,
+                    "max_price": max(completed_prices) if completed_prices else None,
+                    "num_bidders": len(entries),
+                    "num_completed": len(completed),
+                    "num_cancelled": len(cancelled),
+                    "completed_prices": completed_prices,
+                    "cancelled_prices": cancelled_prices,
+                    "our_price": our_price,
+                    "our_qty": our_qty,
+                    "our_status": our_status,
+                })
+
+        if not ingredient_turns:
+            return "Nessun dato di bid storico trovato per gli ingredienti richiesti."
+
+        # Format output
+        lines = [
+            "=== STORICO BID PER INGREDIENTE ===",
+            f"(Basato su {len(all_dumps)} turni recenti, nostro restaurant_id={self.my_restaurant_id})",
+            "",
+        ]
+
+        for name in sorted(ingredient_turns.keys()):
+            turns = ingredient_turns[name]
+            lines.append(f"## {name}")
+            for t in turns:
+                clearing = t["clearing_price"] if t["clearing_price"] is not None else "N/A"
+                our_info = f"noi: {t['our_price']}×{t['our_qty']}→{t['our_status']}" if t["our_price"] else "noi: non partecipato"
+                lines.append(
+                    f"  Turno {t['turn']}: clearing={clearing}, max={t['max_price']}, "
+                    f"bidders={t['num_bidders']} ({t['num_completed']} ok, {t['num_cancelled']} cancelled), "
+                    f"prezzi_ok={t['completed_prices']}, {our_info}"
+                )
+            # Summary across turns
+            clearings = [t["clearing_price"] for t in turns if t["clearing_price"] is not None]
+            if clearings:
+                avg_c = sum(clearings) / len(clearings)
+                lines.append(f"  → Media clearing: {avg_c:.1f}, Range: {min(clearings)}-{max(clearings)}")
+            lines.append("")
+
+        lines.append("=== FINE STORICO ===")
+        return "\n".join(lines)
+
     # ── DELTA: LAST TWO DUMPS ─────────────────────────────────────────────
 
     def get_restaurant_delta(self) -> dict | None:
