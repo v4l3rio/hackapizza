@@ -8,6 +8,7 @@ from datapizza.agents import Agent
 from datapizza.tools import Tool
 from datapizza.tools.mcp_client import MCPClient
 
+from config import MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION
 from state.game_state import GameState
 from infrastructure.sse_listener import SSEListener
 from infrastructure.http_client import HttpClient
@@ -134,6 +135,42 @@ class ServingAgent(Agent):
             log("serving", self._state.turn_id, "serve", f"Served '{dish_name}' to customer {customer_id} ('{client_name}')")
         except Exception as exc:
             log_error("serving", self._state.turn_id, "serve", f"serve_dish failed for '{dish_name}': {exc}")
+            # return
+
+        # After each successful serve, refresh inventory and close if nothing left to cook.
+        await self._close_if_no_cookable_dishes()
+
+    async def _close_if_no_cookable_dishes(self) -> None:
+        """Refresh inventory then close the restaurant if no menu dish can still be cooked."""
+        if self._state is None or self._http is None:
+            await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
+            log("serving", self._state.turn_id if self._state else 0, "close_check", "State or http error, restaurant close")
+            return
+
+        try:
+            await self._state.refresh_all(self._http)
+        except Exception as exc:
+            log_error("serving", self._state.turn_id, "close_check", f"State refresh failed: {exc}")
+
+        menu_names = {item.get("name") for item in self._state.menu_items}
+        full_menu_count = len(menu_names)
+        still_cookable = [r for r in self._state.cookable_dishes() if r.get("name") in menu_names]
+
+        if len(still_cookable) >= MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION * full_menu_count:
+            log(
+                "serving",
+                self._state.turn_id,
+                "close_check",
+                f"Still {len(still_cookable)} cookable menu dish(es) — staying open",
+            )
+            return
+
+        log("serving", self._state.turn_id, "close_check", "No cookable menu dishes left — closing restaurant")
+        try:
+            await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
+            log("serving", self._state.turn_id, "close_check", "Restaurant closed")
+        except Exception as exc:
+            log_error("serving", self._state.turn_id, "close_check", f"Failed to close restaurant: {exc}")
 
     async def _resolve_customer_id(self, client_name: str | None) -> int:
         """Resolve client name to numeric customer ID via /meals.

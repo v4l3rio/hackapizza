@@ -40,9 +40,11 @@ REGOLO_MODEL: str = config["REGOLO_MODEL_BIG"]
 DEFAULT_BID_FLAT: int = config['DEFAULT_BID_FLAT']          # flat bid per ingredient on turn 1
 DEFAULT_BID_QUANTITY: int = config['DEFAULT_BID_QUANTITY']
 DEFAULT_PRICE_SELL: int = config['DEFAULT_PRICE_SELL']
+DEFAULT_PRICE_SELL_MARKET: int = config['DEFAULT_PRICE_SELL_MARKET']
 BID_CLEARING_MULTIPLIER: float = config['BID_CLEARING_MULTIPLIER']  # bid = clearing_price * multiplier
 MAX_BID_BALANCE_FRACTION: float = config['MAX_BID_BALANCE_FRACTION']  # cap: max 60% of balance in bids
 BID_SERVINGS_MULTIPLIER: int = config['BID_SERVINGS_MULTIPLIER']   # bid for N servings of each focus recipe per turn
+MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION: float = config['MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION']
 
 # Market strategy
 MARKET_MAX_BUY_MULTIPLIER: float = config['MARKET_MAX_BUY_MULTIPLIER']
