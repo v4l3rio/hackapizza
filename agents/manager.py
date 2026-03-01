@@ -16,7 +16,6 @@ from agents.bidding import BiddingAgent
 from agents.menu import MenuAgent
 from agents.market import MarketAgent
 from agents.serving import ServingAgent
-from agents.recipe_strategy import RecipeStrategyAgent
 from agents.news_watcher import NewsWatcherAgent
 from utils.logger import log, log_error, dump_logs
 
@@ -56,7 +55,6 @@ class AgentManager:
         self._menu = MenuAgent(mcp_tools=filter_tools(["save_menu"]))
         self._market = MarketAgent()
         self._serving = ServingAgent(mcp=mcp, mcp_tools=filter_tools(["prepare_dish", "serve_dish", "update_restaurant_is_open"]))
-        self._strategy = RecipeStrategyAgent(http)
         self._news = NewsWatcherAgent()
 
         # Avvia subito il polling delle notizie in background (popola memory.news_insights)
@@ -80,7 +78,6 @@ class AgentManager:
         with HistoryClient(WEB_APP_URL) as c:
             c.set_turn(self.state.turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
-        await self._run_strategy()
         try:
             await self.state.refresh_all(self.http)
         except Exception as exc:
@@ -91,17 +88,6 @@ class AgentManager:
         log("manager", self.state.turn_id, "reset", f"Game reset: {data}")
         self.state.turn_id = 0
         self.state.phase = "ND"
-        await self._run_strategy()
-
-    async def _run_strategy(self) -> None:
-        """Run RecipeStrategyAgent to pick focus recipes for this game session."""
-        try:
-            clearing_prices = self.memory.clearing_prices if self.memory.clearing_prices else None
-            strategy = await self._strategy.execute(clearing_prices=clearing_prices)
-            self.memory.focus_recipes = [r["name"] for r in strategy if r.get("name")]
-            log("manager", self.state.turn_id, "strategy", f"Focus recipes: {self.memory.focus_recipes}")
-        except Exception as exc:
-            log_error("manager", self.state.turn_id, "strategy", f"Strategy selection failed: {exc}")
 
     async def _on_message(self, data: dict[str, Any]) -> None:
         """Broadcast message (e.g. market entry created by another team)."""
