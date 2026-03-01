@@ -46,6 +46,7 @@ class BiddingAgent(Agent):
         self._state: GameState | None = None
         super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=1)
         self.max_recipes = MAX_RECIPES
+        self._last_bid_time: float = 0.0
 
     async def execute(self, state: GameState, memory: StrategyMemory, http: HttpClient) -> None:
         self._state = state
@@ -64,6 +65,8 @@ class BiddingAgent(Agent):
                 log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
                 return
 
+            news_context = self._build_news_bid_context(memory, since=self._last_bid_time)
+            self._last_bid_time = time.time()
             # Build historical bid context for LLM autonomous pricing
             loop = asyncio.get_event_loop()
             bid_context = await loop.run_in_executor(
@@ -88,6 +91,17 @@ class BiddingAgent(Agent):
                 f"(somma di priceForEach × {DEFAULT_BID_QUANTITY} per ogni ingrediente) "
                 f"NON deve superare {budget:.2f}.\n"
                 f"Chiama closed_bid una volta con l'array completo di offerte."
+                f"Ingredienti da offrire (quantità per ciascuno: {DEFAULT_BID_QUANTITY}): {json.dumps(list(needed))}\n"
+                f"Ultimi prezzi di aggiudicazione noti: {json.dumps(memory.clearing_prices)}\n"
+                f"Prezzo fisso di default per bid (non moltiplicare questo valore per la quantità, inseriscilo come parametro come fornito): {DEFAULT_BID_FLAT}.\n"
+                f"La spesa totale NON deve superare {budget:.2f}.\n"
+                + (
+                    f"\nNotizie di mercato (adatta i prezzi di conseguenza):\n{news_context}\n"
+                    "  - scarcity → offri un prezzo 20-35% PIÙ ALTO rispetto al tuo prezzo base\n"
+                    "  - surplus  → offri un prezzo 20-30% PIÙ BASSO rispetto al tuo prezzo base\n"
+                    if news_context else ""
+                )
+                + "\nChiama closed_bid una volta con l'array completo di offerte."
             )
 
             try:
@@ -95,6 +109,29 @@ class BiddingAgent(Agent):
             except Exception as exc:
                 span.record_exception(exc)
                 log_error("closed_bid", state.turn_id, "agent", f"BiddingAgent failed: {exc}")
+
+    @staticmethod
+    def _build_news_bid_context(memory: StrategyMemory, since: float = 0.0) -> str:
+        """
+        Ritorna il contesto della notizia più recente registrata dopo `since`.
+        Stringa vuota se nessuna notizia nuova in questo turno.
+        """
+        if not memory.news_insights:
+            log("closed_bid", memory.turn_id, "news", "No news insights available for bidding context")
+            return ""
+        fresh = [
+            ins for ins in memory.news_insights
+            if ins.get("recorded_at", 0) > since
+            and ins.get("direction") in ("scarcity", "surplus")
+            and ins.get("ingredients_affected")
+        ]
+        if not fresh:
+            log("closed_bid", memory.turn_id, "news", "No fresh news insights for bidding context")
+            return ""
+        latest = max(fresh, key=lambda x: x.get("recorded_at", 0))
+        lines = [f"  - {ing}: {latest['direction']}" for ing in latest["ingredients_affected"]]
+        log("closed_bid", memory.turn_id, "news", f"Applying news context from {len(latest['ingredients_affected'])} ingredients: {latest['direction']}")
+        return "\n".join(lines)
 
     async def _compute_needed(self, state, http: HttpClient) -> dict[str, int]:
         """Returns DEFAULT_BID_QUANTITY for every known ingredient."""
