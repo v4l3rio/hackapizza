@@ -1,0 +1,18 @@
+meta {
+  name: POST Run Dump (Manual)
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8765/api/dump/run
+  body: none
+  auth: none
+}
+
+docs {
+  Manually trigger a dump of the current game state.
+  
+  This is useful when automatic scheduling is disabled.
+  The dump will be saved to disk and added to the dumps history.
+}

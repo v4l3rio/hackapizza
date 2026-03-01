@@ -1,11 +1,11 @@
 meta {
-  name: GET Restaurant Menu
+  name: Get history
   type: http
-  seq: 4
+  seq: 1
 }
 
 get {
-  url: {{baseUrl}}/restaurant/5/menu
+  url: http://localhost:8765/api/dump/latest
   body: none
   auth: inherit
 }

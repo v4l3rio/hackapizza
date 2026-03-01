@@ -1,18 +1,17 @@
 meta {
-  name: GET Dishes
+  name: Get optimal
   type: http
-  seq: 1
+  seq: 3
 }
 
 get {
-  url: {{baseUrl}}/meals?turn_id=44&restaurant_id=5
+  url: https://m1bhppihmkpq.share.zrok.io/api/recipes/optimal-set?size=20
   body: none
   auth: inherit
 }
 
 params:query {
-  turn_id: 44
-  restaurant_id: 5
+  size: 20
 }
 
 settings {
