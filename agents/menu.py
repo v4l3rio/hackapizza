@@ -81,6 +81,11 @@ class MenuAgent(Agent):
 
             clearing = memory.clearing_prices if memory.clearing_prices else None
 
+            # Reputation multiplier: rep=100 → 1.5, rep=50 → 0.75, rep=0 → 0.5
+            # Formula: 0.5 + (rep/100)^2
+            rep_multiplier = round(0.5 + (state.reputation / 100.0) ** 2, 3)
+            log("waiting", state.turn_id, "menu", f"Reputation={state.reputation:.1f} → price multiplier={rep_multiplier}")
+
             # Pre-compute pricing profiles — deterministic, no LLM involvement
             dish_profiles: list[dict] = []
 
@@ -124,10 +129,12 @@ class MenuAgent(Agent):
 
                 # Use dish history average price minus 5 if available, otherwise use calculated markup
                 if history_prices.get(name) is not None:
-                    suggested_price = max(0.0, round(history_prices[name] - 5, 2))
+                    base_price = max(0.0, history_prices[name] - 5)
                 else:
-                    # Fallback: use DEFAULT_PRICE_SELL if history is not available
-                    suggested_price = float(DEFAULT_PRICE_SELL)
+                    base_price = float(DEFAULT_PRICE_SELL)
+
+                # Scale by reputation: high rep → higher price, low rep → lower price
+                suggested_price = round(base_price * rep_multiplier, 2)
 
                 dish_profiles.append({
                     "name": name,
@@ -145,6 +152,8 @@ class MenuAgent(Agent):
             log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
+                f"Reputazione attuale: {state.reputation:.1f}/100 → moltiplicatore prezzi: {rep_multiplier}x "
+                f"(già applicato nei suggested_price).\n\n"
                 f"Profili di prezzo (pre-calcolati — usa il suggested_price come base):\n"
                 f"{json.dumps(dish_profiles, indent=2)}\n\n"
                 f"Piatti cucinabili (dati ricetta completi): {json.dumps(cookable)}\n\n"
