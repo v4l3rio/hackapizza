@@ -90,6 +90,7 @@ class BiddingAgent(Agent):
         Stringa vuota se nessuna notizia nuova in questo turno.
         """
         if not memory.news_insights:
+            log("closed_bid", memory.turn_id, "news", "No news insights available for bidding context")
             return ""
         fresh = [
             ins for ins in memory.news_insights
@@ -98,9 +99,11 @@ class BiddingAgent(Agent):
             and ins.get("ingredients_affected")
         ]
         if not fresh:
+            log("closed_bid", memory.turn_id, "news", "No fresh news insights for bidding context")
             return ""
         latest = max(fresh, key=lambda x: x.get("recorded_at", 0))
         lines = [f"  - {ing}: {latest['direction']}" for ing in latest["ingredients_affected"]]
+        log("closed_bid", memory.turn_id, "news", f"Applying news context from {len(latest['ingredients_affected'])} ingredients: {latest['direction']}")
         return "\n".join(lines)
 
     async def _compute_needed(self, state, http: HttpClient) -> dict[str, int]:
