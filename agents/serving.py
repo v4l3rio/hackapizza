@@ -42,6 +42,7 @@ class ServingAgent(Agent):
         "  - Orbital Family: equilibrato → scegli il miglior rapporto QUALITÀ-PREZZO.\n"
         "Se l'archetipo non è esplicito, deducilo dal testo dell'ordine e dal nome del cliente. "
         "Chiama prepare_dish con il nome esatto del piatto dal nostro menu. "
+        "Chiama serve_dish per servire i clienti. "
         "Agisci con decisione — chiama sempre uno strumento per agire."
     )
 
