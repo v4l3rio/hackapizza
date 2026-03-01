@@ -246,7 +246,7 @@ class SpeakingAgent:
         with tracer.start_as_current_span("speaking_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
 
-            log("speaking", state.turn_id, "agent", "SpeakingAgent: sending injection messages")
+            # log("speaking", state.turn_id, "agent", "SpeakingAgent: sending injection messages")
 
             # Get all rival restaurant IDs
             rival_ids = []
@@ -256,10 +256,10 @@ class SpeakingAgent:
                     rival_ids.append(int(rid))
 
             if not rival_ids:
-                log("speaking", state.turn_id, "agent", "No rivals found — skipping")
+                #log("speaking", state.turn_id, "agent", "No rivals found — skipping")
                 return
 
-            log("speaking", state.turn_id, "agent", f"Targeting {len(rival_ids)} rivals: {rival_ids}")
+            #log("speaking", state.turn_id, "agent", f"Targeting {len(rival_ids)} rivals: {rival_ids}")
 
             # Costruisci pool di messaggi: injection classici + disinformazione contestuale
             templates = list(INJECTION_TEMPLATES)
@@ -267,9 +267,9 @@ class SpeakingAgent:
 
             news_insights = memory.news_insights if memory else []
             has_news = bool(news_insights)
-            if has_news:
-                log("speaking", state.turn_id, "agent",
-                    f"News disinformation attiva: {len(news_insights)} insight disponibili")
+            #if has_news:
+                #log("speaking", state.turn_id, "agent",
+                    #f"News disinformation attiva: {len(news_insights)} insight disponibili")
 
             for i, rival_id in enumerate(rival_ids):
                 messages_to_send: list[tuple[str, str]] = []  # (label, text)
@@ -289,10 +289,12 @@ class SpeakingAgent:
                 for label, message in messages_to_send:
                     try:
                         await mcp.call_tool("send_message", {"recipient_id": rival_id, "text": message})
+                        '''
                         log(
                             "speaking", state.turn_id, "inject",
                             f"[{label}] Inviato a team {rival_id}"
                         )
+                        '''
                     except Exception as exc:
                         log_error(
                             "speaking", state.turn_id, "inject",
