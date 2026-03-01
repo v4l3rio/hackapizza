@@ -18,6 +18,7 @@ from infrastructure.http_client import HttpClient
 from infrastructure.sse_listener import SSEListener
 from state.game_state import GameState
 from state.memory import StrategyMemory
+from state.planner import plan_next_n_recipies
 from utils.logger import log, log_error, dump_logs
 from utils.tracing import get_tracer
 
@@ -189,6 +190,8 @@ class AgentManager:
                     log("manager", self.state.turn_id, "turn", f"Logs saved to {log_file}")
                     loop = asyncio.get_event_loop()
                     await loop.run_in_executor(None, DASHBOARD.run_dump, self.state.turn_id)
+
+                    self._bidding.max_recipes = plan_next_n_recipies(self._bidding.max_recipes)
                     if self.state.turn_id > 0:
                         try:
                             await self.memory.consolidate(self.http, self.state.turn_id)
