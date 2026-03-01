@@ -8,6 +8,7 @@ from datapizza.tools import Tool
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.llm_factory import get_llm_client
+from infrastructure.history_client import HistoryClient
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
 from utils.ingredient_data import dish_prestige_score, dish_avg_prep_time_ms
@@ -18,7 +19,8 @@ from config import (
     MENU_MARKUP_PRESTIGE,
     MENU_PRESTIGE_SCORE_HIGH,
     MENU_PRESTIGE_SCORE_LOW,
-    DEFAULT_PRICE_SELL
+    DEFAULT_PRICE_SELL,
+    WEB_APP_URL
 )
 
 tracer = get_tracer(__name__)
@@ -45,7 +47,6 @@ class MenuAgent(Agent):
         "Sei l'agente del menu per il nostro ristorante in un multiverso gastronomico sci-fi. "
         "Il tuo compito è creare un menu attraente dai piatti che possiamo attualmente cucinare. "
         "Ogni piatto ha un livello pre-calcolato (BUDGET / STANDARD / PRESTIGE) e un prezzo suggerito. "
-        f"Usa il prezzo è fisso {DEFAULT_PRICE_SELL}"
         "Chiama save_menu esattamente una volta con tutti i piatti del menu."
     )
 
@@ -82,6 +83,25 @@ class MenuAgent(Agent):
 
             # Pre-compute pricing profiles — deterministic, no LLM involvement
             dish_profiles: list[dict] = []
+
+            # Fetch dish price history once for all cookable dishes
+            history_prices: dict[str, float | None] = {}
+            try:
+                with HistoryClient(WEB_APP_URL) as c:
+                    c.set_turn(state.turn_id)
+                    for recipe in cookable:
+                        dish_name = recipe.get("name", "Unknown")
+                        try:
+                            dh = c.dish_history(dish_name, limit=1)
+                            history_prices[dish_name] = dh.summary.avg_price
+                        except Exception as e:
+                            log("waiting", state.turn_id, "menu",
+                                f"Could not fetch history for {dish_name}: {e}")
+                            history_prices[dish_name] = None
+            except Exception as exc:
+                log_error("waiting", state.turn_id, "menu",
+                         f"Failed to initialize HistoryClient: {exc}")
+
             for recipe in cookable:
                 name = recipe.get("name", "Unknown")
                 cost = ingredient_cost(recipe, clearing)
@@ -98,7 +118,12 @@ class MenuAgent(Agent):
                     tier = "STANDARD"
                     markup = MENU_MARKUP_STANDARD
 
-                suggested_price = round(cost * markup, 2)
+                # Use dish history average price minus 5 if available, otherwise use calculated markup
+                if history_prices.get(name) is not None:
+                    suggested_price = max(0.0, round(history_prices[name] - 5, 2))
+                else:
+                    suggested_price = round(cost * markup, 2)
+
                 dish_profiles.append({
                     "name": name,
                     "estimated_cost": round(cost, 2),
@@ -115,9 +140,9 @@ class MenuAgent(Agent):
             log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
-                f"Piatti cucinabili (dati ricetta completi): {json.dumps(cookable)}\n\n"
                 f"Profili di prezzo (pre-calcolati — usa il suggested_price come base):\n"
                 f"{json.dumps(dish_profiles, indent=2)}\n\n"
+                f"Piatti cucinabili (dati ricetta completi): {json.dumps(cookable)}\n\n"
                 f"Regole per livello:\n"
                 f"  BUDGET   (prestige_score < {MENU_PRESTIGE_SCORE_LOW}) "
                 f"→ markup {MENU_MARKUP_BUDGET}x — ingredienti comuni, economici e veloci, "
