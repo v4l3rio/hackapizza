@@ -200,7 +200,7 @@ class NewsWatcherAgent(Agent):
         # Deduplicazione semantica: skip se headline molto simile a uno già visto
         norm = self._normalize_headline(str(headline))
         if norm in self._seen_headlines:
-            log("news", "—", "dedup", f"Notizia duplicata ignorata: {headline!r}")
+            # log("news", "—", "dedup", f"Notizia duplicata ignorata: {headline!r}")
             return f"Notizia duplicata, ignorata: {headline}"
         self._seen_headlines.add(norm)
 
@@ -217,13 +217,14 @@ class NewsWatcherAgent(Agent):
         # Propaga anche alla StrategyMemory condivisa (se disponibile)
         if self._strategy_memory is not None:
             self._strategy_memory.news_insights.append(insight)
-
+        '''
         log(
             "news", "—", "insight",
             f"[{priority.upper()}] {headline}"
             + (f" | ingredienti={ingredients_affected}" if ingredients_affected else "")
             + (f" | azioni={actions}" if actions else ""),
         )
+        '''
         return f"Insight registrato: {headline}"
 
     # ------------------------------------------------------------------ fetch helpers
@@ -277,7 +278,7 @@ class NewsWatcherAgent(Agent):
 
         text = _html_to_text(html)
         if len(text.strip()) < 30:
-            log("news", "—", "fetch", f"Contenuto troppo breve per {url}, salto")
+            # log("news", "—", "fetch", f"Contenuto troppo breve per {url}, salto")
             self._seen_urls.add(self._norm_url(url))
             return
 
@@ -313,14 +314,14 @@ class NewsWatcherAgent(Agent):
         Singola passata: scarica e analizza tutti gli articoli nuovi.
         Ritorna la lista degli insight raccolti in questa passata.
         """
-        log("news", "—", "poll", "Controllo blog per nuovi articoli...")
+        # log("news", "—", "poll", "Controllo blog per nuovi articoli...")
         new_urls = await self._get_new_article_urls()
 
         if not new_urls:
-            log("news", "—", "poll", "Nessun articolo nuovo trovato.")
+            # log("news", "—", "poll", "Nessun articolo nuovo trovato.")
             return []
 
-        log("news", "—", "poll", f"Trovati {len(new_urls)} articoli nuovi")
+        #log("news", "—", "poll", f"Trovati {len(new_urls)} articoli nuovi")
 
         before = len(self._ins)
         for url in new_urls[:5]:  # max 5 articoli per passata
@@ -330,10 +331,12 @@ class NewsWatcherAgent(Agent):
 
     async def run_loop(self) -> None:
         """Loop infinito: analizza subito poi ogni POLL_INTERVAL_SECONDS."""
+        '''
         log(
             "news", "—", "agent",
             f"NewsWatcherAgent avviato — polling ogni {POLL_INTERVAL_SECONDS}s su {BLOG_URL}",
         )
+        '''
         while True:
             try:
                 await self.run_once()
@@ -353,14 +356,14 @@ class NewsWatcherAgent(Agent):
         if self._polling_task and not self._polling_task.done():
             return self._polling_task
         self._polling_task = asyncio.create_task(self.run_loop())
-        log("news", "—", "agent", "Task di polling avviato in background")
+        # log("news", "—", "agent", "Task di polling avviato in background")
         return self._polling_task
 
     def stop(self) -> None:
         """Cancella il task di background."""
         if self._polling_task and not self._polling_task.done():
             self._polling_task.cancel()
-            log("news", "—", "agent", "Task di polling fermato")
+            # log("news", "—", "agent", "Task di polling fermato")
 
     @property
     def insights(self) -> list[dict[str, Any]]:

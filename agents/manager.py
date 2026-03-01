@@ -77,6 +77,11 @@ class AgentManager:
             c.set_turn(self.state.turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
         await self._run_strategy()
+        try:
+            await self.state.refresh_all(self.http)
+        except Exception as exc:
+            log_error("manager", self.state.turn_id, "refresh", f"State refresh on game_started failed: {exc}")
+        await self._speaking.execute(self.state, self.memory, self.mcp)
 
     async def _on_game_reset(self, data: dict[str, Any]) -> None:
         log("manager", self.state.turn_id, "reset", f"Game reset: {data}")
@@ -141,10 +146,7 @@ class AgentManager:
             span.set_attribute("phase", phase)
             span.set_attribute("turn_id", self.state.turn_id)
             try:
-                if phase == "speaking":
-                    await self._speaking.execute(self.state, self.memory, self.mcp)
-
-                elif phase == "closed_bid":
+                if phase == "closed_bid":
                     # Consolidate memory from the PREVIOUS turn's bid results before bidding.
                     # (turn_id - 1 so we fetch already-settled history, not the current auction.)
                     # When turn_id == 1 this becomes 0, which returns all history — fine for T1.
