@@ -4,6 +4,7 @@ from typing import Any
 
 import aiohttp
 
+from config import WEB_APP_URL
 from utils.logger import log, log_error
 
 
@@ -26,10 +27,10 @@ class HttpClient:
     # --- Endpoints ---
 
     async def get_best_ingredients(self, n_recipes) -> list[str]:
-        url = '/api/recipes/optimal-set?size=10'
+        url = '/api/recipes/optimal-set'
         params = f'size={n_recipes}'
 
-        data = await self._get(f'{url}?{params}')
+        data = await self._get(f'{WEB_APP_URL}?{params}')
 
         return list(data['shared_ingredients'].keys())
 
