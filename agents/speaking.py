@@ -272,31 +272,24 @@ class SpeakingAgent:
                     #f"News disinformation attiva: {len(news_insights)} insight disponibili")
 
             for i, rival_id in enumerate(rival_ids):
-                messages_to_send: list[tuple[str, str]] = []  # (label, text)
-
-                # 1. Disinformazione contestuale basata su news reali (se disponibile)
+                # 1 messaggio per rivale: news_disinfo se disponibile, altrimenti injection classico
                 if has_news:
                     news_msgs = _build_news_disinfo(news_insights, i, OUR_ID)
-                    for idx, nmsg in enumerate(news_msgs):
-                        messages_to_send.append((f"news_disinfo_{idx}", nmsg))
+                    message = news_msgs[0] if news_msgs else None
+                    label = "news_disinfo_0"
+                else:
+                    message = None
+                    label = ""
 
-                # 2. Template injection classici (1 per rivale, diverso per ognuno)
-                template_idx = i % len(templates)
-                classic_msg = templates[template_idx].format(our_id=OUR_ID)
-                messages_to_send.append((f"classic_inject_{template_idx}", classic_msg))
+                if message is None:
+                    template_idx = i % len(templates)
+                    message = templates[template_idx].format(our_id=OUR_ID)
+                    label = f"classic_inject_{template_idx}"
 
-                # Invia tutti i messaggi al rivale
-                for label, message in messages_to_send:
-                    try:
-                        await mcp.call_tool("send_message", {"recipient_id": rival_id, "text": message})
-                        '''
-                        log(
-                            "speaking", state.turn_id, "inject",
-                            f"[{label}] Inviato a team {rival_id}"
-                        )
-                        '''
-                    except Exception as exc:
-                        log_error(
-                            "speaking", state.turn_id, "inject",
-                            f"[{label}] Fallito verso team {rival_id}: {exc}"
-                        )
+                try:
+                    await mcp.call_tool("send_message", {"recipient_id": rival_id, "text": message})
+                except Exception as exc:
+                    log_error(
+                        "speaking", state.turn_id, "inject",
+                        f"[{label}] Fallito verso team {rival_id}: {exc}"
+                    )
