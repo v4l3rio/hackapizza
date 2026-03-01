@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 
 from datapizza.agents import Agent
 from datapizza.tools import Tool
@@ -24,6 +25,7 @@ from config import (
 )
 
 tracer = get_tracer(__name__)
+_log = logging.getLogger("menu_agent")
 
 
 class MenuAgent(Agent):
@@ -73,13 +75,19 @@ class MenuAgent(Agent):
                 "state",
                 f"Balance={state.balance:.2f} | Inventory={state.inventory}",
             )
+            _log.info("MenuAgent.execute: turn_id=%s balance=%.2f inventory=%s",
+                      state.turn_id, state.balance, state.inventory)
 
             cookable = state.cookable_dishes()
+            _log.info("Cookable dishes count=%d names=%s",
+                      len(cookable), [r.get("name") for r in cookable])
             if not cookable:
                 log("waiting", state.turn_id, "menu", "No cookable dishes — skipping menu update")
+                _log.warning("No cookable dishes — MenuAgent will not set a menu this turn")
                 return
 
             clearing = memory.clearing_prices if memory.clearing_prices else None
+            _log.debug("clearing_prices=%s", clearing)
 
             # Reputation multiplier: rep=100 → 1.5, rep=50 → 0.75, rep=0 → 0.5
             # Formula: 0.5 + (rep/100)^2
@@ -92,6 +100,7 @@ class MenuAgent(Agent):
             # Fetch dish price history once for all cookable dishes
             history_prices: dict[str, float | None] = {}
             try:
+                _log.debug("Initializing HistoryClient for turn_id=%s url=%s", state.turn_id, WEB_APP_URL)
                 with HistoryClient(WEB_APP_URL) as c:
                     c.set_turn(state.turn_id)
                     for recipe in cookable:
@@ -99,17 +108,20 @@ class MenuAgent(Agent):
                         try:
                             dh = c.dish_history(dish_name, limit=1)
                             history_prices[dish_name] = dh.summary.avg_price
+                            _log.debug("History for '%s': avg_price=%s", dish_name, dh.summary.avg_price)
                         except Exception as e:
+                            _log.warning("Could not fetch history for '%s': %s", dish_name, e)
                             log("waiting", state.turn_id, "menu",
                                 f"Could not fetch history for {dish_name}: {e}")
                             history_prices[dish_name] = None
             except Exception as exc:
+                _log.exception("Failed to initialize HistoryClient: %s", exc)
                 log_error("waiting", state.turn_id, "menu",
                          f"Failed to initialize HistoryClient: {exc}")
-                # Fallback: mark all dishes as having no history available
                 for recipe in cookable:
                     dish_name = recipe.get("name", "Unknown")
                     history_prices[dish_name] = None
+            _log.info("history_prices=%s", history_prices)
 
             for recipe in cookable:
                 name = recipe.get("name", "Unknown")
@@ -127,14 +139,28 @@ class MenuAgent(Agent):
                     tier = "STANDARD"
                     markup = MENU_MARKUP_STANDARD
 
-                # Use dish history average price minus 5 if available, otherwise use calculated markup
                 if history_prices.get(name) is not None:
+<<<<<<< HEAD
                     base_price = max(0.0, history_prices[name] - 5)
                 else:
                     base_price = float(DEFAULT_PRICE_SELL)
 
                 # Scale by reputation: high rep → higher price, low rep → lower price
                 suggested_price = round(base_price * rep_multiplier, 2)
+=======
+                    suggested_price = max(0.0, round(history_prices[name] - 5, 2))
+                    _log.debug("'%s': price from history=%.2f → suggested=%.2f",
+                               name, history_prices[name], suggested_price)
+                else:
+                    suggested_price = float(DEFAULT_PRICE_SELL)
+                    _log.debug("'%s': no history → fallback suggested_price=%.2f", name, suggested_price)
+
+                _log.info(
+                    "Dish profile: name='%s' tier=%s prestige=%.1f cost=%.2f markup=%.2f "
+                    "avg_prep_ms=%d suggested_price=%.2f",
+                    name, tier, prestige_score, cost, markup, avg_prep_ms, suggested_price,
+                )
+>>>>>>> 7d0569aba69ca79b3c0f7f9257774e6851cf4e6e
 
                 dish_profiles.append({
                     "name": name,
@@ -172,7 +198,17 @@ class MenuAgent(Agent):
             )
 
             try:
-                await self.a_run(task, tool_choice="required_first")
+                _log.debug("Calling a_run with %d dish profiles", len(dish_profiles))
+                result = await self.a_run(task, tool_choice="required_first")
+                _log.debug("a_run result: %s", result)
+                if result:
+                    tools_called = [tc.name for tc in result.tools_used]
+                    _log.info("LLM tools called: %s", tools_called)
+                    for tc in result.tools_used:
+                        _log.debug("Tool call: name=%s args=%s", tc.name, tc.arguments)
+                else:
+                    _log.warning("a_run returned no result — save_menu may not have been called")
             except Exception as exc:
+                _log.exception("MenuAgent.a_run failed: %s", exc)
                 span.record_exception(exc)
                 log_error("waiting", state.turn_id, "agent", f"MenuAgent failed: {exc}")
