@@ -10,14 +10,11 @@
 import asyncio
 import json
 import os
-from dotenv import load_dotenv
 from datetime import datetime
 from typing import Any, Awaitable, Callable
 
 import aiohttp
-
-from config import WEB_APP_URL
-from infrastructure.history_client import HistoryClient
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -36,8 +33,6 @@ def log(tag: str, message: str) -> None:
 
 async def game_started(data: dict[str, Any]) -> None:
     turn_id = data.get("turn_id", 0)
-    with HistoryClient(WEB_APP_URL) as c:
-        c.set_turn(turn_id)
     log("EVENT", "game started, turn id: " + str(turn_id))
 
 

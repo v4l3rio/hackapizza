@@ -6,14 +6,6 @@ import logging
 from datapizza.agents import Agent
 from datapizza.tools import Tool
 
-from state.game_state import GameState
-from state.memory import StrategyMemory
-from infrastructure.llm_factory import get_llm_client
-from infrastructure.history_client import HistoryClient
-from utils.logger import log, log_error
-from utils.tracing import get_tracer
-from utils.ingredient_data import dish_prestige_score, dish_avg_prep_time_ms
-from state.game_state import ingredient_cost
 from config import (
     MENU_MARKUP_BUDGET,
     MENU_MARKUP_STANDARD,
@@ -21,8 +13,15 @@ from config import (
     MENU_PRESTIGE_SCORE_HIGH,
     MENU_PRESTIGE_SCORE_LOW,
     DEFAULT_PRICE_SELL,
-    WEB_APP_URL
+    DASHBOARD
 )
+from infrastructure.llm_factory import get_llm_client
+from state.game_state import GameState
+from state.game_state import ingredient_cost
+from state.memory import StrategyMemory
+from utils.ingredient_data import dish_prestige_score, dish_avg_prep_time_ms
+from utils.logger import log, log_error
+from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
 _log = logging.getLogger("menu_agent")
@@ -100,20 +99,23 @@ class MenuAgent(Agent):
             # Fetch dish price history once for all cookable dishes
             history_prices: dict[str, float | None] = {}
             try:
-                _log.debug("Initializing HistoryClient for turn_id=%s url=%s", state.turn_id, WEB_APP_URL)
-                with HistoryClient(WEB_APP_URL) as c:
-                    c.set_turn(state.turn_id)
-                    for recipe in cookable:
-                        dish_name = recipe.get("name", "Unknown")
-                        try:
-                            dh = c.dish_history(dish_name, limit=1)
-                            history_prices[dish_name] = dh.summary.avg_price
-                            _log.debug("History for '%s': avg_price=%s", dish_name, dh.summary.avg_price)
-                        except Exception as e:
-                            _log.warning("Could not fetch history for '%s': %s", dish_name, e)
-                            log("waiting", state.turn_id, "menu",
-                                f"Could not fetch history for {dish_name}: {e}")
+                all_dish_history = DASHBOARD.history_dishes(limit=1)
+
+                for recipe in cookable:
+                    dish_name = recipe.get("name", "Unknown")
+                    try:
+                        obs = all_dish_history.get(dish_name, [])
+                        if obs:
+                            prices = [o["price"] for o in obs]
+                            history_prices[dish_name] = round(sum(prices) / len(prices), 2)
+                        else:
                             history_prices[dish_name] = None
+                        _log.debug("History for '%s': avg_price=%s", dish_name, history_prices[dish_name])
+                    except Exception as e:
+                        _log.warning("Could not fetch history for '%s': %s", dish_name, e)
+                        log("waiting", state.turn_id, "menu",
+                            f"Could not fetch history for {dish_name}: {e}")
+                        history_prices[dish_name] = None
             except Exception as exc:
                 _log.exception("Failed to initialize HistoryClient: %s", exc)
                 log_error("waiting", state.turn_id, "menu",

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import aiohttp
 
-from config import WEB_APP_URL
-from utils.logger import log, log_error
+from config import DASHBOARD
+from utils.logger import log_error
 
 
 class HttpClient:
@@ -23,35 +24,12 @@ class HttpClient:
             async with session.get(url, headers=self._headers) as resp:
                 resp.raise_for_status()
                 return await resp.json()
-            
-    async def _get_web_app(self, path: str) -> Any:
-        url = f"{WEB_APP_URL}{path}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=self._headers) as resp:
-                resp.raise_for_status()
-                return await resp.json()
-
-    async def _post_web_app(self, path: str) -> Any:
-        url = f"{WEB_APP_URL}{path}"
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=self._headers) as resp:
-                resp.raise_for_status()
-                return await resp.json()
 
     # --- Endpoints ---
 
     async def dump_data(self) -> None:
-        params = "/api/dump/run"
-        await self._post_web_app(params)
-
-
-    async def get_best_ingredients(self, n_recipes) -> list[str]:
-        url = '/api/recipes/optimal-set'
-        params = f'size={n_recipes}'
-
-        data = await self._get_web_app(f'{url}?{params}')
-
-        return list(data['shared_ingredients'].keys())
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, DASHBOARD.run_dump, self.current_turn_id)
 
     async def get_recipes(self) -> list[dict[str, Any]]:
         data = await self._get(f"/recipes")

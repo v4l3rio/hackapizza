@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import asyncio
 import json
 
 from datapizza.agents import Agent
 from datapizza.tools import Tool
 
-from config import DEFAULT_BID_FLAT, DEFAULT_BID_QUANTITY, MAX_BID_BALANCE_FRACTION, MAX_RECIPES
+from config import DEFAULT_BID_FLAT, DEFAULT_BID_QUANTITY, MAX_BID_BALANCE_FRACTION, MAX_RECIPES, DASHBOARD
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.llm_factory import get_llm_client
@@ -75,7 +76,11 @@ class BiddingAgent(Agent):
         """Returns DEFAULT_BID_QUANTITY for every known ingredient."""
 
         if MAX_RECIPES:
-            ingredients = await http.get_best_ingredients(MAX_RECIPES)
+            loop = asyncio.get_event_loop()
+            data = await loop.run_in_executor(
+                None, DASHBOARD.get_optimal_recipe_set, MAX_RECIPES
+            )
+            ingredients = list(data['shared_ingredients'].keys())
             log("closed_bid", state.turn_id, "debug-agent", f"Obtained {len(ingredients)} Ingredients from {MAX_RECIPES} recipes")
         else:
             ingredients = get_ingredient_data()

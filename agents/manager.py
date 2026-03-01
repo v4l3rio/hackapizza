@@ -1,24 +1,23 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from datapizza.tools import Tool
 from datapizza.tools.mcp_client import MCPClient
 
-from config import WEB_APP_URL
-from infrastructure.history_client import HistoryClient
+from agents.bidding import BiddingAgent
+from agents.market import MarketAgent
+from agents.menu import MenuAgent
+from agents.news_watcher import NewsWatcherAgent
+from agents.serving import ServingAgent
+from agents.speaking import SpeakingAgent
+from config import DASHBOARD
 from infrastructure.http_client import HttpClient
+from infrastructure.sse_listener import SSEListener
 from state.game_state import GameState
 from state.memory import StrategyMemory
-from infrastructure.sse_listener import SSEListener
-from agents.speaking import SpeakingAgent
-from agents.bidding import BiddingAgent
-from agents.menu import MenuAgent
-from agents.market import MarketAgent
-from agents.serving import ServingAgent
-from agents.news_watcher import NewsWatcherAgent
 from utils.logger import log, log_error, dump_logs
-
 from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
@@ -75,8 +74,6 @@ class AgentManager:
     async def _on_game_started(self, data: dict[str, Any]) -> None:
         turn_id = data.get("turn_id", 0)
         self.state.turn_id = int(turn_id)
-        with HistoryClient(WEB_APP_URL) as c:
-            c.set_turn(self.state.turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
         try:
             await self.state.refresh_all(self.http)
@@ -168,7 +165,8 @@ class AgentManager:
                 elif phase == "stopped":
                     log_file = dump_logs(self.state.turn_id)
                     log("manager", self.state.turn_id, "turn", f"Logs saved to {log_file}")
-                    await self.http.dump_data()
+                    loop = asyncio.get_event_loop()
+                    await loop.run_in_executor(None, DASHBOARD.run_dump, self.state.turn_id)
                     if self.state.turn_id > 0:
                         try:
                             await self.memory.consolidate(self.http, self.state.turn_id)
