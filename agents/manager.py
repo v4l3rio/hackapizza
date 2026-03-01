@@ -18,7 +18,8 @@ from agents.market import MarketAgent
 from agents.serving import ServingAgent
 from agents.recipe_strategy import RecipeStrategyAgent
 from agents.news_watcher import NewsWatcherAgent
-from utils.logger import log, log_error
+from utils.logger import log, log_error, dump_logs
+
 from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
@@ -159,7 +160,7 @@ class AgentManager:
 
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory)
-                    await self._market.execute_waiting(self.state)
+                    await self._market.execute_waiting(self.state, self.memory, self.mcp)
                     try:
                         await self.mcp.call_tool("update_restaurant_is_open", {"is_open": True})
                         log("manager", self.state.turn_id, "phase", "Restaurant opened")
@@ -171,7 +172,8 @@ class AgentManager:
                     await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 
                 elif phase == "stopped":
-                    log("manager", self.state.turn_id, "phase", "Game stopped / turn ended")
+                    log_file = dump_logs(self.state.turn_id)
+                    log("manager", self.state.turn_id, "turn", f"Logs saved to {log_file}")
                     if self.state.turn_id > 0:
                         try:
                             await self.memory.consolidate(self.http, self.state.turn_id)

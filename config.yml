@@ -5,10 +5,13 @@ REGOLO_MODEL_BIG: gpt-oss-120b
 # Bidding strategy
 DEFAULT_BID_FLAT: 2         # flat bid per ingredient on turn 1
 DEFAULT_BID_QUANTITY: 10
-DEFAULT_PRICE_SELL: 500
+DEFAULT_PRICE_SELL: 180
+DEFAULT_PRICE_SELL_MARKET: 50
 BID_CLEARING_MULTIPLIER: 1.1  # bid = clearing_price * multiplier
 MAX_BID_BALANCE_FRACTION: 0.6  # cap: max 60% of balance in bids
 BID_SERVINGS_MULTIPLIER: 2
+
+MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION: 0.3 # Lower bound of fraction of dish to be able to fulfill before closing
 
 # Market strategy
 MARKET_MAX_BUY_MULTIPLIER: 0.8  # only buy if price <= clearing_price * this (buy cheap!)
