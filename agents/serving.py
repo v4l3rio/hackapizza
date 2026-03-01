@@ -74,6 +74,7 @@ class ServingAgent(Agent):
             except Exception as exc:
                 _log.exception("Failed to close restaurant: %s", exc)
                 log_error("serving", state.turn_id, "close_check", f"Failed to close restaurant: {exc}")
+                return
         
         
         self._state = state
@@ -213,7 +214,7 @@ class ServingAgent(Agent):
                 "serving",
                 self._state.turn_id,
                 "close_check",
-                f"Still {len(still_cookable)} cook-able menu dishes ({len(still_cookable)/full_menu_count:.2%}) — staying open",
+                f"Still {len(still_cookable)} cook-able menu dishes ({len(still_cookable)/max(1.0,full_menu_count):.2%}) — staying open",
             )
             return
 

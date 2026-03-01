@@ -55,7 +55,7 @@ MARKET_MAX_BUY_FLAT: int = config['MARKET_MAX_BUY_FLAT']
 # Menu pricing
 MENU_MARKUP: float = config['MENU_MARKUP']            # dish price = ingredient cost * markup
 # Menu pricing — tiered by dish prestige score (see utils/ingredient_data.py)
-MENU_MARKUP: float = 2.5            # default fallback markup
+#MENU_MARKUP: float = 2.5            # default fallback markup
 MENU_MARKUP_BUDGET: float = 2.0     # low-prestige dishes  → Galactic Explorer
 MENU_MARKUP_STANDARD: float = 2.5   # mid-prestige dishes  → Orbital Family / Astrobaron
 MENU_MARKUP_PRESTIGE: float = 4.5   # high-prestige dishes → Space Sage (unlimited budget)

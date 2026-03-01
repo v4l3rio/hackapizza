@@ -29,7 +29,7 @@ class MarketAgent:
         mcp: MCPClient,
     ) -> None:
         """Waiting phase: list surplus ingredients as SELL entries at DEFAULT_PRICE_SELL."""
-        log("serving", state.turn_id, "market", "MarketAgent: selling DISABLED — skipping")
+        log("waiting", state.turn_id, "market", "MarketAgent: selling DISABLED — skipping")
         # surplus = self._compute_surplus(state, memory.focus_recipes)
         #
         # if not surplus:

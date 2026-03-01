@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from infrastructure.http_client import HttpClient
 from typing import Any
 
 from datapizza.tools import Tool
@@ -8,9 +7,9 @@ from datapizza.tools.mcp_client import MCPClient
 
 from config import WEB_APP_URL
 from infrastructure.history_client import HistoryClient
+from infrastructure.http_client import HttpClient
 from state.game_state import GameState
 from state.memory import StrategyMemory
-from infrastructure.http_client import HttpClient
 from infrastructure.sse_listener import SSEListener
 from agents.speaking import SpeakingAgent
 from agents.bidding import BiddingAgent
@@ -150,6 +149,11 @@ class AgentManager:
 
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory)
+                    # Refresh state so serving agent sees the updated menu from save_menu
+                    try:
+                        await self.state.refresh_all(self.http)
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "refresh", f"Post-menu refresh failed: {exc}")
                     await self._market.execute_waiting(self.state, self.memory, self.mcp)
                     try:
                         await self.mcp.call_tool("update_restaurant_is_open", {"is_open": True})

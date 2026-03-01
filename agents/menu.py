@@ -140,7 +140,7 @@ class MenuAgent(Agent):
                     markup = MENU_MARKUP_STANDARD
 
                 if history_prices.get(name) is not None:
-                    suggested_price = max(0.0, round(history_prices[name] - 5, 2))
+                    suggested_price = max(1.0, round(history_prices[name] - 5, 2))
                     _log.debug("'%s': price from history=%.2f → suggested=%.2f",
                                name, history_prices[name], suggested_price)
                 else:
