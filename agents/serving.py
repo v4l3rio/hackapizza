@@ -161,11 +161,11 @@ class ServingAgent(Agent):
                 "serving",
                 self._state.turn_id,
                 "close_check",
-                f"Still {len(still_cookable)} cookable menu dish(es) — staying open",
+                f"Still {len(still_cookable)} cook-able menu dishes ({len(still_cookable)/full_menu_count:.2%}) — staying open",
             )
             return
 
-        log("serving", self._state.turn_id, "close_check", "No cookable menu dishes left — closing restaurant")
+        log("serving", self._state.turn_id, "close_check", f"Only {len(still_cookable)} cook-able menu dishes left ({len(still_cookable)/full_menu_count:.2%}) — closing restaurant")
         try:
             await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
             log("serving", self._state.turn_id, "close_check", "Restaurant closed")
