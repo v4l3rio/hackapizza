@@ -159,7 +159,7 @@ class MenuAgent(Agent):
                     "avg_prep_time_ms": round(avg_prep_ms),
                     "tier": tier,
                     "markup": markup,
-                    "suggested_price": suggested_price,
+                    "suggested_price": suggested_price * rep_multiplier,
                 })
 
             profile_summary = ", ".join(
@@ -168,8 +168,6 @@ class MenuAgent(Agent):
             log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
-                f"Reputazione attuale: {state.reputation:.1f}/100 → moltiplicatore prezzi: {rep_multiplier}x "
-                f"(già applicato nei suggested_price).\n\n"
                 f"Profili di prezzo (pre-calcolati — usa il suggested_price come base):\n"
                 f"{json.dumps(dish_profiles, indent=2)}\n\n"
                 f"Piatti cucinabili (dati ricetta completi): {json.dumps(cookable)}\n\n"
