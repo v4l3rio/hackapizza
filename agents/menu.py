@@ -101,6 +101,10 @@ class MenuAgent(Agent):
             except Exception as exc:
                 log_error("waiting", state.turn_id, "menu",
                          f"Failed to initialize HistoryClient: {exc}")
+                # Fallback: mark all dishes as having no history available
+                for recipe in cookable:
+                    dish_name = recipe.get("name", "Unknown")
+                    history_prices[dish_name] = None
 
             for recipe in cookable:
                 name = recipe.get("name", "Unknown")
@@ -122,7 +126,8 @@ class MenuAgent(Agent):
                 if history_prices.get(name) is not None:
                     suggested_price = max(0.0, round(history_prices[name] - 5, 2))
                 else:
-                    suggested_price = round(cost * markup, 2)
+                    # Fallback: use DEFAULT_PRICE_SELL if history is not available
+                    suggested_price = float(DEFAULT_PRICE_SELL)
 
                 dish_profiles.append({
                     "name": name,
