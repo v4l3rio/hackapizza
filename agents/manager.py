@@ -7,6 +7,7 @@ from datapizza.tools import Tool
 from datapizza.tools.mcp_client import MCPClient
 
 from agents.bidding import BiddingAgent
+from agents.customer_profiler import CustomerProfilerAgent, load_customer_profiles
 from agents.market import MarketAgent
 from agents.menu import MenuAgent
 from agents.news_watcher import NewsWatcherAgent
@@ -55,6 +56,11 @@ class AgentManager:
         self._market = MarketAgent()
         self._serving = ServingAgent(mcp=mcp, mcp_tools=filter_tools(["prepare_dish", "serve_dish", "update_restaurant_is_open"]))
         self._news = NewsWatcherAgent()
+        self._profiler = CustomerProfilerAgent()
+
+        # Carica i profili cliente esistenti all'avvio
+        memory.customer_profiles = load_customer_profiles()
+        log("manager", 0, "profiler", f"Profili cliente caricati: {len(memory.customer_profiles)}")
 
         # Avvia subito il polling delle notizie in background (popola memory.news_insights)
         self._news.start(memory=memory)
@@ -172,6 +178,11 @@ class AgentManager:
                             await self.memory.consolidate(self.http, self.state.turn_id)
                         except Exception as exc:
                             log_error("manager", self.state.turn_id, "memory", f"Final consolidate failed: {exc}")
+                    try:
+                        new_count = await self._profiler.run_once(self.memory)
+                        log("manager", self.state.turn_id, "profiler", f"{new_count} nuovi profili cliente aggiunti")
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "profiler", f"CustomerProfiler failed: {exc}")
 
                 else:
                     log("manager", self.state.turn_id, "phase", f"Unknown phase '{phase}' — ignoring")

@@ -14,6 +14,7 @@ class StrategyMemory:
     revenue_per_turn: dict[int, float] = field(default_factory=dict)
     focus_recipes: list[str] = field(default_factory=list)  # recipe names chosen by strategy agent
     news_insights: list[dict[str, Any]] = field(default_factory=list)  # from NewsWatcherAgent
+    customer_profiles: list[dict[str, Any]] = field(default_factory=list)  # from CustomerProfilerAgent
 
     def get_news_context(self, max_items: int = 5) -> str:
         """Stringa formattata degli insight per i prompt degli altri agenti."""

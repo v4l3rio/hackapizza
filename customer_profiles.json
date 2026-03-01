@@ -1,0 +1,5418 @@
+[
+  {
+    "name": "Alya Quen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ciro Aeth",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Neris Malk",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Briseo Vorn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Talia Quor",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orfeo Senn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maia Vel",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yorik Rune",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Selma Thorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Enea Vail",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Niva Rour",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Voren Pike",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tavia Krest",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orin Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vexa Thorne",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Darek Solen",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Quade",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caden Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Liora Sable",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Armand Quor",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nara Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eran Bral",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sia Keld",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rami Varo",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dora Quen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Teln",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nico Hald",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pia Solen",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Garo Venn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lina Quill",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Haro Vail",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Brea Korr",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Arel Sorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Toren Crest",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nia Brisk",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Darek Rune",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Noll",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lio Kest",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cira Vorn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Oren Vale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Flux",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pavel Morn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sira Lune",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vito Quen",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nora Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Marek Sol",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elia Thorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jaro Nix",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Talia Vex",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Riven Korr",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alya Thorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Neris Quill",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ciro Leth",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Mure",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Borin Sere",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maelis Rune",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Toren Malk",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rian Quor",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Selis Vail",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orel Nemet",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Crest 2",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Varek Sol 2",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tessa Vorn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orin Luxe",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Knox",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Darek Vail",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Liora Brant",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cyrus Hale",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Niva Quade",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Arel Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rami Thorn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Juno Vel",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pera Holt",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vito Sorel",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dora Kline",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lysa Morn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nino Bral",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Cest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rico Dalen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gina Varo",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tomo Arlen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nalia Crest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eran Quill",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Brin Halo",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Kest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cael Brix",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lira Vorn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pavel Mire",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Meya Thorn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jorik Lune",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Olia Vex",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tarin Flux",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sira Nox",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rovo Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elia Morn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vero Senn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nira Holt",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Milo Trask",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dara Korr",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kiron Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ciro Velm",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Nemet",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Borin Aeth",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maelis Kron",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Toren Vial",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rian Mure",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Selma Quen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Oriel Thesk",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tavia Luxor",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Darek Wynn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Solv",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caden Rour",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Liora Vex",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Arkos Morn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Niva Crest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Voren Hale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rami Keld",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sia Toren",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eran Wold",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mora Cint",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dalen Yori",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Piera Soln",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gioro Meln",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lina Varo",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pavo Rell",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xio Arden",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nera Flux",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bren Tal",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lysa Quor",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orik Senn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vela Croft",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elior Mirk",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Taro Nix",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caro Vane",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ylen Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nilo Korr",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mirael Dorn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kaio Velt",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rina Vox",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ivo Tern",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Neris Opal",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Briseo Cald",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Talia Rune",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orfeo Lumen",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maia Nemet",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yorik Sable",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Selis Thorne",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Enea Miral",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Armand Zev",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lucille Voss",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vexa Lorn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dorian Crest",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Isolde Rane",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Magnus Quill",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Petra Aurel",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Celian Vor",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vito Rowan",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nara Cline",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Omar Yeld",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tessa Bruni",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rafi Solen",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Luma Ferri",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dario Kest",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mila Hearth",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Narek Voss",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sora Flint",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elian Quark",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ciro Malk",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Runa Valek",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jalen Brisk",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kira Nox",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Piero Flux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Osha Vire",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tarek Noll",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Meya Drift",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Corin Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Isha Vant",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Brann Helix",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Niva Torq",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kael Rime",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Belen Zale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maia Halon",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zeno Jasper",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Amir Knoll",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giselle Rook",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Uma Lang",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lio Reyes",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ciro Danner",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yorin Cairn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alina Dune",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aria Vail",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Esme Lang",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kellan Sterling",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Celia Grove",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elio Iverson",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zephyr Alden",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fiora Vega",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jarek Stroud",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Bennet",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lara Cairn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maia Griffin",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Thea Jade",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ciro Ion",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Viola Zephyr",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Arin Halden",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Priya Tiber",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zora Fallow",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Alden",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Odin Onyx",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Juno Stroud",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hector Gale",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Odin Reeve",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Avery",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Halden",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Amir Xander",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alaric Fallow",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Oriana Ainsley",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Roxane Grove",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lucan Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caleb West",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mila Stellan",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vera Ibarra",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eira Alden",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zephyr Xander",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Willa Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wren Mire",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Felix Umber",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aria Nash",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Anya Ellis",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vanya Orren",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Neris Zorin",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quinn Blythe",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nira Morrow",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Esme Kestrel",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Priya Vale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lyra Kade",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kaia Knoll",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Uma Bastion",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caia York",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Riven Kellan",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aria Umber",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kira Danner",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ember Eldridge",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Amir Sterling",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giora Shard",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tessa Grove",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Axel Tyde",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Talia Ainsley",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jonas Ember",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Arden Mire",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Oriel Nero",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Faye Raven",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orin Quill",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lara Forge",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lira Kestrel",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Yarrow",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Anya Slate",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara West",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Amir Faraday",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dara Avery",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sable Fenn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iris Hale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giselle Carrow",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dahlia Wick",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dorian Quorra",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xara Bennet",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zeno Ion",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Zale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Maia Calder",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giora Calder",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Odin Lang",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Esme Wren",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Wren",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alina Drake",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dorian Sawyer",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Talia Wilder",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aeron Hallow",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Maven",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alaric Cline",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Priya Jade",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Farah Stroud",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ronan Stroud",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Harlan Talon",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aria Cairn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vesper Warden",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nico Drake",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elira Ellis",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Leona Oris",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Odin Xander",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lucan Sable",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eira Reeve",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nolan Hawke",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Farrow",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Leona Flint",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xara Reeve",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yorin Warden",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Galen Wren",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wren Arden",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yorin Thorne",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Valen Stellan",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nolan Corvin",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Valen Zale",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alaric Sawyer",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Leona Wilder",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Felix Hale",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Priya Avery",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tessa Wick",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lira Holt",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aisha Aster",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kellan Wick",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iris Wren",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xeno Grove",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lorcan Quorra",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rafa Ion",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iris Carrow",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alina Warden",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Torin Avery",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Harlan Eldridge",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Clio Ulric",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lira Voss",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lyra Cairn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Uma Lumen",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Silas Yale",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Neris Raven",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Harlan Stroud",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elira Nero",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Orren",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nolan Faraday",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Clio Kestrel",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sana Jade",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alaric Lux",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giora Oris",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Silas Mire",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xeno Xander",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lara Hale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Axel Carrow",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Harlan Yale",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Yarrow",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Oriana Xylo",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Valen Kestrel",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wren Bellamy",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Samir Oris",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aria Zephyr",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Willa Kade",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Willa Corvin",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wren Xander",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rafa Rowan",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Thea Voss",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Leona Dale",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alaric Reeve",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elira Calder",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dahlia Jade",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Galen Nash",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Fenn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Enzo Ibarra",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giora Crest",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vera Knoll",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Frost",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Petra Vireo",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zephyr Garnet",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Roxane Nero",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Viola Arkwright",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Samir Wick",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Noel Tyde",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Wilder",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zora Griffin",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zephyr Corvin",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Blackwell",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giora Donovan",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jarek Nadir",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alaric West",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sana Griffin",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Anya Bellamy",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lio Nero",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quinn Jasper",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Valen Voss",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Riven Yale",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vera Wren",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elio Hawke",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ulen Voss",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Taroa Vale",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Seraa Holt",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Renna Kade",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quilla Arden",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Perrina Dov",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orlaa Pine",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Noxa Vire",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Miraela Tyde",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Luxea Sorn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kenaa Mora",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jaroa Vell",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Irina Sable",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Halea Drax",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Giraa Venn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fiora Renn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Erisa Quell",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dorina Krell",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Calaa Fenn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bexa Taran",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aresa Myr",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zaraa Voss",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yela Arin",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xana Drit",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wynna Sel",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vossa Arden",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ulaa Merin",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tareka Vail",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Seraa Lumen",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Riana Kest",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quaraa Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Paxa Riven",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orelisa Tide",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Noxa Halden",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Miraa Quen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lioa Stride",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kaiaa Nera",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jorrena Vex",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iraa Calder",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Halea Vorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Galena Rook",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fane Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elda Moss",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dax Rell",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cira Vale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Brana Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aris Kade",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zenoa Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Venn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xen Oris",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wira Dawn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Varek Sol",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Taro Vale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sera Holt",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Renn Kade",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quill Arden",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Perrin Dov",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orla Pine",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nox Vire",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mirael Tyde",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Luxe Sorn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kena Mora",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jaro Vell",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Irin Sable",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Drax",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gira Venn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fior Renn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eris Quell",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dorin Krell",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cala Fenn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bex Taran",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ares Myr",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yel Arin",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xan Drit",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wynn Sel",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Voss Arden",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ula Merin",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tarek Vail",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sera Lumen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rian Kest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quara Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pax Riven",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orelis Tide",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nox Halden",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Quen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lio Stride",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kaia Nera",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jorren Vex",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ira Calder",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Vorn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Galen Rook",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fane Oris",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Elda Moor",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dax Rowan",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cira Dune",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bran Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aris Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zeno Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Kyte",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xen Marr",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wira Solin",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Varek Nadir",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Uria Lune",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Taro Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sia Morn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Renn Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quila Nera",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Perrin Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ona Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nero Holt",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mila Oris",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lorn Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kira Dune",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jett Mora",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iona Crest",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Vett",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gina Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fenn Argo",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Edda Rune",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Daro Kline",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caro Drift",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bela Strix",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Arel Sable",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Quill",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yani Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xara Holt",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wynn Rell",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vero Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Una Calder",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Torin Pike",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sera Nix",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rian Sol",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quara Velt",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pax Orin",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Olia Crest",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nox Halon",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Voss",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lio Stray",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kara Moth",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Juno Rell",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iris Dane",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hiro Quell",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gala Venn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Feron Lux",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eira Kade",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Daxin Holt",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Celia Rook",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bramm Kest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alya Moor",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zorin Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yelma Rook",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wira Kade",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vero Sable",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Uma Crest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Taro Venn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sari Holt",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Riva Lumen",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quill Soren",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pira Knox",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orel Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nia Feld",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Merek Quill",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lyra Drift",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kade Thorn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jori Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ivo Rake",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hira Sol",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Garo Nemi",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fia Orin",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eron Lux",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dela Venn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Canto Roe",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bira Dune",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aeron Pike",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Mield",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yaro Flint",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xira Lune",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wex Halon",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vela Arden",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ulix Renn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tessa Moor",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Soren Tyde",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rhea Calder",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quin Mare",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pavo Nix",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Oris Vale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nara Quil",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Miro Hatch",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Luma Crest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Koren Voss",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jessa Kline",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iden Sable",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Helia Moth",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Goran Lyst",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fara Inlet",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eryk Pulse",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Delia Sorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Calen Mord",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Brisa Korr",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aldric Vane",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rilo Cairn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quade Nix",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pera Dawn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ode Venn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nera Bloom",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Milo Quasar",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lira Thorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kade Lumen",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Juno Crest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Isla Noor",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hiro Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gita Crest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fennick Rune",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eira Solis",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dax Orlo",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Caro Vex",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bram Lark",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Asha Thorn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zuri Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yen Mica",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xia Rook",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wade Lux",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vela Stone",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Una Drift",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Torin Gale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Sia Rowan",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rook Adair",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quora Ash",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pax Vireo",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ona Rill",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nico Rust",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mara Quill",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lio Trace",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kora Lilt",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jax Miro",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iria Cast",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Holt Riven",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gale Tris",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Fenn Piper",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eli Varn",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Dara Moon",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cyril Luxe",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bela Cairn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ari Fenn",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zed Hollow",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yara Crest",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xeno Reed",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wren Axis",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vik Solace",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ula Prism",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Tess Orbit",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Seth Meridian",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rina Vale",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quillan Roa",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pia Ember",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Olin Frost",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nia Sable",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Marek Dune",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lysa Forge",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kell Arden",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jessa North",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ivo Quinn",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hana Slate",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Garrin Holt",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Faye Morrow",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Eros Kade",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Demi Fox",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Cato Briar",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Bree Solaris",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Alden Cross",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Zara Hale",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Yori Flint",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Xara Bloom",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Wynn Arc",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Vara Knoll",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ulric Pike",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Talia Wren",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Soren Crest",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Rhea Jet",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Quin Star",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Pella Rune",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Orin Tides",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Nox Alder",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Mira Sol",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Lenn Vox",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Kira Vale",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Jaro Pinn",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Iris Lumen",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Hale Orion",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Gala Rime",
+    "archetype": "astrobaron",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Faro Kest",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Ena Quill",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Darek Voss",
+    "archetype": "orbital_family",
+    "preferred_tier": "STANDARD",
+    "price_sensitivity": "medium",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Celia Drift",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Borin Flux",
+    "archetype": "galactic_explorer",
+    "preferred_tier": "BUDGET",
+    "price_sensitivity": "high",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  },
+  {
+    "name": "Aria Novae",
+    "archetype": "space_sage",
+    "preferred_tier": "PRESTIGE",
+    "price_sensitivity": "low",
+    "excerpt": "",
+    "recorded_at": 1772342524.9782112
+  }
+]

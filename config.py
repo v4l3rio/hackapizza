@@ -37,6 +37,7 @@ MCP_URL: str = f"{BASE_URL}/mcp"
 
 REGOLO_BASE_URL: str = config["REGOLO_BASE_URL"]
 REGOLO_MODEL: str = config["REGOLO_MODEL_BIG"]
+REGOLO_SMALL_MODEL: str = config["REGOLO_MODEL_SMALL"]
 
 # Bidding strategy
 DEFAULT_BID_FLAT: int = config['DEFAULT_BID_FLAT']  # flat bid per ingredient on turn 1

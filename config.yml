@@ -1,6 +1,7 @@
 BASE_URL: https://hackapizza.datapizza.tech
 REGOLO_BASE_URL: https://api.regolo.ai/v1
 REGOLO_MODEL_BIG: gpt-oss-120b
+REGOLO_MODEL_SMALL: gpt-oss-20b
 
 # Bidding strategy
 DEFAULT_BID_FLAT: 4        # flat bid per ingredient on turn 1
