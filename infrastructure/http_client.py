@@ -31,11 +31,18 @@ class HttpClient:
                 resp.raise_for_status()
                 return await resp.json()
 
+    async def _post_web_app(self, path: str) -> Any:
+        url = f"{WEB_APP_URL}{path}"
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=self._headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+
     # --- Endpoints ---
 
     async def dump_data(self) -> None:
         params = "/api/dump/run"
-        await self._get_web_app(params)
+        await self._post_web_app(params)
 
 
     async def get_best_ingredients(self, n_recipes) -> list[str]:
