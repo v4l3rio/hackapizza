@@ -82,9 +82,9 @@ class AgentManager:
         self.state.turn_id = int(turn_id)
         log("manager", self.state.turn_id, "turn", f"Game started — turn {self.state.turn_id}")
         try:
-            await self.state.refresh_all(self.http)
+            await self.state.refresh_restaurants(self.http)
         except Exception as exc:
-            log_error("manager", self.state.turn_id, "refresh", f"State refresh on game_started failed: {exc}")
+            log_error("manager", self.state.turn_id, "refresh", f"Restaurants refresh on game_started failed: {exc}")
         await self._speaking.execute(self.state, self.memory, self.mcp)
 
     async def _on_game_reset(self, data: dict[str, Any]) -> None:
@@ -119,19 +119,6 @@ class AgentManager:
         self.state.turn_id = int(turn_id)
 
         log("manager", self.state.turn_id, "phase", f"→ {phase.upper()}")
-
-        # Refresh state before dispatching
-        try:
-            await self.state.refresh_all(self.http)
-            log(
-                "manager",
-                self.state.turn_id,
-                "state",
-                f"Balance={self.state.balance:.2f} | Inventory={self.state.inventory}",
-            )
-        except Exception as exc:
-            log_error("manager", self.state.turn_id, "refresh", f"State refresh failed: {exc}")
-
         await self._dispatch(phase)
 
     async def _dispatch(self, phase: str) -> None:
@@ -141,22 +128,41 @@ class AgentManager:
             try:
                 if phase == "closed_bid":
                     # Consolidate memory from the PREVIOUS turn's bid results before bidding.
-                    # (turn_id - 1 so we fetch already-settled history, not the current auction.)
-                    # When turn_id == 1 this becomes 0, which returns all history — fine for T1.
                     try:
                         await self.memory.consolidate(self.http, self.state.turn_id - 1)
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 
+                    # Bidding only needs balance
+                    try:
+                        await self.state.refresh_info(self.http)
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "refresh", f"Info refresh failed: {exc}")
+
                     await self._bidding.execute(self.state, self.memory, self.http)
 
                 elif phase == "waiting":
-                    await self._menu.execute(self.state, self.memory)
-                    # Refresh state so serving agent sees the updated menu from save_menu
+                    # Menu needs balance, reputation, inventory, recipes
                     try:
-                        await self.state.refresh_all(self.http)
+                        await asyncio.gather(
+                            self.state.refresh_info(self.http),
+                            self.state.refresh_recipes(self.http),
+                        )
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "refresh", f"Pre-menu refresh failed: {exc}")
+
+                    await self._menu.execute(self.state, self.memory)
+
+                    # After save_menu, refresh menu + inventory for serving/market
+                    try:
+                        await asyncio.gather(
+                            self.state.refresh_info(self.http),
+                            self.state.refresh_menu(self.http),
+                            self.state.refresh_recipes(self.http),
+                        )
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "refresh", f"Post-menu refresh failed: {exc}")
+
                     await self._market.execute_waiting(self.state, self.memory, self.mcp)
                     try:
                         await self.mcp.call_tool("update_restaurant_is_open", {"is_open": True})
@@ -165,6 +171,16 @@ class AgentManager:
                         log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
+                    # Serving needs inventory, menu, recipes
+                    try:
+                        await asyncio.gather(
+                            self.state.refresh_info(self.http),
+                            self.state.refresh_menu(self.http),
+                            self.state.refresh_recipes(self.http),
+                        )
+                    except Exception as exc:
+                        log_error("manager", self.state.turn_id, "refresh", f"Pre-serving refresh failed: {exc}")
+
                     await self._serving.execute(self.state)
                     await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 

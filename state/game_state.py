@@ -26,16 +26,37 @@ class GameState:
     active_meals: list[dict[str, Any]] = field(default_factory=list)
     restaurants: list[dict[str, Any]] = field(default_factory=list)
 
-    async def refresh_all(self, http: HttpClient) -> None:
-        """Refresh all state from the game server."""
-        results = await http.get_all(self.turn_id)
-        self.balance = results.get("balance", self.balance)
-        self.reputation = results.get("reputation", self.reputation)
-        self.inventory = results.get("inventory", self.inventory)
-        self.recipes = results.get("recipes", self.recipes)
-        self.menu_items = results.get("menu_items", self.menu_items)
-        self.active_meals = results.get("active_meals", self.active_meals)
-        self.restaurants = results.get("restaurants", self.restaurants)
+    async def refresh_info(self, http: HttpClient) -> None:
+        """Refresh balance, reputation, and inventory from the server."""
+        info = await http.get_restaurant_info()
+        if isinstance(info, dict):
+            self.balance = info.get("balance", self.balance)
+            self.reputation = int(info.get("reputation", self.reputation))
+            self.inventory = info.get("inventory", self.inventory)
+
+    async def refresh_recipes(self, http: HttpClient) -> None:
+        """Refresh available recipes from the server."""
+        recipes = await http.get_recipes()
+        if isinstance(recipes, list):
+            self.recipes = recipes
+
+    async def refresh_menu(self, http: HttpClient) -> None:
+        """Refresh own restaurant menu from the server."""
+        menu = await http.get_restaurant_menu()
+        if isinstance(menu, list):
+            self.menu_items = menu
+
+    async def refresh_restaurants(self, http: HttpClient) -> None:
+        """Refresh the list of all restaurants from the server."""
+        restaurants = await http.get_restaurants()
+        if isinstance(restaurants, list):
+            self.restaurants = restaurants
+
+    async def refresh_meals(self, http: HttpClient) -> None:
+        """Refresh active meals from the server."""
+        meals = await http.get_meals(self.turn_id)
+        if isinstance(meals, list):
+            self.active_meals = meals
 
     def cookable_dishes(self) -> list[dict[str, Any]]:
         """Return recipes for which we have all required ingredients."""

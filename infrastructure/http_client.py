@@ -6,7 +6,6 @@ from typing import Any
 import aiohttp
 
 from config import DASHBOARD
-from utils.logger import log_error
 
 
 class HttpClient:
@@ -64,32 +63,3 @@ class HttpClient:
         data = await self._get(f"/restaurant/{self.team_id}/menu")
         return data if isinstance(data, list) else data.get("menu", data.get("items", []))
 
-    async def get_all(self, turn_id: int = 0) -> dict[str, Any]:
-        """Fetch all relevant state in parallel."""
-        import asyncio
-        results = await asyncio.gather(
-            self.get_restaurant_info(),
-            self.get_recipes(),
-            self.get_meals(turn_id),
-            self.get_restaurants(),
-            self.get_restaurant_menu(),
-            return_exceptions=True,
-        )
-
-        info, recipes, meals, restaurants, menu = results
-
-        out: dict[str, Any] = {}
-
-        if isinstance(info, dict):
-            out["balance"] = info.get("balance", 0.0)
-            out["reputation"] = int(info.get("reputation", 100))
-            out["inventory"] = info.get("inventory", {})
-        else:
-            log_error("HTTP", "ERROR", "get_all", f"get_restaurant_info failed: {info}")
-
-        out["recipes"] = recipes if isinstance(recipes, list) else []
-        out["active_meals"] = meals if isinstance(meals, list) else []
-        out["restaurants"] = restaurants if isinstance(restaurants, list) else []
-        out["menu_items"] = menu if isinstance(menu, list) else []
-
-        return out
