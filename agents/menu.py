@@ -161,7 +161,7 @@ class MenuAgent(Agent):
                     "avg_prep_time_ms": round(avg_prep_ms),
                     "tier": tier,
                     "markup": markup,
-                    "suggested_price": suggested_price * rep_multiplier,
+                    "suggested_price": (suggested_price * rep_multiplier) + 50,
                 })
 
             profile_summary = ", ".join(
