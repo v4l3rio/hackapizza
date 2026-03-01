@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 from typing import Any
@@ -19,6 +18,14 @@ from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
 _log = logging.getLogger("serving_agent")
+
+# Lower value = higher priority (served first)
+ARCHETYPE_PRIORITY: dict[str, int] = {
+    "astrobaron": 0,        # pochissimo tempo
+    "galactic_explorer": 1, # poco tempo
+    "orbital_family": 2,    # molto tempo, equilibrato
+    "space_sage": 3,        # hanno tempo da perdere
+}
 
 
 class ServingAgent(Agent):
@@ -52,10 +59,21 @@ class ServingAgent(Agent):
         self._state: GameState | None = None
         self._mcp = mcp
         self._http: HttpClient | None = None
+        self._memory: Any | None = None
         self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_name, ...]
         self._client_queue: list[str] = []  # spawned clients not yet matched to a pending order
+        self._client_priorities: dict[str, int] = {}  # client_name -> priority value
         self._served_clients: set[str] = set()  # clients already served (to avoid double-serve)
         super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=3)
+
+    def _detect_archetype(self, client_name: str) -> str:
+        """Detect client archetype from profiles. Returns 'orbital_family' if not found."""
+        if self._memory and self._memory.customer_profiles:
+            key = client_name.strip().lower()
+            for p in self._memory.customer_profiles:
+                if p.get("name", "").strip().lower() == key:
+                    return p.get("archetype", "orbital_family")
+        return "orbital_family"
 
     def register(self, sse: SSEListener, state: GameState, mcp: MCPClient, http: HttpClient) -> None:
         """Register SSE handlers. Call once at startup."""
@@ -65,7 +83,7 @@ class ServingAgent(Agent):
         sse.on("client_spawned", self._on_client_spawned)
         sse.on("preparation_complete", self._on_preparation_complete)
 
-    async def execute(self, state: GameState) -> None:
+    async def execute(self, state: GameState, memory: Any | None = None) -> None:
         """Called when the serving phase starts."""
         # FALLBACK IF NO INGREDIENT: CLOSE RESTAURANT
         if (not state.inventory):
@@ -77,11 +95,12 @@ class ServingAgent(Agent):
                 _log.exception("Failed to close restaurant: %s", exc)
                 log_error("serving", state.turn_id, "close_check", f"Failed to close restaurant: {exc}")
                 return
-        
-        
+
         self._state = state
+        self._memory = memory
         self._pending_orders.clear()
         self._client_queue.clear()
+        self._client_priorities.clear()
         self._served_clients.clear()
         with tracer.start_as_current_span("serving_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
@@ -105,7 +124,11 @@ class ServingAgent(Agent):
         intolerances = data.get("intolerances") or data.get("allergies") or []
         _log.info("CLIENT SPAWNED — name=%s order='%s' intolerances=%s", client_name, order_text, intolerances)
 
-        log("serving", self._state.turn_id, "client", f"Client {client_name} wants: '{order_text}'")
+        archetype = self._detect_archetype(client_name)
+        priority = ARCHETYPE_PRIORITY.get(archetype, 2)
+        self._client_priorities[client_name] = priority
+        log("serving", self._state.turn_id, "client",
+            f"Client {client_name} [{archetype}] wants: '{order_text}'")
         self._client_queue.append(client_name)
 
         menu_names = {item.get("name") for item in self._state.menu_items}
@@ -117,11 +140,11 @@ class ServingAgent(Agent):
             f"Il cliente '{client_name}' è arrivato.\n"
             f"Il suo ordine: \"{order_text}\"\n"
             f"Le sue intolleranze/allergie alimentari: {json.dumps(intolerances)}\n\n"
-            "Identifica l'archetipo del cliente dal suo nome e dal testo dell'ordine:\n"
-            "  - Galactic Explorer → prezzo più basso + meno ingredienti (preparazione veloce)\n"
-            "  - Astrobaron → prezzo più alto + meno ingredienti (preparazione veloce)\n"
-            "  - Space Sage → ingredienti più rari/prestigiosi\n"
-            "  - Orbital Family → miglior rapporto prezzo-qualità\n\n"
+            f"Archetipo rilevato: {archetype}\n"
+            "  - galactic_explorer → prezzo più basso + meno ingredienti (preparazione veloce)\n"
+            "  - astrobaron → prezzo più alto + meno ingredienti (preparazione veloce)\n"
+            "  - space_sage → ingredienti più rari/prestigiosi\n"
+            "  - orbital_family → miglior rapporto prezzo-qualità\n\n"
             f"Menu attuale (nome, prezzo): {json.dumps(self._state.menu_items)}\n"
             f"Ricette con ingredienti (per controllo intolleranze): {json.dumps(menu_recipes)}\n\n"
             "Seleziona il piatto che corrisponde meglio all'archetipo evitando ingredienti a cui il cliente è intollerante. "
@@ -176,6 +199,8 @@ class ServingAgent(Agent):
             del self._pending_orders[dish_name]
 
         if client_name is None and self._client_queue:
+            # Pick highest-priority waiting client (lowest priority value)
+            self._client_queue.sort(key=lambda n: self._client_priorities.get(n, 2))
             client_name = self._client_queue.pop(0)
             _log.warning("No pending order for dish '%s' — using queued client '%s'", dish_name, client_name)
             log("serving", self._state.turn_id, "serve", f"No pending order for '{dish_name}' — assigned to queued client '{client_name}'")
@@ -243,7 +268,7 @@ class ServingAgent(Agent):
     async def _resolve_customer_id(self, client_name: str | None) -> int:
         """Resolve client name to numeric customer ID via /meals.
 
-        If name is provided, matches by name first. Falls back to first unserved customer.
+        If name is provided, matches by name first. Falls back to highest-priority unserved customer.
         """
         if self._state is None or self._http is None:
             raise RuntimeError("ServingAgent not registered")
@@ -271,13 +296,17 @@ class ServingAgent(Agent):
                     _log.debug("Matched customer by name: '%s' -> customerId=%s", client_name, m["customerId"])
                     return m["customerId"]
             _log.warning("Name '%s' not found in active meals — falling back to first unserved", client_name)
-            log("serving", turn_id, "meal_lookup", f"Name '{client_name}' not found — falling back to first unserved")
+            log("serving", turn_id, "meal_lookup", f"Name '{client_name}' not found — falling back to highest-priority unserved")
 
         if active:
+            # Sort by known priority, fallback to orbital_family (2) for unknowns
+            active.sort(key=lambda m: self._client_priorities.get(
+                ((m.get("customer") or {}).get("name") or ""), 2
+            ))
             m = active[0]
             name = ((m.get("customer") or {}).get("name") or "")
-            _log.info("Fallback: using first active customer '%s' (customerId=%s)", name, m["customerId"])
-            log("serving", turn_id, "meal_lookup", f"Serving first unserved customer '{name}' (id={m['customerId']})")
+            _log.info("Fallback: using highest-priority active customer '%s' (customerId=%s)", name, m["customerId"])
+            log("serving", turn_id, "meal_lookup", f"Serving highest-priority unserved customer '{name}' (id={m['customerId']})")
             return m["customerId"]
 
         _log.error("No unserved customer found in /meals for turn_id=%s. Full meals dump: %s", turn_id, meals)

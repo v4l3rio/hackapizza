@@ -165,7 +165,7 @@ class AgentManager:
                         log_error("manager", self.state.turn_id, "open", f"Failed to open restaurant: {exc}")
 
                 elif phase == "serving":
-                    await self._serving.execute(self.state)
+                    await self._serving.execute(self.state, self.memory)
                     await self._market.execute_serving(self.state, self.memory, self.mcp, self.http)
 
                 elif phase == "stopped":
