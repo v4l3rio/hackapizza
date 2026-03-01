@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from infrastructure.http_client import HttpClient
 from typing import Any
 
 from datapizza.tools import Tool
@@ -163,6 +164,7 @@ class AgentManager:
                 elif phase == "stopped":
                     log_file = dump_logs(self.state.turn_id)
                     log("manager", self.state.turn_id, "turn", f"Logs saved to {log_file}")
+                    await self.http.dump_data()
                     if self.state.turn_id > 0:
                         try:
                             await self.memory.consolidate(self.http, self.state.turn_id)

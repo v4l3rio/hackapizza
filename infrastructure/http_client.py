@@ -33,6 +33,11 @@ class HttpClient:
 
     # --- Endpoints ---
 
+    async def dump_data(self) -> None:
+        params = "/api/dump/run"
+        await self._get_web_app(params)
+
+
     async def get_best_ingredients(self, n_recipes) -> list[str]:
         url = '/api/recipes/optimal-set'
         params = f'size={n_recipes}'

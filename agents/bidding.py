@@ -76,7 +76,7 @@ class BiddingAgent(Agent):
 
         if MAX_RECIPES:
             ingredients = await http.get_best_ingredients(MAX_RECIPES)
-            log("closed_bid", state.turn_id, "debug-agent", f"Obtained {len(ingredients)} from {MAX_RECIPES} recipes")
+            log("closed_bid", state.turn_id, "debug-agent", f"Obtained {len(ingredients)} Ingredients from {MAX_RECIPES} recipes")
         else:
             ingredients = get_ingredient_data()
 
