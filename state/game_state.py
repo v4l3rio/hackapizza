@@ -19,6 +19,7 @@ class GameState:
     turn_id: int = 0
     phase: str = "unknown"
     balance: float = 0.0
+    reputation: int = 100
     inventory: dict[str, int] = field(default_factory=dict)
     recipes: list[dict[str, Any]] = field(default_factory=list)
     menu_items: list[dict[str, Any]] = field(default_factory=list)
@@ -29,6 +30,7 @@ class GameState:
         """Refresh all state from the game server."""
         results = await http.get_all(self.turn_id)
         self.balance = results.get("balance", self.balance)
+        self.reputation = results.get("reputation", self.reputation)
         self.inventory = results.get("inventory", self.inventory)
         self.recipes = results.get("recipes", self.recipes)
         self.menu_items = results.get("menu_items", self.menu_items)

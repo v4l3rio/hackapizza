@@ -89,6 +89,11 @@ class MenuAgent(Agent):
             clearing = memory.clearing_prices if memory.clearing_prices else None
             _log.debug("clearing_prices=%s", clearing)
 
+            # Reputation multiplier: rep=100 → 1.5, rep=50 → 0.75, rep=0 → 0.5
+            # Formula: 0.5 + (rep/100)^2
+            rep_multiplier = round(0.5 + (state.reputation / 100.0) ** 2, 3)
+            log("waiting", state.turn_id, "menu", f"Reputation={state.reputation:.1f} → price multiplier={rep_multiplier}")
+
             # Pre-compute pricing profiles — deterministic, no LLM involvement
             dish_profiles: list[dict] = []
 
@@ -147,7 +152,6 @@ class MenuAgent(Agent):
                     "avg_prep_ms=%d suggested_price=%.2f",
                     name, tier, prestige_score, cost, markup, avg_prep_ms, suggested_price,
                 )
-
                 dish_profiles.append({
                     "name": name,
                     "estimated_cost": round(cost, 2),
@@ -164,6 +168,8 @@ class MenuAgent(Agent):
             log("waiting", state.turn_id, "menu", f"Dish profiles: {profile_summary}")
 
             task = (
+                f"Reputazione attuale: {state.reputation:.1f}/100 → moltiplicatore prezzi: {rep_multiplier}x "
+                f"(già applicato nei suggested_price).\n\n"
                 f"Profili di prezzo (pre-calcolati — usa il suggested_price come base):\n"
                 f"{json.dumps(dish_profiles, indent=2)}\n\n"
                 f"Piatti cucinabili (dati ricetta completi): {json.dumps(cookable)}\n\n"
