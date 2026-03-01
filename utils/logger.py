@@ -65,6 +65,9 @@ logging.basicConfig(
     stream=sys.stdout,
 )
 
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+
 _logger = logging.getLogger("hackapizza")
 
 
