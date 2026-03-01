@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ristorante Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
       --cream: #f5f0e8;
@@ -24,709 +23,177 @@
       --font-body: 'DM Sans', sans-serif;
       --font-mono: 'DM Mono', monospace;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--cream);
-      color: var(--espresso);
-      font-family: var(--font-body);
-      font-size: 14px;
-      line-height: 1.6;
-    }
+    body { background: var(--cream); color: var(--espresso); font-family: var(--font-body); font-size: 14px; line-height: 1.6; }
 
     /* ── CONFIG BAR ── */
     .config-bar {
-      background: var(--espresso);
-      color: var(--cream);
-      padding: 0.6rem 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background: var(--espresso); color: var(--cream); padding: 0.6rem 2rem;
+      display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 100;
     }
-
     .config-bar label { font-size: 0.65rem; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-
     .config-bar input {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--cream);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      padding: 0.3rem 0.6rem;
-      border-radius: 3px;
-      width: 200px;
-      outline: none;
-      transition: border-color 0.2s;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      color: var(--cream); font-family: var(--font-mono); font-size: 0.72rem;
+      padding: 0.3rem 0.6rem; border-radius: 3px; width: 200px; outline: none; transition: border-color 0.2s;
     }
     .config-bar input:focus { border-color: var(--gold); }
-
+    .config-bar input.short { width: 60px; text-align: center; }
     .config-group { display: flex; align-items: center; gap: 0.5rem; }
-
     .refresh-btn {
-      margin-left: auto;
-      background: var(--rust);
-      border: none;
-      color: white;
-      font-family: var(--font-body);
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 0.4rem 1rem;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background 0.2s;
+      margin-left: auto; background: var(--rust); border: none; color: white;
+      font-family: var(--font-body); font-size: 0.75rem; font-weight: 500;
+      padding: 0.4rem 1rem; border-radius: 3px; cursor: pointer; transition: background 0.2s;
     }
     .refresh-btn:hover { background: var(--terracotta); }
-
-    .countdown-badge {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--muted);
-      white-space: nowrap;
+    .turn-btn {
+      background: var(--gold); border: none; color: var(--espresso);
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+      padding: 0.3rem 0.7rem; border-radius: 3px; cursor: pointer;
     }
-
+    .turn-badge { font-family: var(--font-mono); font-size: 0.68rem; color: var(--gold); padding: 0.2rem 0.5rem; border: 1px solid rgba(212,146,42,0.4); border-radius: 3px; background: rgba(212,146,42,0.1); }
+    .countdown-badge { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); white-space: nowrap; }
     select.interval-select {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--cream);
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      padding: 0.3rem 0.5rem;
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      color: var(--cream); font-family: var(--font-mono); font-size: 0.7rem;
+      padding: 0.3rem 0.5rem; border-radius: 3px; outline: none; cursor: pointer;
     }
 
     /* ── MASTHEAD ── */
     .masthead {
-      background: var(--espresso);
-      color: var(--cream);
-      padding: 2.5rem 2rem 2rem;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
+      background: var(--espresso); color: var(--cream); padding: 2.5rem 2rem 2rem;
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
       border-bottom: 3px solid var(--gold);
     }
-
-    .masthead-title {
-      font-family: var(--font-display);
-      font-size: 2.4rem;
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
-
-    .masthead-title em {
-      font-style: italic;
-      color: var(--gold);
-    }
-
-    .masthead-sub {
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
-      color: var(--muted);
-      margin-top: 0.4rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .masthead-date {
-      text-align: right;
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      color: var(--muted);
-      font-style: italic;
-    }
+    .masthead-title { font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+    .masthead-title em { font-style: italic; color: var(--gold); }
+    .masthead-sub { font-size: 0.72rem; font-family: var(--font-mono); color: var(--muted); margin-top: 0.4rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .masthead-date { text-align: right; font-family: var(--font-display); font-size: 0.85rem; color: var(--muted); font-style: italic; }
 
     /* ── NAV ── */
-    nav {
-      background: var(--paper);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      display: flex;
-      gap: 0;
-      overflow-x: auto;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 500;
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 0.8rem 1.2rem;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
+    nav { background: var(--paper); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; }
+    nav a { text-decoration: none; color: var(--muted); font-size: 0.75rem; font-weight: 500; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; padding: 0.8rem 1.2rem; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
     nav a:hover { color: var(--rust); }
     nav a.active { color: var(--rust); border-bottom-color: var(--rust); }
 
-    /* ── MAIN LAYOUT ── */
-    main {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
-    }
-
-    /* ── SECTION HEADERS ── */
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-title {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
-      font-weight: 500;
-    }
-
-    .section-title span {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: 400;
-      margin-bottom: 0.2rem;
-    }
-
-    .section-status {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--muted);
-      display: inline-block;
-    }
+    /* ── MAIN ── */
+    main { max-width: 1400px; margin: 0 auto; padding: 2rem; display: flex; flex-direction: column; gap: 3rem; }
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+    .section-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 500; }
+    .section-title span { display: block; font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 400; margin-bottom: 0.2rem; }
+    .section-status { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); display: inline-block; }
     .dot.ok { background: var(--sage); box-shadow: 0 0 4px var(--sage); }
     .dot.error { background: var(--rust); }
     .dot.loading { background: var(--gold); animation: blink 1s infinite; }
-
     @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
+    .state-msg { text-align: center; padding: 3rem; color: var(--muted); font-style: italic; font-family: var(--font-display); font-size: 1rem; }
 
-    /* ── ERROR / EMPTY ── */
-    .state-msg {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-      font-style: italic;
-      font-family: var(--font-display);
-      font-size: 1rem;
-    }
-
-    /* ════════════════════════════════════
-       SECTION 1 — MY RESTAURANT
-    ════════════════════════════════════ */
-    .my-restaurant-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
-    .restaurant-hero {
-      grid-column: 1 / -1;
-      background: var(--espresso);
-      color: var(--cream);
-      border-radius: 8px;
-      padding: 2rem 2.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .restaurant-hero::before {
-      content: '';
-      position: absolute;
-      right: -40px;
-      top: -40px;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(212,146,42,0.2) 0%, transparent 70%);
-    }
-
-    .restaurant-name {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1.1;
-    }
-
+    /* ── RESTAURANT ── */
+    .my-restaurant-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .restaurant-hero { grid-column: 1 / -1; background: var(--espresso); color: var(--cream); border-radius: 8px; padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; position: relative; overflow: hidden; }
+    .restaurant-hero::before { content: ''; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(212,146,42,0.2) 0%, transparent 70%); }
+    .restaurant-name { font-family: var(--font-display); font-size: 2rem; font-weight: 700; line-height: 1.1; }
     .restaurant-name em { font-style: italic; color: var(--gold); }
-
-    .restaurant-tagline {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 0.5rem;
-      font-family: var(--font-mono);
-    }
-
-    .open-badge {
-      padding: 0.5rem 1.2rem;
-      border-radius: 999px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 500;
-      white-space: nowrap;
-      border: 1px solid;
-    }
+    .restaurant-tagline { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; font-family: var(--font-mono); }
+    .open-badge { padding: 0.5rem 1.2rem; border-radius: 999px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; white-space: nowrap; border: 1px solid; }
     .open-badge.open { background: rgba(107,124,92,0.25); border-color: var(--sage); color: #a8c490; }
     .open-badge.closed { background: rgba(196,81,26,0.2); border-color: var(--rust); color: #e88a6a; }
+    .info-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: var(--card-shadow); }
+    .info-card-label { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+    .info-card-value { font-family: var(--font-display); font-size: 1.1rem; color: var(--espresso); }
+    .info-card-value.big { font-size: 2rem; font-weight: 700; color: var(--rust); }
+    .info-tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .info-tag { background: var(--paper); border: 1px solid var(--border); border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.7rem; color: var(--bark); font-family: var(--font-mono); }
 
-    .info-card {
-      background: var(--warm-white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: var(--card-shadow);
-    }
+    /* ── MARKET ── */
+    .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .market-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: var(--card-shadow); transition: transform 0.18s, box-shadow 0.18s; }
+    .market-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,18,9,0.12); }
+    .market-card-top { background: var(--paper); padding: 1rem 1.2rem 0.8rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+    .market-card-body { padding: 0.9rem 1.2rem; }
+    .market-price { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 500; color: var(--rust); white-space: nowrap; }
 
-    .info-card-label {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.6rem;
+    /* ── TABLES ── */
+    .meals-table, .bids-table, .restaurants-table {
+      background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: var(--card-shadow);
     }
+    .meals-table table, .bids-table table, .restaurants-table table { width: 100%; border-collapse: collapse; }
+    .meals-table thead th, .bids-table thead th, .restaurants-table thead th {
+      background: var(--paper); padding: 0.75rem 1.2rem; text-align: left;
+      font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 500;
+    }
+    .meals-table tbody tr, .bids-table tbody tr, .restaurants-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .meals-table tbody tr:last-child, .bids-table tbody tr:last-child, .restaurants-table tbody tr:last-child { border-bottom: none; }
+    .meals-table tbody tr:hover, .bids-table tbody tr:hover, .restaurants-table tbody tr:hover { background: var(--cream); }
+    .meals-table td, .bids-table td, .restaurants-table td { padding: 0.7rem 1.2rem; vertical-align: middle; font-size: 0.82rem; }
 
-    .info-card-value {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      color: var(--espresso);
-    }
+    .meal-status, .bid-status { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.65rem; font-family: var(--font-mono); font-weight: 500; }
+    .meal-status.pending, .bid-status.PENDING { background: rgba(212,146,42,0.15); color: var(--gold); }
+    .meal-status.served, .bid-status.COMPLETED { background: rgba(107,124,92,0.15); color: var(--sage); }
+    .meal-status.cancelled, .bid-status.CANCELLED { background: rgba(196,81,26,0.12); color: var(--terracotta); }
+    .meal-status.preparing, .bid-status.ACTIVE { background: rgba(61,43,26,0.1); color: var(--bark); }
 
-    .info-card-value.big {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--rust);
-    }
+    .summary-cards { display: flex; gap: 1rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .summary-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.4rem; box-shadow: var(--card-shadow); flex: 1; min-width: 140px; }
+    .summary-card-label { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .summary-card-value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; }
+    .summary-card-sub { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.15rem; }
 
-    .info-tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.5rem;
-    }
+    .dish-group-header { display: flex; align-items: baseline; gap: 0.75rem; margin: 1.2rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    .dish-group-header:first-child { margin-top: 0; }
+    .dish-group-name { font-family: var(--font-display); font-size: 1rem; font-weight: 500; }
+    .dish-group-count { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); }
+    .bid-ingredient-header { display: flex; align-items: baseline; gap: 0.75rem; margin: 1.2rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    .bid-ingredient-name { font-family: var(--font-display); font-size: 1rem; font-weight: 500; }
+    .bid-ingredient-meta { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); }
 
-    .info-tag {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.15rem 0.7rem;
-      font-size: 0.7rem;
-      color: var(--bark);
-      font-family: var(--font-mono);
-    }
-
-    /* ════════════════════════════════════
-       SECTION 2 — MARKET ENTRIES
-    ════════════════════════════════════ */
-    .market-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-
-    .market-card {
-      background: var(--warm-white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.18s, box-shadow 0.18s;
-    }
-    .market-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(26,18,9,0.12);
-    }
-
-    .market-card-top {
-      background: var(--paper);
-      padding: 1rem 1.2rem 0.8rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .market-card-name {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
-    .market-price {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--rust);
-      white-space: nowrap;
-    }
-
-    .market-card-body {
-      padding: 0.9rem 1.2rem;
-    }
-
-    .market-meta {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 0.3rem;
-    }
-
-    .market-category {
-      display: inline-block;
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 0.1rem 0.5rem;
-      font-size: 0.65rem;
-      font-family: var(--font-mono);
-      color: var(--bark);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-top: 0.4rem;
-    }
-
-    .stock-bar {
-      height: 3px;
-      background: var(--border);
-      border-radius: 2px;
-      margin-top: 0.6rem;
-      overflow: hidden;
-    }
-    .stock-fill {
-      height: 100%;
-      border-radius: 2px;
-      background: var(--sage);
-      transition: width 0.5s ease;
-    }
-    .stock-fill.low { background: var(--rust); }
-    .stock-fill.mid { background: var(--gold); }
-
-    /* ════════════════════════════════════
-       SECTION 3 — OTHER RESTAURANTS
-    ════════════════════════════════════ */
-    .restaurants-table {
-      background: var(--warm-white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-    }
-
-    .restaurants-table table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .restaurants-table thead th {
-      background: var(--paper);
-      padding: 0.75rem 1.2rem;
-      text-align: left;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      border-bottom: 1px solid var(--border);
-      font-weight: 500;
-    }
-
-    .restaurants-table tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-    .restaurants-table tbody tr:last-child { border-bottom: none; }
-    .restaurants-table tbody tr:hover { background: var(--cream); }
-
-    .restaurants-table td {
-      padding: 0.9rem 1.2rem;
-      vertical-align: middle;
-    }
-
-    .r-name {
-      font-family: var(--font-display);
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .r-cuisine {
-      font-size: 0.72rem;
-      color: var(--muted);
-      font-family: var(--font-mono);
-      margin-top: 0.1rem;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
-      font-size: 0.67rem;
-      font-family: var(--font-mono);
-      font-weight: 500;
-    }
+    .r-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 500; }
+    .r-cuisine { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); margin-top: 0.1rem; }
+    .status-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.67rem; font-family: var(--font-mono); font-weight: 500; }
     .status-pill.open { background: rgba(107,124,92,0.15); color: var(--sage); }
     .status-pill.closed { background: rgba(196,81,26,0.12); color: var(--terracotta); }
 
-    .rating-stars {
-      color: var(--gold);
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-
-    .rating-num {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-left: 0.3rem;
-    }
-
-    /* ════════════════════════════════════
-       SECTION 4 — RECIPES
-    ════════════════════════════════════ */
-    .recipes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.2rem;
-    }
-
-    .recipe-card {
-      background: var(--warm-white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.18s, box-shadow 0.18s;
-      cursor: pointer;
-    }
-    .recipe-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(26,18,9,0.12);
-    }
+    /* ── RECIPES ── */
+    .recipes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+    .recipe-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: var(--card-shadow); transition: transform 0.18s, box-shadow 0.18s; cursor: pointer; }
+    .recipe-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(26,18,9,0.12); }
     .recipe-card.expanded { transform: none; }
-
-    .recipe-card-header {
-      padding: 1.2rem 1.3rem 0.8rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--paper);
-    }
-
-    .recipe-num {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.3rem;
-    }
-
-    .recipe-name {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
+    .recipe-card-header { padding: 1.2rem 1.3rem 0.8rem; border-bottom: 1px solid var(--border); background: var(--paper); }
+    .recipe-num { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .recipe-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 500; line-height: 1.2; }
     .recipe-name em { font-style: italic; color: var(--rust); }
-
-    .recipe-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem;
-      margin-top: 0.6rem;
-    }
-
-    .recipe-tag {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 0.1rem 0.45rem;
-      font-size: 0.62rem;
-      font-family: var(--font-mono);
-      color: var(--bark);
-      text-transform: uppercase;
-    }
-
-    .recipe-body {
-      padding: 1rem 1.3rem;
-    }
-
-    .recipe-desc {
-      font-size: 0.78rem;
-      color: var(--bark);
-      line-height: 1.6;
-      margin-bottom: 0.8rem;
-    }
-
-    .recipe-meta-row {
-      display: flex;
-      gap: 1.2rem;
-    }
-
+    .recipe-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.6rem; }
+    .recipe-tag { background: var(--cream); border: 1px solid var(--border); border-radius: 3px; padding: 0.1rem 0.45rem; font-size: 0.62rem; font-family: var(--font-mono); color: var(--bark); text-transform: uppercase; }
+    .recipe-body { padding: 1rem 1.3rem; }
+    .recipe-meta-row { display: flex; gap: 1.2rem; }
     .recipe-meta-item { display: flex; flex-direction: column; gap: 0.1rem; }
     .recipe-meta-label { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
     .recipe-meta-val { font-family: var(--font-mono); font-size: 0.75rem; color: var(--espresso); font-weight: 500; }
-
-    .recipe-ingredients {
-      margin-top: 0.8rem;
-      padding-top: 0.8rem;
-      border-top: 1px solid var(--border);
-      display: none;
-    }
+    .recipe-ingredients { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--border); display: none; }
     .recipe-card.expanded .recipe-ingredients { display: block; }
-
-    .recipe-ingredients-title {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-
-    .recipe-ingredient-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .recipe-ingredient-list li {
-      font-size: 0.75rem;
-      color: var(--bark);
-      padding-left: 0.9rem;
-      position: relative;
-    }
-    .recipe-ingredient-list li::before {
-      content: '—';
-      position: absolute;
-      left: 0;
-      color: var(--gold);
-      font-size: 0.7rem;
-    }
-
-    .expand-hint {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: var(--muted);
-      text-align: right;
-      margin-top: 0.6rem;
-    }
-
-    /* ── LOADING SKELETON ── */
-    .skeleton {
-      background: linear-gradient(90deg, var(--paper) 25%, var(--border) 50%, var(--paper) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 4px;
-    }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-    /* ── CHARTS SECTION ── */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .chart-card {
-      background: var(--warm-white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-    }
-
-    .chart-card-header {
-      padding: 1rem 1.3rem 0.6rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--paper);
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .chart-card-title {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    .chart-card-meta {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      color: var(--muted);
-    }
-
-    .chart-card-body {
-      padding: 1rem 1.2rem;
-      position: relative;
-      height: 220px;
-    }
-
-    .chart-card-body canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .chart-stat-row {
-      display: flex;
-      gap: 1.5rem;
-      padding: 0.6rem 1.3rem 0.9rem;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-
-    .chart-stat { display: flex; flex-direction: column; gap: 0.1rem; }
-    .chart-stat-label { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-    .chart-stat-val { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 500; color: var(--espresso); }
+    .recipe-ingredients-title { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.5rem; }
+    .recipe-ingredient-list { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+    .recipe-ingredient-list li { font-size: 0.75rem; color: var(--bark); padding-left: 0.9rem; position: relative; }
+    .recipe-ingredient-list li::before { content: '\2014'; position: absolute; left: 0; color: var(--gold); font-size: 0.7rem; }
+    .expand-hint { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); text-align: right; margin-top: 0.6rem; }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .my-restaurant-layout { grid-template-columns: 1fr; }
       .restaurant-hero { flex-direction: column; align-items: flex-start; }
       main { padding: 1rem; }
+      .summary-cards { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 
-<!-- CONFIG BAR -->
 <div class="config-bar">
   <div class="config-group">
     <label>Base URL</label>
@@ -735,6 +202,15 @@
   <div class="config-group">
     <label>x-api-key</label>
     <input id="cfgApiKey" type="password" placeholder="your-api-key"/>
+  </div>
+  <div class="config-group">
+    <label>Restaurant ID</label>
+    <input id="cfgRestaurantId" type="text" class="short" value="5"/>
+  </div>
+  <div class="config-group">
+    <label>Turno</label>
+    <input id="cfgTurnId" type="number" class="short" placeholder="#" min="1"/>
+    <span class="turn-badge" id="turnBadge">&mdash;</span>
   </div>
   <div class="config-group">
     <label>Auto-refresh</label>
@@ -747,680 +223,443 @@
   </div>
   <span class="countdown-badge" id="cfgCountdown"></span>
   <span id="cfgServerStatus" style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted)"></span>
-  <button class="refresh-btn" onclick="saveConfigAndRefresh()">↺ Aggiorna</button>
+  <button class="refresh-btn" onclick="fetchAll()">&#8634; Aggiorna</button>
 </div>
 
-<!-- MASTHEAD -->
 <div class="masthead">
   <div>
     <div class="masthead-title">La Cucina <em>Digitale</em></div>
-    <div class="masthead-sub">Pannello di controllo · Ristorante #5</div>
+    <div class="masthead-sub">Pannello di controllo &middot; Diretto su API</div>
   </div>
   <div class="masthead-date" id="mastheadDate"></div>
 </div>
 
-<!-- NAV -->
 <nav>
   <a href="#my-restaurant" class="active">Il Mio Ristorante</a>
+  <a href="#meals">Ordini</a>
+  <a href="#bids">Aste</a>
   <a href="#market">Mercato</a>
   <a href="#competitors">Concorrenti</a>
   <a href="#recipes">Ricettario</a>
-  <a href="#charts">Andamento</a>
 </nav>
 
 <main>
-
-  <!-- ══ SECTION 1: MY RESTAURANT ══ -->
   <section id="my-restaurant">
     <div class="section-header">
-      <div class="section-title">
-        <span>Il Mio Ristorante</span>
-        La tua attività
-      </div>
-      <div class="section-status">
-        <span class="dot" id="dot-restaurant"></span>
-        <span id="status-restaurant">In attesa…</span>
-      </div>
+      <div class="section-title"><span>Il Mio Ristorante</span>La tua attivit&agrave;</div>
+      <div class="section-status"><span class="dot" id="dot-restaurant"></span><span id="status-restaurant">In attesa&hellip;</span></div>
     </div>
-    <div id="my-restaurant-content">
-      <div class="state-msg">Configura Base URL per iniziare</div>
-    </div>
+    <div id="my-restaurant-content"><div class="state-msg">Configura Base URL per iniziare</div></div>
   </section>
 
-  <!-- ══ SECTION 2: MARKET ══ -->
+  <section id="meals">
+    <div class="section-header">
+      <div class="section-title"><span>Ordini Clienti</span>Richieste piatti del turno</div>
+      <div class="section-status"><span class="dot" id="dot-meals"></span><span id="status-meals">In attesa&hellip;</span></div>
+    </div>
+    <div id="meals-content"><div class="state-msg">Imposta il turno per vedere gli ordini</div></div>
+  </section>
+
+  <section id="bids">
+    <div class="section-header">
+      <div class="section-title"><span>Storico Aste</span>Offerte ingredienti del turno</div>
+      <div class="section-status"><span class="dot" id="dot-bids"></span><span id="status-bids">In attesa&hellip;</span></div>
+    </div>
+    <div id="bids-content"><div class="state-msg">Imposta il turno per vedere le aste</div></div>
+  </section>
+
   <section id="market">
     <div class="section-header">
-      <div class="section-title">
-        <span>Mercato</span>
-        Voci disponibili
-      </div>
-      <div class="section-status">
-        <span class="dot" id="dot-market"></span>
-        <span id="status-market">In attesa…</span>
-      </div>
+      <div class="section-title"><span>Mercato</span>Voci disponibili</div>
+      <div class="section-status"><span class="dot" id="dot-market"></span><span id="status-market">In attesa&hellip;</span></div>
     </div>
-    <div id="market-content">
-      <div class="state-msg">Configura Base URL per iniziare</div>
-    </div>
+    <div id="market-content"><div class="state-msg">Configura Base URL per iniziare</div></div>
   </section>
 
-  <!-- ══ SECTION 3: OTHER RESTAURANTS ══ -->
   <section id="competitors">
     <div class="section-header">
-      <div class="section-title">
-        <span>Concorrenti</span>
-        Gli altri ristoranti
-      </div>
-      <div class="section-status">
-        <span class="dot" id="dot-restaurants"></span>
-        <span id="status-restaurants">In attesa…</span>
-      </div>
+      <div class="section-title"><span>Concorrenti</span>Gli altri ristoranti</div>
+      <div class="section-status"><span class="dot" id="dot-restaurants"></span><span id="status-restaurants">In attesa&hellip;</span></div>
     </div>
-    <div id="restaurants-content">
-      <div class="state-msg">Configura Base URL per iniziare</div>
-    </div>
+    <div id="restaurants-content"><div class="state-msg">Configura Base URL per iniziare</div></div>
   </section>
 
-  <!-- ══ SECTION 4: RECIPES ══ -->
   <section id="recipes">
     <div class="section-header">
-      <div class="section-title">
-        <span>Ricettario</span>
-        Tutte le ricette
-      </div>
-      <div class="section-status">
-        <span class="dot" id="dot-recipes"></span>
-        <span id="status-recipes">In attesa…</span>
-      </div>
+      <div class="section-title"><span>Ricettario</span>Tutte le ricette</div>
+      <div class="section-status"><span class="dot" id="dot-recipes"></span><span id="status-recipes">In attesa&hellip;</span></div>
     </div>
-    <div id="recipes-content">
-      <div class="state-msg">Configura Base URL per iniziare</div>
-    </div>
+    <div id="recipes-content"><div class="state-msg">Configura Base URL per iniziare</div></div>
   </section>
-
-  <!-- ══ SECTION 5: CHARTS ══ -->
-  <section id="charts">
-    <div class="section-header">
-      <div class="section-title">
-        <span>Andamento</span>
-        Statistiche nel tempo
-      </div>
-      <div class="section-status">
-        <span class="dot" id="dot-charts"></span>
-        <span id="status-charts">In attesa…</span>
-      </div>
-    </div>
-    <div id="charts-content">
-      <div class="state-msg">Configura Base URL per iniziare</div>
-    </div>
-  </section>
-
 </main>
 
 <script>
-// ── LOCAL API CALLS ────────────────────────────────────────
-async function localGet(path) {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+// ── CONFIG ──
+function cfg() {
+  return {
+    baseUrl: (document.getElementById('cfgBaseUrl').value || '').trim().replace(/\/$/,''),
+    apiKey: (document.getElementById('cfgApiKey').value || '').trim(),
+    restaurantId: (document.getElementById('cfgRestaurantId').value || '5').trim(),
+    turnId: (document.getElementById('cfgTurnId').value || '').trim(),
+  };
+}
+
+// ── UPSTREAM API ──
+async function api(path, params) {
+  var c = cfg();
+  if (!c.baseUrl) throw new Error('Base URL non configurato');
+  var url = new URL(c.baseUrl + path);
+  if (params) Object.entries(params).forEach(function([k,v]){ if (v != null) url.searchParams.set(k, v); });
+  var headers = { 'Accept': 'application/json' };
+  if (c.apiKey) headers['x-api-key'] = c.apiKey;
+  var res = await fetch(url.toString(), { headers: headers });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
 
-async function localPost(path, body) {
-  const res = await fetch(path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+// ── HELPERS ──
+function setDot(id, state) { document.getElementById('dot-' + id).className = 'dot ' + state; }
+function setStatus(id, text) { document.getElementById('status-' + id).innerHTML = text; }
+
+function enrichMarket(entries, restaurants) {
+  var rMap = {};
+  (restaurants || []).forEach(function(r){ rMap[r.id] = r.name; });
+  var myId = cfg().restaurantId;
+  entries.forEach(function(e) {
+    var rid = String(e.createdByRestaurantId || '');
+    e.restaurant_name = rMap[rid] || ('Ristorante #' + rid);
+    e.unit_price = Math.round(e.totalPrice / Math.max(e.quantity, 1) * 10000) / 10000;
+    e.is_mine = (rid === String(myId));
   });
-  return res.json();
+  return entries;
 }
 
-// ── DELTA HELPERS ──────────────────────────────────────────
-function deltaTag(delta, field) {
-  if (!delta || !delta[field] || !delta[field].changed) return '';
-  const d = delta[field];
-  if (d.diff !== undefined) {
-    const sign = d.diff > 0 ? '+' : '';
-    const color = d.diff > 0 ? 'var(--sage)' : 'var(--rust)';
-    const pct = d.pct !== null ? ` (${d.diff > 0 ? '+' : ''}${d.pct}%)` : '';
-    return `<span style="font-family:var(--font-mono);font-size:0.65rem;color:${color};margin-left:0.4rem">${sign}${d.diff}${pct}</span>`;
-  }
-  return `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gold);margin-left:0.4rem">&#8635; ${d.prev} &rarr; ${d.curr}</span>`;
+function groupByIngredient(entries) {
+  var groups = {};
+  entries.forEach(function(e) {
+    var name = (e.ingredient || {}).name || ('Ingrediente #' + e.ingredientId);
+    (groups[name] = groups[name] || []).push(e);
+  });
+  Object.keys(groups).forEach(function(k){ groups[k].sort(function(a,b){ return a.unit_price - b.unit_price; }); });
+  var sorted = {};
+  Object.keys(groups).sort().forEach(function(k){ sorted[k] = groups[k]; });
+  return sorted;
 }
 
-function deltaInventoryHtml(invDelta) {
-  if (!invDelta || !Object.keys(invDelta).length) return '';
-  const items = Object.entries(invDelta).map(([name, d]) => {
-    const added   = d.prev === null || d.prev === undefined;
-    const removed = d.curr === null || d.curr === undefined;
-    const color   = added ? 'var(--sage)' : removed ? 'var(--rust)' : 'var(--gold)';
-    const label   = added ? `+${d.curr}` : removed ? 'rimosso' : `${d.prev}&#8594;${d.curr}`;
-    return `<span class="info-tag" style="border-color:${color};color:${color}">&Delta; ${name}: ${label}</span>`;
-  }).join('');
-  return `<div style="margin-top:0.5rem"><div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem">Variazioni inventario</div><div class="info-tag-list">${items}</div></div>`;
+// ── RENDER: RESTAURANT ──
+function renderRestaurant(r) {
+  if (!r) { document.getElementById('my-restaurant-content').innerHTML = '<div class="state-msg">Nessun dato.</div>'; return; }
+  var isOpen = r.isOpen;
+  var menuItems = (r.menu || {}).items || [];
+  var invEntries = Object.entries(r.inventory || {});
+  var kitchen = r.kitchen || [];
+  var messages = r.receivedMessages || [];
+
+  document.getElementById('my-restaurant-content').innerHTML =
+    '<div class="my-restaurant-layout">' +
+      '<div class="restaurant-hero"><div>' +
+        '<div class="restaurant-name">' + r.name + '</div>' +
+        '<div class="restaurant-tagline">ID #' + r.id + '</div>' +
+      '</div><span class="open-badge ' + (isOpen?'open':'closed') + '">' + (isOpen?'&#9679; Aperto':'&#9675; Chiuso') + '</span></div>' +
+      '<div class="info-card"><div class="info-card-label">Saldo</div><div class="info-card-value big">&euro;' + (r.balance||0).toLocaleString('it-IT') + '</div></div>' +
+      '<div class="info-card"><div class="info-card-label">Reputazione</div><div class="info-card-value big" style="color:var(--gold)">' + (r.reputation||'-') + '</div></div>' +
+      '<div class="info-card" style="grid-column:1/-1"><div class="info-card-label">Menu (' + menuItems.length + ' piatti)</div>' +
+        (menuItems.length ? '<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.6rem">' + menuItems.map(function(i){ return '<div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.9rem;display:flex;align-items:center;gap:0.7rem"><span style="font-family:var(--font-display);font-size:0.9rem">' + i.name + '</span><span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust);font-weight:500">&euro;' + i.price + '</span></div>'; }).join('') + '</div>' : '<div style="color:var(--muted);font-style:italic;font-size:0.8rem;margin-top:0.4rem">Nessun piatto</div>') +
+      '</div>' +
+      '<div class="info-card" style="grid-column:1/-1"><div class="info-card-label">Inventario (' + invEntries.length + ')</div>' +
+        (invEntries.length ? '<div class="info-tag-list" style="margin-top:0.5rem">' + invEntries.map(function(e){ return '<span class="info-tag">&#129474; ' + e[0] + ' <b style="color:var(--rust)">&times;' + e[1] + '</b></span>'; }).join('') + '</div>' : '<div style="color:var(--muted);font-style:italic;font-size:0.8rem;margin-top:0.4rem">Vuoto</div>') +
+      '</div>' +
+      (kitchen.length ? '<div class="info-card" style="grid-column:1/-1"><div class="info-card-label">In cucina (' + kitchen.length + ')</div><div class="info-tag-list" style="margin-top:0.5rem">' + kitchen.map(function(k){ return '<span class="info-tag">&#127859; ' + JSON.stringify(k) + '</span>'; }).join('') + '</div></div>' : '') +
+      (messages.length ? '<div class="info-card" style="grid-column:1/-1"><div class="info-card-label">Messaggi (' + messages.length + ')</div><div style="margin-top:0.5rem;display:flex;flex-direction:column;gap:0.4rem">' + messages.map(function(m){ return '<div style="font-size:0.78rem;padding:0.4rem 0.7rem;background:var(--paper);border-radius:4px;border-left:2px solid var(--gold)">' + JSON.stringify(m) + '</div>'; }).join('') + '</div></div>' : '') +
+    '</div>';
 }
 
-function marketDeltaBanner(marketDelta) {
-  if (!marketDelta || marketDelta._new) return '';
-  const s = marketDelta._summary || {};
-  if (!s.added_count && !s.removed_count && !s.changed_count) return '';
-  const parts = [];
-  if (s.added_count)   parts.push(`<span style="color:var(--sage)">+${s.added_count} nuov${s.added_count===1?'a':'e'}</span>`);
-  if (s.removed_count) parts.push(`<span style="color:var(--rust)">&minus;${s.removed_count} rimoss${s.removed_count===1?'a':'e'}</span>`);
-  if (s.changed_count) parts.push(`<span style="color:var(--gold)">&#8635; ${s.changed_count} aggiorn${s.changed_count===1?'ata':'ate'}</span>`);
-  return `<div style="font-family:var(--font-mono);font-size:0.7rem;padding:0.4rem 0.8rem;background:rgba(0,0,0,0.05);border-radius:4px;margin-bottom:1rem;display:flex;gap:1rem;flex-wrap:wrap">&Delta; rispetto al dump precedente: ${parts.join(' &middot; ')}</div>`;
+// ── RENDER: MEALS ──
+function renderMeals(meals, turnId) {
+  var el = document.getElementById('meals-content');
+  if (!meals || !meals.length) { el.innerHTML = '<div class="state-msg">Nessun ordine' + (turnId ? ' (turno #' + turnId + ')' : '') + '</div>'; return; }
+
+  var byDish = {}, byStatus = {};
+  meals.forEach(function(m) {
+    var d = m.request || 'unknown', s = m.status || 'unknown';
+    (byDish[d] = byDish[d] || []).push(m);
+    byStatus[s] = (byStatus[s] || 0) + 1;
+  });
+
+  var statusIcon = function(s) { return ({pending:'&#9679;', served:'&#10003;', cancelled:'&#10007;', preparing:'&#9881;'})[s] || '?'; };
+  var fmtTime = function(t) { return t ? new Date(t).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '&mdash;'; };
+
+  var html = '<div class="summary-cards">';
+  html += '<div class="summary-card"><div class="summary-card-label">Totale ordini</div><div class="summary-card-value" style="color:var(--rust)">' + meals.length + '</div><div class="summary-card-sub">turno #' + (turnId||'&mdash;') + '</div></div>';
+  html += '<div class="summary-card"><div class="summary-card-label">Piatti</div><div class="summary-card-value" style="color:var(--gold)">' + Object.keys(byDish).length + '</div></div>';
+  Object.entries(byStatus).forEach(function(e) {
+    var color = ({pending:'var(--gold)',served:'var(--sage)',cancelled:'var(--terracotta)',preparing:'var(--bark)'})[e[0]] || 'var(--muted)';
+    html += '<div class="summary-card"><div class="summary-card-label">' + e[0] + '</div><div class="summary-card-value" style="color:' + color + '">' + e[1] + '</div></div>';
+  });
+  html += '</div>';
+
+  Object.entries(byDish).forEach(function(e) {
+    var dishName = e[0], dishMeals = e[1];
+    html += '<div class="dish-group-header"><span class="dish-group-name">' + dishName + '</span><span class="dish-group-count">' + dishMeals.length + ' ordini</span></div>';
+    html += '<div class="meals-table"><table><thead><tr><th>Cliente</th><th>Stato</th><th>Ora</th><th>Servito</th></tr></thead><tbody>';
+    dishMeals.forEach(function(m) {
+      html += '<tr><td style="font-family:var(--font-display);font-size:0.9rem">' + ((m.customer||{}).name || 'Cliente #' + m.customerId) + '</td>';
+      html += '<td><span class="meal-status ' + m.status + '">' + statusIcon(m.status) + ' ' + m.status + '</span></td>';
+      html += '<td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--muted)">' + fmtTime(m.startTime) + '</td>';
+      html += '<td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--muted)">' + (m.servedDishId ? '#' + m.servedDishId : '&mdash;') + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  });
+  el.innerHTML = html;
 }
 
-function restaurantDeltaTag(rDelta) {
-  if (!rDelta || rDelta._new) return '';
-  const changes = [];
-  if (rDelta.balance)    changes.push(`saldo ${rDelta.balance.diff > 0 ? '+' : ''}${rDelta.balance.diff}`);
-  if (rDelta.reputation) changes.push(`rep ${rDelta.reputation.diff > 0 ? '+' : ''}${rDelta.reputation.diff}`);
-  if (rDelta.isOpen)     changes.push(rDelta.isOpen.curr ? 'aperto' : 'chiuso');
-  if (!changes.length)   return '';
-  return `<span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--gold);background:rgba(212,146,42,0.12);border:1px solid rgba(212,146,42,0.3);padding:0.1rem 0.45rem;border-radius:3px;margin-left:0.5rem">&Delta; ${changes.join(', ')}</span>`;
+// ── RENDER: BIDS ──
+function renderBids(bids, turnId) {
+  var el = document.getElementById('bids-content');
+  if (!bids || !bids.length) { el.innerHTML = '<div class="state-msg">Nessuna asta' + (turnId ? ' (turno #' + turnId + ')' : '') + '</div>'; return; }
+
+  var byIng = {}, byStatus = {}, totalSpent = 0;
+  bids.forEach(function(b) {
+    var name = (b.ingredient||{}).name || ('#' + b.ingredientId);
+    (byIng[name] = byIng[name] || []).push(b);
+    var s = b.status || 'unknown';
+    byStatus[s] = (byStatus[s]||0) + 1;
+    totalSpent += (b.quantity||0) * (b.priceForEach||0);
+  });
+
+  var html = '<div class="summary-cards">';
+  html += '<div class="summary-card"><div class="summary-card-label">Offerte</div><div class="summary-card-value" style="color:var(--rust)">' + bids.length + '</div><div class="summary-card-sub">turno #' + (turnId||'&mdash;') + '</div></div>';
+  html += '<div class="summary-card"><div class="summary-card-label">Ingredienti</div><div class="summary-card-value" style="color:var(--gold)">' + Object.keys(byIng).length + '</div></div>';
+  html += '<div class="summary-card"><div class="summary-card-label">Spesa totale</div><div class="summary-card-value" style="color:var(--terracotta)">&euro;' + totalSpent.toLocaleString('it-IT') + '</div></div>';
+  Object.entries(byStatus).forEach(function(e) {
+    var color = ({COMPLETED:'var(--sage)',PENDING:'var(--gold)',CANCELLED:'var(--terracotta)',ACTIVE:'var(--bark)'})[e[0]] || 'var(--muted)';
+    html += '<div class="summary-card"><div class="summary-card-label">' + e[0] + '</div><div class="summary-card-value" style="color:' + color + '">' + e[1] + '</div></div>';
+  });
+  html += '</div>';
+
+  Object.entries(byIng).forEach(function(e) {
+    var ingName = e[0], ingBids = e[1];
+    var tQty = ingBids.reduce(function(s,b){return s+(b.quantity||0);},0);
+    var tSpent = ingBids.reduce(function(s,b){return s+(b.quantity||0)*(b.priceForEach||0);},0);
+    html += '<div class="bid-ingredient-header"><span class="bid-ingredient-name">' + ingName + '</span><span class="bid-ingredient-meta">' + ingBids.length + ' offerte &middot; ' + tQty + ' u &middot; &euro;' + tSpent.toLocaleString('it-IT') + '</span></div>';
+    html += '<div class="bids-table"><table><thead><tr><th>Ristorante</th><th>Qt&agrave;</th><th>Prezzo/u</th><th>Totale</th><th>Stato</th></tr></thead><tbody>';
+    ingBids.forEach(function(b) {
+      var rname = (b.restaurant||{}).name || ('Ristorante #' + b.restaurantId);
+      var tot = (b.quantity||0)*(b.priceForEach||0);
+      html += '<tr><td style="font-family:var(--font-display);font-size:0.85rem">' + rname + '</td>';
+      html += '<td style="font-family:var(--font-mono);font-size:0.8rem">' + b.quantity + '</td>';
+      html += '<td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust)">&euro;' + b.priceForEach + '</td>';
+      html += '<td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--terracotta)">&euro;' + tot.toLocaleString('it-IT') + '</td>';
+      html += '<td><span class="bid-status ' + b.status + '">' + b.status + '</span></td></tr>';
+    });
+    html += '</tbody></table></div>';
+  });
+  el.innerHTML = html;
 }
 
-// ── RENDER: MY RESTAURANT ─────────────────────────────────
-function renderRestaurant(data, menu, delta) {
-  const r = data;
-  if (!r) { document.getElementById('my-restaurant-content').innerHTML = '<div class="state-msg">Nessun dato disponibile.</div>'; return; }
-  const isOpen = r.isOpen;
-  const balance = r.balance ?? null;
-  const reputation = r.reputation ?? null;
-  const inventory = r.inventory || {};
-  const menuItems = menu?.items || r.menu?.items || [];
-  const kitchen = r.kitchen || [];
-  const messages = r.receivedMessages || [];
-  const inventoryEntries = Object.entries(inventory);
+// ── RENDER: MARKET ──
+function renderMarket(grouped) {
+  if (!grouped || !Object.keys(grouped).length) { document.getElementById('market-content').innerHTML = '<div class="state-msg">Nessuna voce di mercato.</div>'; return; }
+  var myId = String(cfg().restaurantId);
+  var statusColor = function(s){ return ({cancelled:'var(--muted)',open:'var(--espresso)',filled:'var(--gold)'})[s]||'var(--muted)'; };
+  var statusIcon = function(s){ return ({cancelled:'&#x2715;',open:'&#9679;',filled:'&#x2713;'})[s]||'?'; };
+  var fmtDate = function(d){ return new Date(d).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); };
 
-  document.getElementById('my-restaurant-content').innerHTML = `
-    <div class="my-restaurant-layout">
-      <div class="restaurant-hero">
-        <div>
-          <div class="restaurant-name">${r.name}</div>
-          <div class="restaurant-tagline">ID #${r.id} &middot; Pannello operativo</div>
-        </div>
-        <span class="open-badge ${isOpen ? 'open' : 'closed'}">${isOpen ? '&#9679; Aperto' : '&#9675; Chiuso'}</span>
-      </div>
-      <div class="info-card">
-        <div class="info-card-label">Saldo</div>
-        <div class="info-card-value big">&euro;${(balance ?? 0).toLocaleString('it-IT')}${deltaTag(delta, 'balance')}</div>
-      </div>
-      <div class="info-card">
-        <div class="info-card-label">Reputazione</div>
-        <div class="info-card-value big" style="color:var(--gold)">${reputation ?? '-'}${deltaTag(delta, 'reputation')}</div>
-        <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);margin-top:0.3rem">punti reputazione</div>
-      </div>
-      <div class="info-card" style="grid-column:1/-1">
-        <div class="info-card-label">Menu attivo (${menuItems.length} ${menuItems.length===1?'piatto':'piatti'})</div>
-        ${menuItems.length ? `<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.6rem">${menuItems.map(item => {
-          const mDelta = delta?.menu?.[item.name];
-          const priceChanged = mDelta && mDelta.prev !== mDelta.curr;
-          return `<div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.9rem;display:flex;align-items:center;gap:0.7rem"><span style="font-family:var(--font-display);font-size:0.9rem">${item.name}</span><span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust);font-weight:500">&euro;${item.price}</span>${priceChanged ? `<span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--gold)">era &euro;${mDelta.prev}</span>` : ''}</div>`;
-        }).join('')}</div>` : `<div style="color:var(--muted);font-style:italic;font-size:0.8rem;margin-top:0.4rem">Nessun piatto nel menu</div>`}
-      </div>
-      <div class="info-card" style="grid-column:1/-1">
-        <div class="info-card-label">Inventario (${inventoryEntries.length} ingredienti)</div>
-        ${inventoryEntries.length ? `<div class="info-tag-list" style="margin-top:0.5rem">${inventoryEntries.map(([name, qty]) => `<span class="info-tag">&#129474; ${name} <b style="color:var(--rust)">&times;${qty}</b></span>`).join('')}</div>` : `<div style="color:var(--muted);font-style:italic;font-size:0.8rem;margin-top:0.4rem">Inventario vuoto</div>`}
-        ${deltaInventoryHtml(delta?.inventory)}
-      </div>
-      ${kitchen.length ? `<div class="info-card" style="grid-column:1/-1"><div class="info-card-label">In cucina (${kitchen.length})</div><div class="info-tag-list" style="margin-top:0.5rem">${kitchen.map(k => `<span class="info-tag">&#127859; ${JSON.stringify(k)}</span>`).join('')}</div></div>` : ''}
-      ${messages.length ? `<div class="info-card" style="grid-column:1/-1"><div class="info-card-label">Messaggi ricevuti (${messages.length})</div><div style="margin-top:0.5rem;display:flex;flex-direction:column;gap:0.4rem">${messages.map(m => `<div style="font-size:0.78rem;padding:0.4rem 0.7rem;background:var(--paper);border-radius:4px;border-left:2px solid var(--gold)">${JSON.stringify(m)}</div>`).join('')}</div></div>` : ''}
-    </div>`;
-}
-
-// ── RENDER: MARKET ────────────────────────────────────────
-function renderMarket(grouped, marketDelta) {
-  if (!grouped || !Object.keys(grouped).length) {
-    document.getElementById('market-content').innerHTML = '<div class="state-msg">Nessuna voce di mercato trovata.</div>';
-    return;
-  }
-  const statusColor = s => ({'cancelled':'var(--muted)','open':'var(--espresso)','filled':'var(--gold)'}[s] || 'var(--muted)');
-  const statusIcon  = s => ({'cancelled':'&#x2715;','open':'&#9679;','filled':'&#x2713;'}[s] || '?');
-  const fmtDate = d => new Date(d).toLocaleString('it-IT', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-  const newIds     = new Set((marketDelta?.added   || []).map(e => e.id));
-  const changedIds = new Map((marketDelta?.changed || []).map(e => [e.id, e]));
-
-  const html = Object.entries(grouped).map(([groupName, groupEntries]) => {
-    const bestPrice = Math.min(...groupEntries.map(e => e.unit_price)).toFixed(2);
-    const cards = groupEntries.map(e => {
-      const isMine = e.is_mine;
-      const isBuy  = e.side === 'BUY';
-      const isNew  = newIds.has(e.id);
-      const changed = changedIds.get(e.id);
-      const cardBg      = isBuy ? '#faf8f4' : '#1a1209';
-      const cardColor   = isBuy ? 'var(--espresso)' : 'var(--cream)';
-      const cardBorder  = isBuy ? 'var(--border)' : '#3d2b1a';
-      const accentColor = isBuy ? 'var(--rust)' : 'var(--gold)';
-      const sideBg      = isBuy ? 'rgba(196,81,26,0.12)' : 'rgba(212,146,42,0.18)';
-      const mutedColor  = isBuy ? 'var(--muted)' : '#8a7060';
-      const myRing  = isMine ? `box-shadow:0 0 0 2px ${accentColor};` : '';
-      const newRing = isNew  ? `outline:2px dashed var(--sage);outline-offset:2px;` : '';
-      return `<div class="market-card" style="background:${cardBg};color:${cardColor};border-color:${cardBorder};${myRing}${newRing}position:relative;overflow:hidden">
-        ${isMine ? `<div style="position:absolute;top:0;right:0;background:${accentColor};color:${isBuy?'white':'var(--espresso)'};font-family:var(--font-mono);font-size:0.55rem;font-weight:600;padding:0.15rem 0.5rem;letter-spacing:0.08em">TUO</div>` : ''}
-        ${isNew  ? `<div style="position:absolute;top:0;left:0;background:var(--sage);color:white;font-family:var(--font-mono);font-size:0.55rem;font-weight:600;padding:0.15rem 0.5rem;letter-spacing:0.08em">NUOVO</div>` : ''}
-        <div class="market-card-top" style="background:${isBuy ? 'var(--paper)' : '#241509'};border-bottom-color:${cardBorder}">
-          <div>
-            <div style="display:inline-block;background:${sideBg};border:1px solid ${accentColor};color:${accentColor};font-family:var(--font-mono);font-size:0.62rem;font-weight:600;padding:0.1rem 0.45rem;border-radius:3px;letter-spacing:0.06em">${e.side}</div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;color:${mutedColor};margin-top:0.3rem;font-weight:${isMine?'600':'400'}">${e.restaurant_name}</div>
-          </div>
-          <div style="text-align:right">
-            <div class="market-price" style="color:${accentColor}">&euro;${e.unit_price.toFixed(2)}<span style="font-size:0.6rem;color:${mutedColor}">/u</span></div>
-            <div style="font-family:var(--font-mono);font-size:0.62rem;color:${mutedColor};margin-top:0.1rem">tot. &euro;${e.totalPrice}</div>
-          </div>
-        </div>
-        <div class="market-card-body">
-          <div class="market-meta" style="display:flex;justify-content:space-between;align-items:center;color:${mutedColor}">
-            <span>Qt&agrave;: <b style="color:${cardColor}">${e.quantity}</b></span>
-            <span style="font-family:var(--font-mono);font-size:0.68rem;color:${statusColor(e.status)}">${changed ? `<span style="color:var(--gold)">&#8635; ${changed.prev}&rarr;${changed.curr}</span>` : `${statusIcon(e.status)} ${e.status}`}</span>
-          </div>
-          <div style="font-family:var(--font-mono);font-size:0.65rem;margin-top:0.3rem;color:${mutedColor}">${fmtDate(e.insertedAt)}</div>
-        </div>
-      </div>`;
+  var html = Object.entries(grouped).map(function(entry) {
+    var groupName = entry[0], groupEntries = entry[1];
+    var bestPrice = Math.min.apply(null, groupEntries.map(function(e){return e.unit_price;})).toFixed(2);
+    var cards = groupEntries.map(function(e) {
+      var isMine = e.is_mine, isBuy = e.side==='BUY';
+      var cardBg = isBuy?'#faf8f4':'#1a1209', cardColor = isBuy?'var(--espresso)':'var(--cream)', cardBorder = isBuy?'var(--border)':'#3d2b1a';
+      var accentColor = isBuy?'var(--rust)':'var(--gold)', sideBg = isBuy?'rgba(196,81,26,0.12)':'rgba(212,146,42,0.18)', mutedColor = isBuy?'var(--muted)':'#8a7060';
+      var myRing = isMine?'box-shadow:0 0 0 2px '+accentColor+';':'';
+      return '<div class="market-card" style="background:'+cardBg+';color:'+cardColor+';border-color:'+cardBorder+';'+myRing+'position:relative;overflow:hidden">' +
+        (isMine?'<div style="position:absolute;top:0;right:0;background:'+accentColor+';color:'+(isBuy?'white':'var(--espresso)')+';font-family:var(--font-mono);font-size:0.55rem;font-weight:600;padding:0.15rem 0.5rem;letter-spacing:0.08em">TUO</div>':'') +
+        '<div class="market-card-top" style="background:'+(isBuy?'var(--paper)':'#241509')+';border-bottom-color:'+cardBorder+'">' +
+          '<div><div style="display:inline-block;background:'+sideBg+';border:1px solid '+accentColor+';color:'+accentColor+';font-family:var(--font-mono);font-size:0.62rem;font-weight:600;padding:0.1rem 0.45rem;border-radius:3px;letter-spacing:0.06em">'+e.side+'</div>' +
+          '<div style="font-family:var(--font-mono);font-size:0.65rem;color:'+mutedColor+';margin-top:0.3rem">'+e.restaurant_name+'</div></div>' +
+          '<div style="text-align:right"><div class="market-price" style="color:'+accentColor+'">&euro;'+e.unit_price.toFixed(2)+'<span style="font-size:0.6rem;color:'+mutedColor+'">/u</span></div>' +
+          '<div style="font-family:var(--font-mono);font-size:0.62rem;color:'+mutedColor+';margin-top:0.1rem">tot. &euro;'+e.totalPrice+'</div></div>' +
+        '</div>' +
+        '<div class="market-card-body">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:'+mutedColor+'"><span>Qt&agrave;: <b style="color:'+cardColor+'">'+e.quantity+'</b></span>' +
+          '<span style="font-family:var(--font-mono);font-size:0.68rem;color:'+statusColor(e.status)+'">'+statusIcon(e.status)+' '+e.status+'</span></div>' +
+          '<div style="font-family:var(--font-mono);font-size:0.65rem;margin-top:0.3rem;color:'+mutedColor+'">'+fmtDate(e.insertedAt)+'</div>' +
+        '</div></div>';
     }).join('');
-    return `<div style="margin-bottom:1.8rem">
-      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">
-        <span style="font-family:var(--font-display);font-size:1rem;font-weight:500">${groupName}</span>
-        <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted)">${groupEntries.length} offert${groupEntries.length===1?'a':'e'}</span>
-        <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);margin-left:auto">da &euro;${bestPrice}/u</span>
-      </div>
-      <div class="market-grid">${cards}</div>
-    </div>`;
+    return '<div style="margin-bottom:1.8rem"><div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">' +
+      '<span style="font-family:var(--font-display);font-size:1rem;font-weight:500">'+groupName+'</span>' +
+      '<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted)">'+groupEntries.length+' offert'+(groupEntries.length===1?'a':'e')+'</span>' +
+      '<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);margin-left:auto">da &euro;'+bestPrice+'/u</span>' +
+    '</div><div class="market-grid">'+cards+'</div></div>';
   }).join('');
-  document.getElementById('market-content').innerHTML = marketDeltaBanner(marketDelta) + html;
+  document.getElementById('market-content').innerHTML = html;
 }
 
-// ── RENDER: OTHER RESTAURANTS ─────────────────────────────
-let restaurantsData = [];
-let sortCol = 'name';
-let sortDir = 1;
+// ── RENDER: RESTAURANTS ──
+var restaurantsData = [], sortCol = 'name', sortDir = 1;
 
-function sortRestaurants(col) {
-  sortCol === col ? sortDir *= -1 : (sortCol = col, sortDir = 1);
-  drawRestaurantsTable();
-}
+function sortRestaurants(col) { sortCol === col ? sortDir *= -1 : (sortCol = col, sortDir = 1); drawRestaurantsTable(); }
 
 function drawRestaurantsTable() {
-  const others = restaurantsData.filter(r => r.id !== '5');
+  var myId = cfg().restaurantId;
+  var others = restaurantsData.filter(function(r){return String(r.id) !== myId;});
   if (!others.length) return;
-  const maxRep = Math.max(...others.map(r => r.reputation || 0), 1);
-  const sorted = [...others].sort((a, b) => {
-    let av, bv;
-    if (sortCol === 'name')       return sortDir * a.name.localeCompare(b.name);
-    if (sortCol === 'isOpen')     { av = a.isOpen ? 1 : 0; bv = b.isOpen ? 1 : 0; }
-    if (sortCol === 'balance')    { av = a.balance ?? 0; bv = b.balance ?? 0; }
-    if (sortCol === 'reputation') { av = a.reputation ?? 0; bv = b.reputation ?? 0; }
-    if (sortCol === 'inventory')  { av = Object.keys(a.inventory||{}).length; bv = Object.keys(b.inventory||{}).length; }
-    if (sortCol === 'menu')       { av = (a.menu?.items||[]).length; bv = (b.menu?.items||[]).length; }
-    return sortDir * (av - bv);
+  var maxRep = Math.max.apply(null, others.map(function(r){return r.reputation||0;}).concat([1]));
+  var sorted = others.slice().sort(function(a,b) {
+    var av, bv;
+    if (sortCol==='name') return sortDir*a.name.localeCompare(b.name);
+    if (sortCol==='isOpen') { av=a.isOpen?1:0; bv=b.isOpen?1:0; }
+    if (sortCol==='balance') { av=a.balance||0; bv=b.balance||0; }
+    if (sortCol==='reputation') { av=a.reputation||0; bv=b.reputation||0; }
+    if (sortCol==='inventory') { av=Object.keys(a.inventory||{}).length; bv=Object.keys(b.inventory||{}).length; }
+    if (sortCol==='menu') { av=((a.menu||{}).items||[]).length; bv=((b.menu||{}).items||[]).length; }
+    return sortDir*(av-bv);
   });
-  const arrow = col => sortCol === col ? (sortDir === 1 ? ' &uarr;' : ' &darr;') : ' &updownarrow;';
-  const thStyle = 'cursor:pointer;user-select:none;white-space:nowrap';
-  const rows = sorted.map(r => {
-    const inventoryKeys = Object.keys(r.inventory || {});
-    const menuItems = r.menu?.items || [];
-    const rDelta = r._delta;
-    return `<tr>
-      <td><div class="r-name">${r.name}${restaurantDeltaTag(rDelta)}</div><div class="r-cuisine">#${r.id}</div></td>
-      <td><span class="status-pill ${r.isOpen ? 'open' : 'closed'}"><span class="dot ${r.isOpen ? 'ok' : 'error'}" style="width:5px;height:5px"></span>${r.isOpen ? 'Aperto' : 'Chiuso'}${rDelta?.isOpen ? ` <span style="font-family:var(--font-mono);font-size:0.55rem;color:var(--gold)">&#8635;</span>` : ''}</span></td>
-      <td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust)">&euro;${(r.balance ?? 0).toLocaleString('it-IT')}${rDelta?.balance?.changed ? `<span style="font-size:0.62rem;color:${rDelta.balance.diff>0?'var(--sage)':'var(--rust)'}">${rDelta.balance.diff>0?'+':''}${rDelta.balance.diff}</span>` : ''}</td>
-      <td><div style="display:flex;align-items:center;gap:0.4rem"><div style="width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:${Math.round((r.reputation||0)/maxRep*100)}%;height:100%;background:var(--gold);border-radius:3px"></div></div><span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">${r.reputation}${rDelta?.reputation?.changed ? `<span style="color:${rDelta.reputation.diff>0?'var(--sage)':'var(--rust)'}">${rDelta.reputation.diff>0?'+':''}${rDelta.reputation.diff}</span>` : ''}</span></div></td>
-      <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">${inventoryKeys.length ? `${inventoryKeys.length} ingredienti` : '&mdash;'}</td>
-      <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">${menuItems.length ? `${menuItems.length} piatti` : '&mdash;'}</td>
-    </tr>`;
+  var arrow = function(c){ return sortCol===c?(sortDir===1?' &uarr;':' &darr;'):' &updownarrow;'; };
+  var thS = 'cursor:pointer;user-select:none;white-space:nowrap';
+  var rows = sorted.map(function(r) {
+    var invKeys = Object.keys(r.inventory||{}), menuItems = (r.menu||{}).items||[];
+    return '<tr><td><div class="r-name">'+r.name+'</div><div class="r-cuisine">#'+r.id+'</div></td>' +
+      '<td><span class="status-pill '+(r.isOpen?'open':'closed')+'"><span class="dot '+(r.isOpen?'ok':'error')+'" style="width:5px;height:5px"></span>'+(r.isOpen?'Aperto':'Chiuso')+'</span></td>' +
+      '<td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--rust)">&euro;'+(r.balance||0).toLocaleString('it-IT')+'</td>' +
+      '<td><div style="display:flex;align-items:center;gap:0.4rem"><div style="width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:'+Math.round((r.reputation||0)/maxRep*100)+'%;height:100%;background:var(--gold);border-radius:3px"></div></div><span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">'+r.reputation+'</span></div></td>' +
+      '<td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">'+(invKeys.length?invKeys.length+' ing.':'&mdash;')+'</td>' +
+      '<td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">'+(menuItems.length?menuItems.length+' piatti':'&mdash;')+'</td></tr>';
   }).join('');
-  document.getElementById('restaurants-content').innerHTML = `<div class="restaurants-table"><table><thead><tr>
-    <th style="${thStyle}" onclick="sortRestaurants('name')">Ristorante${arrow('name')}</th>
-    <th style="${thStyle}" onclick="sortRestaurants('isOpen')">Stato${arrow('isOpen')}</th>
-    <th style="${thStyle}" onclick="sortRestaurants('balance')">Saldo${arrow('balance')}</th>
-    <th style="${thStyle}" onclick="sortRestaurants('reputation')">Reputazione${arrow('reputation')}</th>
-    <th style="${thStyle}" onclick="sortRestaurants('inventory')">Inventario${arrow('inventory')}</th>
-    <th style="${thStyle}" onclick="sortRestaurants('menu')">Menu${arrow('menu')}</th>
-  </tr></thead><tbody>${rows}</tbody></table></div>`;
+  document.getElementById('restaurants-content').innerHTML = '<div class="restaurants-table"><table><thead><tr>' +
+    '<th style="'+thS+'" onclick="sortRestaurants(\'name\')">Ristorante'+arrow('name')+'</th>' +
+    '<th style="'+thS+'" onclick="sortRestaurants(\'isOpen\')">Stato'+arrow('isOpen')+'</th>' +
+    '<th style="'+thS+'" onclick="sortRestaurants(\'balance\')">Saldo'+arrow('balance')+'</th>' +
+    '<th style="'+thS+'" onclick="sortRestaurants(\'reputation\')">Reputazione'+arrow('reputation')+'</th>' +
+    '<th style="'+thS+'" onclick="sortRestaurants(\'inventory\')">Inventario'+arrow('inventory')+'</th>' +
+    '<th style="'+thS+'" onclick="sortRestaurants(\'menu\')">Menu'+arrow('menu')+'</th>' +
+  '</tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 
 function renderRestaurants(data) {
   restaurantsData = Array.isArray(data) ? data : [];
-  const others = restaurantsData.filter(r => r.id !== '5');
-  if (!others.length) {
-    document.getElementById('restaurants-content').innerHTML = '<div class="state-msg">Nessun altro ristorante trovato.</div>';
-    return;
-  }
+  var myId = cfg().restaurantId;
+  var others = restaurantsData.filter(function(r){return String(r.id) !== myId;});
+  if (!others.length) { document.getElementById('restaurants-content').innerHTML = '<div class="state-msg">Nessun concorrente trovato.</div>'; return; }
   drawRestaurantsTable();
 }
 
-// ── RENDER: RECIPES ───────────────────────────────────────
-let expandedRecipe = null;
-
+// ── RENDER: RECIPES ──
+var expandedRecipe = null;
 function toggleRecipe(idx) {
   expandedRecipe = expandedRecipe === idx ? null : idx;
-  document.querySelectorAll('.recipe-card').forEach(c => {
-    c.classList.toggle('expanded', c.dataset.id === String(expandedRecipe));
-  });
+  document.querySelectorAll('.recipe-card').forEach(function(c){ c.classList.toggle('expanded', c.dataset.id === String(expandedRecipe)); });
 }
 
-function renderRecipes(data) {
-  const list = Array.isArray(data) ? data : [];
-  if (!list.length) {
-    document.getElementById('recipes-content').innerHTML = '<div class="state-msg">Nessuna ricetta trovata.</div>';
-    return;
-  }
-  const fmtTime = ms => ms >= 60000 ? `${(ms/60000).toFixed(1)}min` : `${(ms/1000).toFixed(0)}s`;
-  const cards = list.map((r, i) => {
-    const ingredients = r.ingredients || {};
-    const ingEntries = Object.entries(ingredients);
-    return `<div class="recipe-card" data-id="${i}" onclick="toggleRecipe(${i})">
-      <div class="recipe-card-header">
-        <div class="recipe-num">Ricetta #${String(i+1).padStart(3,'0')}</div>
-        <div class="recipe-name">${r.name}</div>
-        <div class="recipe-tags">
-          <span class="recipe-tag">&#9202; ${fmtTime(r.preparationTimeMs)}</span>
-          <span class="recipe-tag" style="color:var(--gold);border-color:var(--gold)">&#10022; Prestige ${r.prestige}</span>
-        </div>
-      </div>
-      <div class="recipe-body">
-        <div class="recipe-meta-row">
-          <div class="recipe-meta-item"><span class="recipe-meta-label">Preparazione</span><span class="recipe-meta-val">${fmtTime(r.preparationTimeMs)}</span></div>
-          <div class="recipe-meta-item"><span class="recipe-meta-label">Ingredienti</span><span class="recipe-meta-val">${ingEntries.length}</span></div>
-          <div class="recipe-meta-item"><span class="recipe-meta-label">Prestige</span><span class="recipe-meta-val" style="color:var(--gold)">${r.prestige}</span></div>
-        </div>
-        <div class="recipe-ingredients">
-          <div class="recipe-ingredients-title">Ingredienti</div>
-          <ul class="recipe-ingredient-list">${ingEntries.map(([name, qty]) => `<li>${name} <span style="color:var(--rust);font-weight:500">&times;${qty}</span></li>`).join('')}</ul>
-        </div>
-        <div class="expand-hint">${ingEntries.length ? '&#8597; clicca per ingredienti' : ''}</div>
-      </div>
-    </div>`;
+function renderRecipes(list) {
+  if (!list || !list.length) { document.getElementById('recipes-content').innerHTML = '<div class="state-msg">Nessuna ricetta.</div>'; return; }
+  var fmtTime = function(ms){ return ms>=60000?(ms/60000).toFixed(1)+'min':(ms/1000).toFixed(0)+'s'; };
+  var cards = list.map(function(r,i) {
+    var ingEntries = Object.entries(r.ingredients||{});
+    return '<div class="recipe-card" data-id="'+i+'" onclick="toggleRecipe('+i+')">' +
+      '<div class="recipe-card-header"><div class="recipe-num">Ricetta #'+String(i+1).padStart(3,'0')+'</div>' +
+      '<div class="recipe-name">'+r.name+'</div>' +
+      '<div class="recipe-tags"><span class="recipe-tag">&#9202; '+fmtTime(r.preparationTimeMs)+'</span><span class="recipe-tag" style="color:var(--gold);border-color:var(--gold)">&#10022; Prestige '+r.prestige+'</span></div></div>' +
+      '<div class="recipe-body"><div class="recipe-meta-row">' +
+        '<div class="recipe-meta-item"><span class="recipe-meta-label">Preparazione</span><span class="recipe-meta-val">'+fmtTime(r.preparationTimeMs)+'</span></div>' +
+        '<div class="recipe-meta-item"><span class="recipe-meta-label">Ingredienti</span><span class="recipe-meta-val">'+ingEntries.length+'</span></div>' +
+        '<div class="recipe-meta-item"><span class="recipe-meta-label">Prestige</span><span class="recipe-meta-val" style="color:var(--gold)">'+r.prestige+'</span></div>' +
+      '</div>' +
+      '<div class="recipe-ingredients"><div class="recipe-ingredients-title">Ingredienti</div>' +
+      '<ul class="recipe-ingredient-list">'+ingEntries.map(function(e){return '<li>'+e[0]+' <span style="color:var(--rust);font-weight:500">&times;'+e[1]+'</span></li>';}).join('')+'</ul></div>' +
+      '<div class="expand-hint">'+(ingEntries.length?'&#8597; clicca per ingredienti':'')+'</div></div></div>';
   }).join('');
-  document.getElementById('recipes-content').innerHTML = `<div class="recipes-grid">${cards}</div>`;
+  document.getElementById('recipes-content').innerHTML = '<div class="recipes-grid">'+cards+'</div>';
 }
 
-// ── MAIN FETCH ────────────────────────────────────────────
-function setDot(id, state) { document.getElementById(`dot-${id}`).className = `dot ${state}`; }
-function setStatus(id, text) { document.getElementById(`status-${id}`).textContent = text; }
-
+// ── MAIN FETCH ──
 async function fetchAll() {
-  ['restaurant','market','restaurants','recipes'].forEach(id => setDot(id, 'loading'));
+  var c = cfg();
+  if (!c.baseUrl) { ['restaurant','meals','bids','market','restaurants','recipes'].forEach(function(id){setDot(id,'error');setStatus(id,'Configura Base URL');}); return; }
+  ['restaurant','meals','bids','market','restaurants','recipes'].forEach(function(id){setDot(id,'loading');});
+  var now = new Date().toLocaleTimeString('it-IT');
+
+  if (c.turnId) document.getElementById('turnBadge').textContent = 'Turno ' + c.turnId;
+
+  // Restaurant
   try {
-    const status = await localGet('/api/status');
-    if (status.status === 'no_data') {
-      ['restaurant','market','restaurants','recipes'].forEach(id => { setDot(id,'error'); setStatus(id,'Nessun dato — configura Base URL'); });
-      return;
-    }
-    const { data, delta, ts, prev_ts } = status;
-    const tsFmt = new Date(ts).toLocaleTimeString('it-IT');
-    const prevFmt = prev_ts ? ' &middot; &Delta; vs ' + new Date(prev_ts).toLocaleTimeString('it-IT') : '';
+    var r = await api('/restaurant/' + c.restaurantId);
+    renderRestaurant(r); setDot('restaurant','ok'); setStatus('restaurant', now);
+  } catch(e) { setDot('restaurant','error'); setStatus('restaurant', e.message); }
 
-    try { renderRestaurant(data.restaurant, data.menu, delta?.restaurant); setDot('restaurant','ok'); setStatus('restaurant', tsFmt + prevFmt); } catch(e) { setDot('restaurant','error'); setStatus('restaurant', e.message); }
-
+  // Meals
+  if (c.turnId) {
     try {
-      const mkt = await localGet('/api/market');
-      renderMarket(mkt.grouped, delta?.market);
-      setDot('market','ok');
-      setStatus('market', `${mkt.summary.total_entries} voci &middot; ${mkt.summary.unique_ingredients} ingredienti`);
-    } catch(e) { setDot('market','error'); setStatus('market', e.message); }
+      var meals = await api('/meals', { turn_id: c.turnId, restaurant_id: c.restaurantId });
+      renderMeals(meals, c.turnId); setDot('meals','ok'); setStatus('meals', (meals||[]).length + ' ordini &middot; turno #' + c.turnId);
+    } catch(e) { setDot('meals','error'); setStatus('meals', e.message); }
+  } else { setDot('meals','error'); setStatus('meals','Imposta turno'); }
 
+  // Bids
+  if (c.turnId) {
     try {
-      const rs = await localGet('/api/restaurants');
-      renderRestaurants(rs.data);
-      setDot('restaurants','ok');
-      setStatus('restaurants', `${rs.data.length} ristoranti`);
-    } catch(e) { setDot('restaurants','error'); setStatus('restaurants', e.message); }
+      var bids = await api('/bid_history', { turn_id: c.turnId });
+      renderBids(bids, c.turnId); setDot('bids','ok'); setStatus('bids', (bids||[]).length + ' offerte &middot; turno #' + c.turnId);
+    } catch(e) { setDot('bids','error'); setStatus('bids', e.message); }
+  } else { setDot('bids','error'); setStatus('bids','Imposta turno'); }
 
-    try { renderRecipes(data.recipes); setDot('recipes','ok'); setStatus('recipes', `${(data.recipes||[]).length} ricette`); }
-    catch(e) { setDot('recipes','error'); setStatus('recipes', e.message); }
+  // Restaurants + Market (market needs restaurants for enrichment)
+  var restaurants = null;
+  try {
+    restaurants = await api('/restaurants');
+    renderRestaurants(restaurants); setDot('restaurants','ok'); setStatus('restaurants', (restaurants||[]).length + ' ristoranti');
+  } catch(e) { setDot('restaurants','error'); setStatus('restaurants', e.message); }
 
-    // Charts — fetch timeseries from server
-    try {
-      setDot('charts', 'loading');
-      await renderCharts();
-      setDot('charts','ok');
-      setStatus('charts', 'aggiornato ' + tsFmt);
-    } catch(e) { setDot('charts','error'); setStatus('charts', e.message); }
+  try {
+    var market = await api('/market/entries');
+    if (market && restaurants) market = enrichMarket(market, restaurants);
+    var grouped = groupByIngredient(market || []);
+    renderMarket(grouped); setDot('market','ok'); setStatus('market', (market||[]).length + ' voci');
+  } catch(e) { setDot('market','error'); setStatus('market', e.message); }
 
-    document.getElementById('cfgServerStatus').textContent = `dump ${tsFmt}${prev_ts ? ' prev ' + new Date(prev_ts).toLocaleTimeString('it-IT') : ''}`;
-  } catch(e) {
-    ['restaurant','market','restaurants','recipes','charts'].forEach(id => { setDot(id,'error'); setStatus(id,'Server non raggiungibile'); });
-    document.getElementById('cfgServerStatus').textContent = 'Server offline';
-  }
+  // Recipes
+  try {
+    var recipes = await api('/recipes');
+    renderRecipes(recipes); setDot('recipes','ok'); setStatus('recipes', (recipes||[]).length + ' ricette');
+  } catch(e) { setDot('recipes','error'); setStatus('recipes', e.message); }
+
+  document.getElementById('cfgServerStatus').textContent = 'aggiornato ' + now;
 }
 
-// ── SAVE CONFIG TO SERVER ─────────────────────────────────
-async function saveConfigAndRefresh() {
-  const { baseUrl, apiKey } = getConfig();
-  try { await localPost('/api/config', { base_url: baseUrl, api_key: apiKey }); } catch(e) { console.warn('config post failed', e); }
-  document.getElementById('cfgServerStatus').textContent = 'Aggiornamento...';
-  setTimeout(fetchAll, 1500);
-}
-
-function getConfig() {
-  return {
-    baseUrl: document.getElementById('cfgBaseUrl').value.trim().replace(/\/$/, ''),
-    apiKey: document.getElementById('cfgApiKey').value.trim(),
-  };
-}
-
-// ── AUTO REFRESH ──────────────────────────────────────────
-let refreshTimer = null, countdownTimer = null, secondsLeft = 0;
-
+// ── AUTO REFRESH ──
+var refreshTimer = null, countdownTimer = null, secondsLeft = 0;
 function startAutoRefresh() {
   clearInterval(refreshTimer); clearInterval(countdownTimer);
-  const interval = parseInt(document.getElementById('cfgInterval').value);
+  var interval = parseInt(document.getElementById('cfgInterval').value);
   if (!interval) { document.getElementById('cfgCountdown').textContent = ''; return; }
   secondsLeft = interval / 1000;
-  document.getElementById('cfgCountdown').textContent = `prossimo in ${secondsLeft}s`;
-  refreshTimer = setInterval(() => { fetchAll(); secondsLeft = interval / 1000; }, interval);
-  countdownTimer = setInterval(() => { secondsLeft--; document.getElementById('cfgCountdown').textContent = `prossimo in ${secondsLeft}s`; }, 1000);
+  document.getElementById('cfgCountdown').textContent = 'prossimo in ' + secondsLeft + 's';
+  refreshTimer = setInterval(function(){ fetchAll(); secondsLeft = interval/1000; }, interval);
+  countdownTimer = setInterval(function(){ secondsLeft--; document.getElementById('cfgCountdown').textContent = 'prossimo in ' + secondsLeft + 's'; }, 1000);
 }
-
 document.getElementById('cfgInterval').addEventListener('change', startAutoRefresh);
 
-['cfgBaseUrl', 'cfgApiKey'].forEach(id => {
-  const el = document.getElementById(id);
-  const saved = localStorage.getItem(id);
+// ── PERSIST CONFIG ──
+['cfgBaseUrl','cfgApiKey','cfgRestaurantId','cfgTurnId'].forEach(function(id) {
+  var el = document.getElementById(id);
+  var saved = localStorage.getItem(id);
   if (saved) el.value = saved;
-  el.addEventListener('input', () => localStorage.setItem(id, el.value));
+  el.addEventListener('input', function(){ localStorage.setItem(id, el.value); });
 });
+document.getElementById('cfgTurnId').addEventListener('keydown', function(e){ if (e.key==='Enter') fetchAll(); });
 
-const navLinks = document.querySelectorAll('nav a');
-const sections = document.querySelectorAll('main section');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { navLinks.forEach(l => l.classList.remove('active')); const link = document.querySelector(`nav a[href="#${e.target.id}"]`); if (link) link.classList.add('active'); } });
-}, { threshold: 0.3 });
-sections.forEach(s => observer.observe(s));
+// ── NAV OBSERVER ──
+var navLinks = document.querySelectorAll('nav a');
+var sections = document.querySelectorAll('main section');
+var observer = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if (e.isIntersecting) { navLinks.forEach(function(l){l.classList.remove('active');}); var link = document.querySelector('nav a[href="#'+e.target.id+'"]'); if (link) link.classList.add('active'); } }); }, { threshold: 0.3 });
+sections.forEach(function(s){observer.observe(s);});
 
-function updateDate() {
-  document.getElementById('mastheadDate').textContent = new Date().toLocaleDateString('it-IT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-}
-updateDate();
+document.getElementById('mastheadDate').textContent = new Date().toLocaleDateString('it-IT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-(async () => {
-  startAutoRefresh();
-  const { baseUrl, apiKey } = getConfig();
-  if (baseUrl) {
-    try { await localPost('/api/config', { base_url: baseUrl, api_key: apiKey }); } catch {}
-    setTimeout(fetchAll, 800);
-  }
-})();
-
-// ── CHARTS ────────────────────────────────────────────────
-const chartInstances = {};
-
-function destroyChart(id) {
-  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
-}
-
-function fmtTs(ts) {
-  return new Date(ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
-
-function makeChart(id, type, labels, datasets, extraOptions) {
-  extraOptions = extraOptions || {};
-  destroyChart(id);
-  const ctx = document.getElementById(id) && document.getElementById(id).getContext('2d');
-  if (!ctx) return;
-  const FONT = { family: "'DM Mono', monospace" };
-  chartInstances[id] = new Chart(ctx, {
-    type: type,
-    data: { labels: labels, datasets: datasets },
-    options: Object.assign({
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 350 },
-      plugins: {
-        legend: { display: datasets.length > 1, labels: { font: Object.assign({}, FONT, {size:10}), color: '#8a7d6e', boxWidth: 10 } },
-        tooltip: { backgroundColor: '#1a1209', titleFont: Object.assign({}, FONT, {size:10}), bodyFont: Object.assign({}, FONT, {size:11}), padding: 8 },
-      },
-      scales: {
-        x: { ticks: { font: Object.assign({}, FONT, {size:9}), color: '#8a7d6e', maxRotation: 45 }, grid: { color: 'rgba(0,0,0,0.04)' } },
-        y: { ticks: { font: Object.assign({}, FONT, {size:9}), color: '#8a7d6e' }, grid: { color: 'rgba(0,0,0,0.06)' } },
-      },
-    }, extraOptions),
-  });
-}
-
-function statRow(items) {
-  return '<div class="chart-stat-row">' + items.map(function(item) {
-    var label = item[0], val = item[1], color = item[2];
-    return '<div class="chart-stat"><span class="chart-stat-label">' + label + '</span><span class="chart-stat-val" style="' + (color ? 'color:' + color : '') + '">' + (val != null ? val : '-') + '</span></div>';
-  }).join('') + '</div>';
-}
-
-async function renderCharts() {
-  var LIMIT = 60;
-  var results = await Promise.all([
-    localGet('/api/dump/timeseries?field=restaurant.balance&limit=' + LIMIT),
-    localGet('/api/dump/timeseries?field=restaurant.reputation&limit=' + LIMIT),
-    localGet('/api/dump/timeseries?field=restaurant.isOpen&limit=' + LIMIT),
-    localGet('/api/dump/timeseries?field=market&limit=' + LIMIT),
-  ]);
-  var balRes = results[0], repRes = results[1], openRes = results[2], mktRes = results[3];
-  var labels = balRes.series.map(function(p) { return fmtTs(p.ts); });
-
-  document.getElementById('charts-content').innerHTML = [
-    '<div class="charts-grid">',
-    '  <div class="chart-card">',
-    '    <div class="chart-card-header"><span class="chart-card-title">Saldo</span><span class="chart-card-meta">&euro; nel tempo</span></div>',
-    '    <div class="chart-card-body"><canvas id="chart-balance"></canvas></div>',
-    '    <div id="stats-balance"></div>',
-    '  </div>',
-    '  <div class="chart-card">',
-    '    <div class="chart-card-header"><span class="chart-card-title">Reputazione</span><span class="chart-card-meta">punti nel tempo</span></div>',
-    '    <div class="chart-card-body"><canvas id="chart-reputation"></canvas></div>',
-    '    <div id="stats-reputation"></div>',
-    '  </div>',
-    '  <div class="chart-card">',
-    '    <div class="chart-card-header"><span class="chart-card-title">Stato Apertura</span><span class="chart-card-meta">aperto / chiuso nel tempo</span></div>',
-    '    <div class="chart-card-body"><canvas id="chart-open"></canvas></div>',
-    '    <div id="stats-open"></div>',
-    '  </div>',
-    '  <div class="chart-card">',
-    '    <div class="chart-card-header"><span class="chart-card-title">Voci di Mercato</span><span class="chart-card-meta">BUY vs SELL nel tempo</span></div>',
-    '    <div class="chart-card-body"><canvas id="chart-market"></canvas></div>',
-    '    <div id="stats-market"></div>',
-    '  </div>',
-    '  <div class="chart-card" style="grid-column:1/-1">',
-    '    <div class="chart-card-header"><span class="chart-card-title">Variazione Saldo</span><span class="chart-card-meta">delta tra dump consecutivi</span></div>',
-    '    <div class="chart-card-body" style="height:180px"><canvas id="chart-balance-delta"></canvas></div>',
-    '    <div id="stats-balance-delta"></div>',
-    '  </div>',
-    '</div>',
-  ].join('\n');
-
-  // BALANCE
-  var balVals = balRes.series.map(function(p) { return p.value; });
-  var validBal = balVals.filter(function(v) { return v !== null; });
-  var balLast = balVals[balVals.length-1];
-  var balFirst = balVals.find(function(v) { return v !== null; });
-  var balChange = balLast - balFirst;
-  makeChart('chart-balance', 'line', labels, [{
-    label: 'Saldo (€)', data: balVals,
-    borderColor: '#c4511a', backgroundColor: 'rgba(196,81,26,0.08)',
-    borderWidth: 2, pointRadius: balVals.length > 20 ? 0 : 3, pointHoverRadius: 5, tension: 0.3, fill: true,
-  }]);
-  document.getElementById('stats-balance').innerHTML = statRow([
-    ['Attuale', '\u20ac' + (balLast||0).toLocaleString('it-IT'), 'var(--rust)'],
-    ['Min', '\u20ac' + Math.min.apply(null,validBal).toLocaleString('it-IT')],
-    ['Max', '\u20ac' + Math.max.apply(null,validBal).toLocaleString('it-IT')],
-    ['Variazione totale', (balChange>=0?'+':'') + '\u20ac' + balChange.toLocaleString('it-IT'), balChange>=0?'var(--sage)':'var(--rust)'],
-    ['Campioni', balVals.length],
-  ]);
-
-  // REPUTATION
-  var repVals = repRes.series.map(function(p) { return p.value; });
-  var validRep = repVals.filter(function(v) { return v !== null; });
-  var repLast = repVals[repVals.length-1];
-  var repFirst = repVals.find(function(v) { return v !== null; });
-  var repChange = repLast - repFirst;
-  makeChart('chart-reputation', 'line', labels, [{
-    label: 'Reputazione', data: repVals,
-    borderColor: '#d4922a', backgroundColor: 'rgba(212,146,42,0.08)',
-    borderWidth: 2, pointRadius: repVals.length > 20 ? 0 : 3, pointHoverRadius: 5, tension: 0.3, fill: true,
-  }]);
-  document.getElementById('stats-reputation').innerHTML = statRow([
-    ['Attuale', repLast, 'var(--gold)'],
-    ['Min', Math.min.apply(null,validRep)],
-    ['Max', Math.max.apply(null,validRep)],
-    ['Variazione', (repChange>=0?'+':'') + repChange, repChange>=0?'var(--sage)':'var(--rust)'],
-  ]);
-
-  // OPEN STATUS
-  var openVals = openRes.series.map(function(p) { return p.value === true ? 1 : 0; });
-  var openPct = openVals.length ? Math.round(openVals.filter(function(v){return v===1;}).length / openVals.length * 100) : 0;
-  makeChart('chart-open', 'bar', labels, [{
-    label: 'Stato', data: openVals,
-    backgroundColor: openVals.map(function(v){ return v===1?'rgba(107,124,92,0.7)':'rgba(196,81,26,0.35)'; }),
-    borderColor:     openVals.map(function(v){ return v===1?'#6b7c5c':'#c4511a'; }),
-    borderWidth: 1, borderRadius: 2,
-  }], {
-    scales: {
-      x: { ticks: { font:{family:"'DM Mono',monospace",size:9}, color:'#8a7d6e', maxRotation:45 }, grid:{color:'rgba(0,0,0,0.04)'} },
-      y: { min:0, max:1, ticks: { callback: function(v){ return v===1?'Aperto':'Chiuso'; }, font:{family:"'DM Mono',monospace",size:9}, color:'#8a7d6e' }, grid:{color:'rgba(0,0,0,0.06)'} },
-    },
-  });
-  document.getElementById('stats-open').innerHTML = statRow([
-    ['Stato attuale', openVals[openVals.length-1]===1?'Aperto':'Chiuso', openVals[openVals.length-1]===1?'var(--sage)':'var(--rust)'],
-    ['% tempo aperto', openPct + '%'],
-    ['Osservazioni', openVals.length],
-  ]);
-
-  // MARKET BUY vs SELL
-  var mktLabels = mktRes.series.map(function(p){ return fmtTs(p.ts); });
-  var buyCounts  = mktRes.series.map(function(p){ return (p.value||[]).filter(function(e){return e.side==='BUY';}).length; });
-  var sellCounts = mktRes.series.map(function(p){ return (p.value||[]).filter(function(e){return e.side==='SELL';}).length; });
-  var totalCounts = buyCounts.map(function(b,i){ return b + sellCounts[i]; });
-  makeChart('chart-market', 'line', mktLabels, [
-    { label:'BUY',  data:buyCounts,  borderColor:'#c4511a', backgroundColor:'rgba(196,81,26,0.06)',  borderWidth:2, pointRadius:buyCounts.length>20?0:3,  tension:0.3, fill:true },
-    { label:'SELL', data:sellCounts, borderColor:'#d4922a', backgroundColor:'rgba(212,146,42,0.06)', borderWidth:2, pointRadius:sellCounts.length>20?0:3, tension:0.3, fill:true },
-  ]);
-  document.getElementById('stats-market').innerHTML = statRow([
-    ['BUY attivi',    buyCounts[buyCounts.length-1],   'var(--rust)'],
-    ['SELL attivi',   sellCounts[sellCounts.length-1], 'var(--gold)'],
-    ['Totale',        totalCounts[totalCounts.length-1]],
-    ['Max osservato', Math.max.apply(null, totalCounts)],
-  ]);
-
-  // BALANCE DELTA
-  var deltaVals = balVals.slice(1).map(function(v,i){
-    return (v!==null && balVals[i]!==null) ? v - balVals[i] : null;
-  });
-  var deltaLabels = labels.slice(1);
-  makeChart('chart-balance-delta', 'bar', deltaLabels, [{
-    label: 'Delta Saldo', data: deltaVals,
-    backgroundColor: deltaVals.map(function(v){ return v>=0?'rgba(107,124,92,0.65)':'rgba(196,81,26,0.55)'; }),
-    borderColor:     deltaVals.map(function(v){ return v>=0?'#6b7c5c':'#c4511a'; }),
-    borderWidth: 1, borderRadius: 2,
-  }]);
-  var pos = deltaVals.filter(function(v){return v>0;});
-  var neg = deltaVals.filter(function(v){return v<0;});
-  document.getElementById('stats-balance-delta').innerHTML = statRow([
-    ['Guadagni totali',  pos.length ? '+\u20ac' + pos.reduce(function(a,b){return a+b;},0).toLocaleString('it-IT') : '-', 'var(--sage)'],
-    ['Perdite totali',   neg.length ? '\u20ac'  + neg.reduce(function(a,b){return a+b;},0).toLocaleString('it-IT') : '-', 'var(--rust)'],
-    ['Delta max',        pos.length ? '+\u20ac' + Math.max.apply(null,pos).toLocaleString('it-IT') : '-', 'var(--sage)'],
-    ['Delta min',        neg.length ? '\u20ac'  + Math.min.apply(null,neg).toLocaleString('it-IT') : '-', 'var(--rust)'],
-  ]);
-}
-
+// ── INIT ──
+startAutoRefresh();
+if (cfg().baseUrl) setTimeout(fetchAll, 300);
 </script>
 </body>
 </html>
