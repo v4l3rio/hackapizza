@@ -270,20 +270,19 @@ class DashboardClient:
         return data
 
     def run_dump(self, turn_id: int | None = None) -> dict:
-        """Fetch everything and persist to disk. Returns the dump dict."""
+        """Fetch everything and persist to disk as {turn_id}.json. Updates if exists."""
         ts = datetime.now(timezone.utc).isoformat()
         data = self.fetch_all(turn_id)
-        dump = {"ts": ts, "data": data}
-        self._persist_dump(dump)
-        print(f"[dump] {ts} — market:{len(data.get('market') or [])} "
+        dump = {"ts": ts, "turn_id": turn_id, "data": data}
+        self._persist_dump(dump, turn_id)
+        print(f"[dump] turn={turn_id} ts={ts} — market:{len(data.get('market') or [])} "
               f"meals:{len(data.get('meals') or [])} "
-              f"bids:{len(data.get('bid_history') or [])} "
-              f"turn_id={turn_id}")
+              f"bids:{len(data.get('bid_history') or [])}")
         return dump
 
-    def _persist_dump(self, dump: dict):
-        safe = dump["ts"].replace(":", "-").replace(".", "-")
-        fpath = os.path.join(self.dumps_dir, f"{safe}.json")
+    def _persist_dump(self, dump: dict, turn_id: int | None = None):
+        name = str(turn_id) if turn_id is not None else dump["ts"].replace(":", "-").replace(".", "-")
+        fpath = os.path.join(self.dumps_dir, f"{name}.json")
         with open(fpath, "w", encoding="utf-8") as f:
             json.dump(dump, f, ensure_ascii=False, indent=2)
 
@@ -577,3 +576,41 @@ class DashboardClient:
                         seen[bid]["status_history"].append({"ts": dump["ts"], "status": b.get("status")})
                     seen[bid]["status"] = b.get("status")
         return sorted(seen.values(), key=lambda e: e["id"])
+
+    # ── DELTA: LAST TWO DUMPS ─────────────────────────────────────────────
+
+    def get_restaurant_delta(self) -> dict | None:
+        """
+        Compare reputation and balance between the last two dumps.
+
+        Returns:
+            {
+                "prev": {"ts", "balance", "reputation"},
+                "curr": {"ts", "balance", "reputation"},
+                "delta": {"balance": diff, "reputation": diff},
+            }
+            or None if fewer than 2 dumps exist.
+        """
+        files = self.list_dump_files()
+        if len(files) < 2:
+            return None
+
+        prev_dump = self.load_dump(files[-2])
+        curr_dump = self.load_dump(files[-1])
+
+        prev_r = (prev_dump.get("data") or {}).get("restaurant") or {}
+        curr_r = (curr_dump.get("data") or {}).get("restaurant") or {}
+
+        prev_bal = prev_r.get("balance", 0)
+        curr_bal = curr_r.get("balance", 0)
+        prev_rep = prev_r.get("reputation", 0)
+        curr_rep = curr_r.get("reputation", 0)
+
+        return {
+            "prev": {"ts": prev_dump["ts"], "balance": prev_bal, "reputation": prev_rep},
+            "curr": {"ts": curr_dump["ts"], "balance": curr_bal, "reputation": curr_rep},
+            "delta": {
+                "balance": curr_bal - prev_bal,
+                "reputation": curr_rep - prev_rep,
+            },
+        }
