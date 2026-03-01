@@ -48,11 +48,14 @@ class AgentManager:
         self.mcp = mcp
         self.sse = sse
 
+        def filter_tools(names: list[str]) -> list[Tool]:
+            return [t for t in mcp_tools if t.name in names]
+
         self._speaking = SpeakingAgent()
-        self._bidding = BiddingAgent(mcp_tools=mcp_tools)
-        self._menu = MenuAgent(mcp_tools=mcp_tools)
+        self._bidding = BiddingAgent(mcp_tools=filter_tools(["closed_bid"]))
+        self._menu = MenuAgent(mcp_tools=filter_tools(["save_menu"]))
         self._market = MarketAgent()
-        self._serving = ServingAgent(mcp=mcp, mcp_tools=mcp_tools)
+        self._serving = ServingAgent(mcp=mcp, mcp_tools=filter_tools(["prepare_dish", "serve_dish", "update_restaurant_is_open"]))
         self._strategy = RecipeStrategyAgent(http)
         self._news = NewsWatcherAgent()
 
