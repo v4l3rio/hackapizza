@@ -23,6 +23,13 @@ class HttpClient:
             async with session.get(url, headers=self._headers) as resp:
                 resp.raise_for_status()
                 return await resp.json()
+            
+    async def _get_web_app(self, path: str) -> Any:
+        url = f"{WEB_APP_URL}{path}"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=self._headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
 
     # --- Endpoints ---
 
@@ -30,7 +37,7 @@ class HttpClient:
         url = '/api/recipes/optimal-set'
         params = f'size={n_recipes}'
 
-        data = await self._get(f'{WEB_APP_URL}?{params}')
+        data = await self._get_web_app(f'{url}?{params}')
 
         return list(data['shared_ingredients'].keys())
 
