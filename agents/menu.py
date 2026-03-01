@@ -140,14 +140,6 @@ class MenuAgent(Agent):
                     markup = MENU_MARKUP_STANDARD
 
                 if history_prices.get(name) is not None:
-<<<<<<< HEAD
-                    base_price = max(0.0, history_prices[name] - 5)
-                else:
-                    base_price = float(DEFAULT_PRICE_SELL)
-
-                # Scale by reputation: high rep → higher price, low rep → lower price
-                suggested_price = round(base_price * rep_multiplier, 2)
-=======
                     suggested_price = max(0.0, round(history_prices[name] - 5, 2))
                     _log.debug("'%s': price from history=%.2f → suggested=%.2f",
                                name, history_prices[name], suggested_price)
@@ -160,8 +152,6 @@ class MenuAgent(Agent):
                     "avg_prep_ms=%d suggested_price=%.2f",
                     name, tier, prestige_score, cost, markup, avg_prep_ms, suggested_price,
                 )
->>>>>>> 7d0569aba69ca79b3c0f7f9257774e6851cf4e6e
-
                 dish_profiles.append({
                     "name": name,
                     "estimated_cost": round(cost, 2),
