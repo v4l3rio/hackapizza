@@ -297,7 +297,8 @@ class NewsWatcherAgent(Agent):
             f"'vendere surplus di [ingrediente] sul mercato', 'aggiungere [piatto] al menu', "
             f"'evitare [ingrediente] in questa fase', 'monitorare il prezzo di [ingrediente]'.\n"
             f"- Assegna priorità: high se l'impatto è immediato, medium se nei prossimi turni, low se generico.\n"
-            f"Chiama record_insights UNA SOLA VOLTA con tutti i dati IN ITALIANO."
+            f"Chiama record_insights UNA SOLA VOLTA con tutti i dati IN ITALIANO.\n"
+            f"NON aggiungere testo libero prima o dopo la chiamata al tool — solo la chiamata."
         )
 
         try:
