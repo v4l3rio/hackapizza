@@ -302,7 +302,7 @@ class NewsWatcherAgent(Agent):
         )
 
         try:
-            await self.a_run(task, tool_choice="required_first")
+            await self.a_run(task)
         except Exception as exc:
             log_error("news", "—", "analyze", f"Analisi LLM fallita per {url}: {exc}")
 
