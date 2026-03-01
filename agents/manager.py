@@ -104,7 +104,7 @@ class AgentManager:
         """Broadcast message (e.g. market entry created by another team)."""
         sender = data.get("sender", "unknown")
         text = data.get("payload", "")
-        log("manager", self.state.turn_id, "message", f"Broadcast from {sender}: {text}")
+        # log("manager", self.state.turn_id, "message", f"Broadcast from {sender}: {text}")
 
     async def _on_new_message(self, data: dict[str, Any]) -> None:
         """Direct private message from another team (new_message SSE event)."""
