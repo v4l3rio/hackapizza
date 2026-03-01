@@ -158,7 +158,7 @@ class AgentManager:
 
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory)
-                    await self._market.execute_waiting(self.state)
+                    await self._market.execute_waiting(self.state, self.memory, self.mcp)
                     try:
                         await self.mcp.call_tool("update_restaurant_is_open", {"is_open": True})
                         log("manager", self.state.turn_id, "phase", "Restaurant opened")
