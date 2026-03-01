@@ -232,7 +232,7 @@ class ServingAgent(Agent):
             return
 
         try:
-            await self._state.refresh_all(self._http)
+            await self._state.refresh_info(self._http)
             _log.debug("State refreshed: inventory=%s", self._state.inventory)
         except Exception as exc:
             _log.exception("State refresh failed: %s", exc)
