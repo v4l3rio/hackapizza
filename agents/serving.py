@@ -53,6 +53,8 @@ class ServingAgent(Agent):
         self._mcp = mcp
         self._http: HttpClient | None = None
         self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_name, ...]
+        self._client_queue: list[str] = []  # spawned clients not yet matched to a pending order
+        self._served_clients: set[str] = set()  # clients already served (to avoid double-serve)
         super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=3)
 
     def register(self, sse: SSEListener, state: GameState, mcp: MCPClient, http: HttpClient) -> None:
@@ -79,6 +81,8 @@ class ServingAgent(Agent):
         
         self._state = state
         self._pending_orders.clear()
+        self._client_queue.clear()
+        self._served_clients.clear()
         with tracer.start_as_current_span("serving_agent.execute") as span:
             span.set_attribute("turn_id", state.turn_id)
             log("serving", state.turn_id, "agent", "ServingAgent started — restaurant already open")
@@ -88,9 +92,6 @@ class ServingAgent(Agent):
 
     async def _on_client_spawned(self, data: dict[str, Any]) -> None:
         _log.debug("_on_client_spawned RAW data: %s", data)
-        asyncio.create_task(self._process_client_spawned(data))
-
-    async def _process_client_spawned(self, data: dict[str, Any]) -> None:
         phase = self._state.phase if self._state else None
         _log.debug("_process_client_spawned: state=%s phase=%s", self._state is not None, phase)
         if self._state is None or self._state.phase != "serving":
@@ -105,6 +106,7 @@ class ServingAgent(Agent):
         _log.info("CLIENT SPAWNED — name=%s order='%s' intolerances=%s", client_name, order_text, intolerances)
 
         log("serving", self._state.turn_id, "client", f"Client {client_name} wants: '{order_text}'")
+        self._client_queue.append(client_name)
 
         menu_names = {item.get("name") for item in self._state.menu_items}
         cookable = self._state.cookable_dishes()
@@ -141,8 +143,13 @@ class ServingAgent(Agent):
                         if tc.name == "prepare_dish":
                             dish = tc.arguments.get("dish_name", "")
                             if dish:
-                                self._pending_orders.setdefault(dish, []).append(client_name)
-                                log("serving", self._state.turn_id, "kitchen", f"Preparing '{dish}' for {client_name}")
+                                if client_name in self._served_clients:
+                                    _log.warning("Client '%s' was already served during a_run — skipping pending_orders", client_name)
+                                else:
+                                    if client_name in self._client_queue:
+                                        self._client_queue.remove(client_name)
+                                    self._pending_orders.setdefault(dish, []).append(client_name)
+                                    log("serving", self._state.turn_id, "kitchen", f"Preparing '{dish}' for {client_name}")
                             else:
                                 _log.warning("prepare_dish called with empty dish_name — arguments=%s", tc.arguments)
                 else:
@@ -168,12 +175,19 @@ class ServingAgent(Agent):
         if not pending and dish_name in self._pending_orders:
             del self._pending_orders[dish_name]
 
+        if client_name is None and self._client_queue:
+            client_name = self._client_queue.pop(0)
+            _log.warning("No pending order for dish '%s' — using queued client '%s'", dish_name, client_name)
+            log("serving", self._state.turn_id, "serve", f"No pending order for '{dish_name}' — assigned to queued client '{client_name}'")
+
         try:
             _log.debug("Resolving customer_id for client_name='%s'", client_name)
             customer_id = await self._resolve_customer_id(client_name)
             _log.info("Calling serve_dish: dish='%s' customer_id=%s", dish_name, customer_id)
             result = await self._mcp.call_tool("serve_dish", {"dish_name": dish_name, "client_id": str(customer_id)})
             _log.debug("serve_dish MCP result: %s", result)
+            if client_name:
+                self._served_clients.add(client_name)
             log("serving", self._state.turn_id, "serve", f"Served '{dish_name}' to customer {customer_id} ('{client_name}')")
         except Exception as exc:
             _log.exception("serve_dish failed — dish='%s' client='%s': %s", dish_name, client_name, exc)
