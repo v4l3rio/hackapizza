@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Callable, Any, Awaitable
 
@@ -43,20 +44,38 @@ class SSEListener:
             except Exception as exc:
                 log_error("sse", 0, "dispatch", f"Handler error for '{event_type}': {exc}")
 
-    async def listen(self) -> None:
-        """Open the SSE connection and process events until the server closes it."""
-        log("sse", 0, "connect", f"Connecting to {self.url}")
+    async def listen(self, max_retries: int = 10, base_delay: float = 1.0, max_delay: float = 60.0) -> None:
+        """Open the SSE connection and process events, reconnecting on drop."""
         timeout = aiohttp.ClientTimeout(total=None, sock_connect=15, sock_read=None)
+        attempt = 0
 
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.get(self.url, headers=self.headers) as response:
-                response.raise_for_status()
-                log("sse", 0, "connect", f"Connected (HTTP {response.status})")
+        while True:
+            try:
+                log("sse", 0, "connect", f"Connecting to {self.url} (attempt {attempt + 1})")
+                async with aiohttp.ClientSession(timeout=timeout) as session:
+                    async with session.get(self.url, headers=self.headers) as response:
+                        response.raise_for_status()
+                        log("sse", 0, "connect", f"Connected (HTTP {response.status})")
+                        attempt = 0  # reset on successful connection
 
-                async for raw_line in response.content:
-                    await self._handle_line(raw_line)
+                        async for raw_line in response.content:
+                            await self._handle_line(raw_line)
 
-        log("sse", 0, "connect", "Connection closed — exiting")
+                log("sse", 0, "connect", "Connection closed by server — reconnecting...")
+
+            except (aiohttp.ServerDisconnectedError, aiohttp.ClientConnectionError, aiohttp.ClientPayloadError) as exc:
+                attempt += 1
+                if attempt > max_retries:
+                    log_error("sse", 0, "connect", f"Max retries ({max_retries}) exceeded. Giving up.")
+                    raise
+
+                delay = min(base_delay * (2 ** (attempt - 1)), max_delay)
+                log_error("sse", 0, "connect", f"Connection error ({exc.__class__.__name__}: {exc}). Retry {attempt}/{max_retries} in {delay:.1f}s...")
+                await asyncio.sleep(delay)
+
+            except Exception as exc:
+                log_error("sse", 0, "connect", f"Unexpected error: {exc}")
+                raise
 
     async def _handle_line(self, raw_line: bytes) -> None:
         if not raw_line:
