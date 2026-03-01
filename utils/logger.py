@@ -60,7 +60,7 @@ sys.stderr = TeeStream(sys.stderr)
 # ==============================
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(message)s",
     stream=sys.stdout,
 )
