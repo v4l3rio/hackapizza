@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from typing import Any
 
 from datapizza.agents import Agent
@@ -17,6 +18,7 @@ from utils.logger import log, log_error
 from utils.tracing import get_tracer
 
 tracer = get_tracer(__name__)
+_log = logging.getLogger("serving_agent")
 
 
 class ServingAgent(Agent):
@@ -70,21 +72,29 @@ class ServingAgent(Agent):
     # ------------------------------------------------------------------ SSE handlers
 
     async def _on_client_spawned(self, data: dict[str, Any]) -> None:
+        _log.debug("_on_client_spawned RAW data: %s", data)
         asyncio.create_task(self._process_client_spawned(data))
 
     async def _process_client_spawned(self, data: dict[str, Any]) -> None:
+        phase = self._state.phase if self._state else None
+        _log.debug("_process_client_spawned: state=%s phase=%s", self._state is not None, phase)
         if self._state is None or self._state.phase != "serving":
+            _log.warning("_process_client_spawned: skipped (state=%s, phase=%s)", self._state is not None, phase)
             return
+
+        _log.debug(f"data_in_serving: data={data}")
 
         client_name = str(data.get("clientName") or data.get("client_id") or data.get("id", "unknown"))
         order_text = str(data.get("orderText") or data.get("order") or data.get("text", ""))
         intolerances = data.get("intolerances") or data.get("allergies") or []
+        _log.info("CLIENT SPAWNED — name=%s order='%s' intolerances=%s", client_name, order_text, intolerances)
 
         log("serving", self._state.turn_id, "client", f"Client {client_name} wants: '{order_text}'")
 
         menu_names = {item.get("name") for item in self._state.menu_items}
         cookable = self._state.cookable_dishes()
         menu_recipes = [r for r in cookable if r.get("name") in menu_names]
+        _log.debug("menu_names=%s | cookable_total=%d | menu_recipes=%d", menu_names, len(cookable), len(menu_recipes))
 
         task = (
             f"Il cliente '{client_name}' è arrivato.\n"
@@ -105,35 +115,53 @@ class ServingAgent(Agent):
             span.set_attribute("client_name", client_name)
             span.set_attribute("turn_id", self._state.turn_id)
             try:
+                _log.debug("Calling a_run for client '%s'", client_name)
                 result = await self.a_run(task)
+                _log.debug("a_run result: %s", result)
                 if result:
+                    tools_called = [tc.name for tc in result.tools_used]
+                    _log.info("LLM tools called: %s", tools_called)
                     for tc in result.tools_used:
+                        _log.debug("Tool call: name=%s args=%s", tc.name, tc.arguments)
                         if tc.name == "prepare_dish":
                             dish = tc.arguments.get("dish_name", "")
                             if dish:
                                 self._pending_orders.setdefault(dish, []).append(client_name)
                                 log("serving", self._state.turn_id, "kitchen", f"Preparing '{dish}' for {client_name}")
+                            else:
+                                _log.warning("prepare_dish called with empty dish_name — arguments=%s", tc.arguments)
+                else:
+                    _log.warning("a_run returned no result for client '%s'", client_name)
             except Exception as exc:
+                _log.exception("_process_client_spawned crashed for client '%s': %s", client_name, exc)
                 span.record_exception(exc)
                 log_error("serving", self._state.turn_id, "client", f"_on_client_spawned failed: {exc}")
 
     async def _on_preparation_complete(self, data: dict[str, Any]) -> None:
+        _log.debug("_on_preparation_complete RAW data: %s", data)
+        phase = self._state.phase if self._state else None
         if self._state is None or self._state.phase != "serving":
+            _log.warning("_on_preparation_complete: skipped (state=%s, phase=%s)", self._state is not None, phase)
             return
-
         dish_name = data.get("dish")
         log("serving", self._state.turn_id, "kitchen", f"Preparation complete: '{dish_name}'")
+        _log.info("PREPARATION COMPLETE — dish='%s' | pending_orders=%s", dish_name, dict(self._pending_orders))
 
         pending = self._pending_orders.get(dish_name, [])
         client_name: str | None = pending.pop(0) if pending else None
+        _log.debug("Resolved client_name='%s' from pending queue; remaining for dish=%s", client_name, pending)
         if not pending and dish_name in self._pending_orders:
             del self._pending_orders[dish_name]
 
         try:
+            _log.debug("Resolving customer_id for client_name='%s'", client_name)
             customer_id = await self._resolve_customer_id(client_name)
-            await self._mcp.call_tool("serve_dish", {"dish_name": dish_name, "client_id": str(customer_id)})
+            _log.info("Calling serve_dish: dish='%s' customer_id=%s", dish_name, customer_id)
+            result = await self._mcp.call_tool("serve_dish", {"dish_name": dish_name, "client_id": str(customer_id)})
+            _log.debug("serve_dish MCP result: %s", result)
             log("serving", self._state.turn_id, "serve", f"Served '{dish_name}' to customer {customer_id} ('{client_name}')")
         except Exception as exc:
+            _log.exception("serve_dish failed — dish='%s' client='%s': %s", dish_name, client_name, exc)
             log_error("serving", self._state.turn_id, "serve", f"serve_dish failed for '{dish_name}': {exc}")
             # return
 
@@ -142,21 +170,31 @@ class ServingAgent(Agent):
 
     async def _close_if_no_cookable_dishes(self) -> None:
         """Refresh inventory then close the restaurant if no menu dish can still be cooked."""
+        _log.debug("_close_if_no_cookable_dishes: state=%s http=%s", self._state is not None, self._http is not None)
         if self._state is None or self._http is None:
+            _log.error("_close_if_no_cookable_dishes: state or http is None — forcing close")
             await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
             log("serving", self._state.turn_id if self._state else 0, "close_check", "State or http error, restaurant close")
             return
 
         try:
             await self._state.refresh_all(self._http)
+            _log.debug("State refreshed: inventory=%s", self._state.inventory)
         except Exception as exc:
+            _log.exception("State refresh failed: %s", exc)
             log_error("serving", self._state.turn_id, "close_check", f"State refresh failed: {exc}")
 
         menu_names = {item.get("name") for item in self._state.menu_items}
         full_menu_count = len(menu_names)
         still_cookable = [r for r in self._state.cookable_dishes() if r.get("name") in menu_names]
+        threshold = MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION * full_menu_count
+        _log.info(
+            "close_check: menu=%d | still_cookable=%d | threshold=%.2f | cookable_names=%s",
+            full_menu_count, len(still_cookable), threshold,
+            [r.get("name") for r in still_cookable],
+        )
 
-        if len(still_cookable) >= MIN_DISH_TO_FULFILL_OR_CLOSE_FRACTION * full_menu_count:
+        if len(still_cookable) >= threshold:
             log(
                 "serving",
                 self._state.turn_id,
@@ -170,6 +208,7 @@ class ServingAgent(Agent):
             await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
             log("serving", self._state.turn_id, "close_check", "Restaurant closed")
         except Exception as exc:
+            _log.exception("Failed to close restaurant: %s", exc)
             log_error("serving", self._state.turn_id, "close_check", f"Failed to close restaurant: {exc}")
 
     async def _resolve_customer_id(self, client_name: str | None) -> int:
@@ -182,24 +221,35 @@ class ServingAgent(Agent):
 
         turn_id = self._state.turn_id
         meals = await self._http.get_meals(turn_id=turn_id, restaurant_id=self._http.team_id)
+        _log.debug("get_meals returned %d entries for turn_id=%s", len(meals), turn_id)
         active = [
             m for m in meals
             if not m.get("executed")
             and (m.get("status") or "").lower() not in ("cancelled", "canceled")
             and m.get("servedDishId") is None
         ]
+        _log.info(
+            "resolve_customer_id: client_name='%s' | total_meals=%d | active=%d | active_names=%s",
+            client_name, len(meals), len(active),
+            [((m.get("customer") or {}).get("name") or "") for m in active],
+        )
 
         if client_name:
             key = client_name.strip().lower()
             for m in active:
-                if ((m.get("customer") or {}).get("name") or "").strip().lower() == key:
+                meal_name = ((m.get("customer") or {}).get("name") or "").strip().lower()
+                if meal_name == key:
+                    _log.debug("Matched customer by name: '%s' -> customerId=%s", client_name, m["customerId"])
                     return m["customerId"]
+            _log.warning("Name '%s' not found in active meals — falling back to first unserved", client_name)
             log("serving", turn_id, "meal_lookup", f"Name '{client_name}' not found — falling back to first unserved")
 
         if active:
             m = active[0]
             name = ((m.get("customer") or {}).get("name") or "")
+            _log.info("Fallback: using first active customer '%s' (customerId=%s)", name, m["customerId"])
             log("serving", turn_id, "meal_lookup", f"Serving first unserved customer '{name}' (id={m['customerId']})")
             return m["customerId"]
 
+        _log.error("No unserved customer found in /meals for turn_id=%s. Full meals dump: %s", turn_id, meals)
         raise LookupError(f"No unserved customer found in /meals (turn_id={turn_id})")
