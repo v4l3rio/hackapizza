@@ -67,7 +67,7 @@ MENU_PRESTIGE_SCORE_HIGH: float = 75.0  # score >= this → PRESTIGE tier
 MENU_PRESTIGE_SCORE_LOW: float = 62.0  # score <  this → BUDGET  tier
 
 DASHBOARD = DashboardClient(
-    base_url=WEB_APP_URL,
+    base_url=BASE_URL,
     api_key=TEAM_API_KEY,
     my_restaurant_id=str(TEAM_ID),
     dumps_dir="./dumps",

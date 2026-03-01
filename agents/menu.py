@@ -90,7 +90,7 @@ class MenuAgent(Agent):
 
             # Reputation multiplier: rep=100 → 1.5, rep=50 → 0.75, rep=0 → 0.5
             # Formula: 0.5 + (rep/100)^2
-            rep_multiplier = round(0.5 + (state.reputation / 100.0) ** 2, 3)
+            rep_multiplier = round(0.7 + (state.reputation / 100.0) ** 2, 3)
             log("waiting", state.turn_id, "menu", f"Reputation={state.reputation:.1f} → price multiplier={rep_multiplier}")
 
             # Pre-compute pricing profiles — deterministic, no LLM involvement

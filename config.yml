@@ -4,7 +4,7 @@ REGOLO_MODEL_BIG: gpt-oss-120b
 
 # Bidding strategy
 DEFAULT_BID_FLAT: 4        # flat bid per ingredient on turn 1
-DEFAULT_BID_QUANTITY: 30
+DEFAULT_BID_QUANTITY: 18
 DEFAULT_PRICE_SELL: 180
 DEFAULT_PRICE_SELL_MARKET: 50
 BID_CLEARING_MULTIPLIER: 1.1  # bid = clearing_price * multiplier
