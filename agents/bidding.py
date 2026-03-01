@@ -38,6 +38,7 @@ class BiddingAgent(Agent):
     def __init__(self, mcp_tools: list[Tool]) -> None:
         self._state: GameState | None = None
         super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=1)
+        self.max_recipes = MAX_RECIPES
 
     async def execute(self, state: GameState, memory: StrategyMemory, http: HttpClient) -> None:
         self._state = state
@@ -78,7 +79,7 @@ class BiddingAgent(Agent):
         if MAX_RECIPES:
             loop = asyncio.get_event_loop()
             data = await loop.run_in_executor(
-                None, DASHBOARD.get_optimal_recipe_set, MAX_RECIPES
+                None, DASHBOARD.get_optimal_recipe_set, self.max_recipes
             )
             ingredients = list(data['shared_ingredients'].keys())
             log("closed_bid", state.turn_id, "debug-agent", f"Obtained {len(ingredients)} Ingredients from {MAX_RECIPES} recipes")
