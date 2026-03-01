@@ -59,7 +59,7 @@ class ServingAgent(Agent):
         self._state: GameState | None = None
         self._mcp = mcp
         self._http: HttpClient | None = None
-        self._memory: Any | None = None
+        self._strategy_memory: Any | None = None
         self._pending_orders: dict[str, list[str]] = {}  # dish_name -> [client_name, ...]
         self._client_queue: list[str] = []  # spawned clients not yet matched to a pending order
         self._client_priorities: dict[str, int] = {}  # client_name -> priority value
@@ -68,9 +68,9 @@ class ServingAgent(Agent):
 
     def _detect_archetype(self, client_name: str) -> str:
         """Detect client archetype from profiles. Returns 'orbital_family' if not found."""
-        if self._memory and self._memory.customer_profiles:
+        if self._strategy_memory and self._strategy_memory.customer_profiles:
             key = client_name.strip().lower()
-            for p in self._memory.customer_profiles:
+            for p in self._strategy_memory.customer_profiles:
                 if p.get("name", "").strip().lower() == key:
                     return p.get("archetype", "orbital_family")
         return "orbital_family"
@@ -97,7 +97,7 @@ class ServingAgent(Agent):
                 return
 
         self._state = state
-        self._memory = memory
+        self._strategy_memory = memory
         self._pending_orders.clear()
         self._client_queue.clear()
         self._client_priorities.clear()
