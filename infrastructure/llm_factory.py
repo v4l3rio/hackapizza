@@ -21,3 +21,11 @@ def get_llm_client() -> OpenAILikeClient:
             base_url=config.REGOLO_BASE_URL,
         )
     return _client
+
+def get_llm_client_small() -> OpenAILikeClient:
+    """Return a separate LLM client for small models."""
+    return OpenAILikeClient(
+        api_key=config.REGOLO_API_KEY,
+        model=config.REGOLO_SMALL_MODEL,
+        base_url=config.REGOLO_BASE_URL,
+    )
