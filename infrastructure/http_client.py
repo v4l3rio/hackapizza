@@ -25,6 +25,14 @@ class HttpClient:
 
     # --- Endpoints ---
 
+    async def get_best_ingredients(self, n_recipes) -> list[str]:
+        url = '/api/recipes/optimal-set?size=10'
+        params = f'size={n_recipes}'
+
+        data = await self._get(f'{url}?{params}')
+
+        return list(data['shared_ingredients'].keys())
+
     async def get_recipes(self) -> list[dict[str, Any]]:
         data = await self._get(f"/recipes")
         return data if isinstance(data, list) else data.get("recipes", [])

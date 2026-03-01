@@ -159,7 +159,7 @@ class AgentManager:
                     except Exception as exc:
                         log_error("manager", self.state.turn_id, "memory", f"Memory consolidate failed: {exc}")
 
-                    await self._bidding.execute(self.state, self.memory)
+                    await self._bidding.execute(self.state, self.memory, self.http)
 
                 elif phase == "waiting":
                     await self._menu.execute(self.state, self.memory)

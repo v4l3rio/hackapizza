@@ -5,13 +5,14 @@ import json
 from datapizza.agents import Agent
 from datapizza.tools import Tool
 
-from config import DEFAULT_BID_FLAT, DEFAULT_BID_QUANTITY, MAX_BID_BALANCE_FRACTION
+from config import DEFAULT_BID_FLAT, DEFAULT_BID_QUANTITY, MAX_BID_BALANCE_FRACTION, MAX_RECIPES
 from state.game_state import GameState
 from state.memory import StrategyMemory
 from infrastructure.llm_factory import get_llm_client
 from utils.ingredient_data import get_ingredient_data
 from utils.logger import log, log_error
 from utils.tracing import get_tracer
+from infrastructure.http_client import HttpClient
 
 tracer = get_tracer(__name__)
 
@@ -37,7 +38,7 @@ class BiddingAgent(Agent):
         self._state: GameState | None = None
         super().__init__(client=get_llm_client(), tools=mcp_tools, max_steps=1)
 
-    async def execute(self, state: GameState, memory: StrategyMemory) -> None:
+    async def execute(self, state: GameState, memory: StrategyMemory, http: HttpClient) -> None:
         self._state = state
 
         with tracer.start_as_current_span("bidding_agent.execute") as span:
@@ -48,7 +49,7 @@ class BiddingAgent(Agent):
             log("closed_bid", state.turn_id, "state", f"Balance={state.balance:.2f} | Inventory={state.inventory}")
 
             budget = state.balance * MAX_BID_BALANCE_FRACTION
-            needed = self._compute_needed(state)
+            needed = await self._compute_needed(state, http)
 
             if not needed:
                 log("closed_bid", state.turn_id, "agent", "No ingredients needed — skipping bid")
@@ -70,6 +71,13 @@ class BiddingAgent(Agent):
                 span.record_exception(exc)
                 log_error("closed_bid", state.turn_id, "agent", f"BiddingAgent failed: {exc}")
 
-    def _compute_needed(self, state: GameState) -> dict[str, int]:
+    async def _compute_needed(self, state, http: HttpClient) -> dict[str, int]:
         """Returns DEFAULT_BID_QUANTITY for every known ingredient."""
-        return {ing: DEFAULT_BID_QUANTITY for ing in get_ingredient_data()}
+
+        if MAX_RECIPES:
+            ingredients = await http.get_best_ingredients(MAX_RECIPES)
+            log("closed_bid", state.turn_id, "debug-agent", f"Obtained {len(ingredients)} from {MAX_RECIPES} recipes")
+        else:
+            ingredients = get_ingredient_data()
+
+        return {ing: DEFAULT_BID_QUANTITY for ing in ingredients} # get_ingredient_data()

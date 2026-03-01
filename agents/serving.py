@@ -65,6 +65,17 @@ class ServingAgent(Agent):
 
     async def execute(self, state: GameState) -> None:
         """Called when the serving phase starts."""
+        # FALLBACK IF NO INGREDIENT: CLOSE RESTAURANT
+        if (not state.inventory):
+            log("serving", state.turn_id, "close_check", "NO INGREDIENT IN INVENTORY: CLOSING RESTAURANT")
+            try:
+                await self._mcp.call_tool("update_restaurant_is_open", {"is_open": False})
+                log("serving", state.turn_id, "close_check", "Restaurant closed")
+            except Exception as exc:
+                _log.exception("Failed to close restaurant: %s", exc)
+                log_error("serving", state.turn_id, "close_check", f"Failed to close restaurant: {exc}")
+        
+        
         self._state = state
         self._pending_orders.clear()
         with tracer.start_as_current_span("serving_agent.execute") as span:
