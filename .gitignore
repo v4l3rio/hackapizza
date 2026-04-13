@@ -1,85 +1,57 @@
-# -----------------------------
-# 🐍 Python
-# -----------------------------
+# ──────────────────────────────────────────────────────────────
+# PROJECT · hackapizza
+# ──────────────────────────────────────────────────────────────
+# AI agent per la competizione Hackapizza 2026. Partecipa a un
+# gioco multi-ristorante in cui gestisce inventario, serve clienti
+# e fa trading di ingredienti usando LLM per le decisioni.
+# Architettura asincrona con SSE/streaming via Regolo API.
+#
+# Stack:  Python (asyncio, httpx), Poetry, LLM (Regolo API)
+# Run:    poetry run python main.py
+# Setup:  poetry install
+# Env:    copia .env.example → .env
+#         variabili: REGOLO_API_KEY, endpoint del server di gioco
+# ──────────────────────────────────────────────────────────────
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Distribution / packaging
+# Build / packaging
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# -----------------------------
-# 🧪 Virtual Environments
-# -----------------------------
+# Ambiente virtuale
 .venv/
 venv/
 env/
 ENV/
 
-# -----------------------------
-# 📦 Poetry
-# -----------------------------
-poetry.lock
-
-# (Keep poetry.lock if building an application, remove this line if it's a library)
-# For applications: you may WANT to commit poetry.lock
-
-# -----------------------------
-# 🔐 Environment Variables
-# -----------------------------
+# Env e secrets
 .env
 .secrets
 *.env
 
-# Kaggle
-.kaggle/
-
-# -----------------------------
-# 🧠 ML / Data / Experiments
-# -----------------------------
-data/
-datasets/
-outputs/
-models/
-checkpoints/
+# Dati di gioco (dump partite, log sessioni)
+dumps/
 logs/
-wandb/
-mlruns/
+state/
+resources/cook_server/dumps
 
-# Jupyter
+# Notebook sketch (non è codice di produzione)
+HACKAPIZZA-SKETCH.ipynb
 .ipynb_checkpoints/
 
-# -----------------------------
-# 🖥 IDE (Generic)
-# -----------------------------
+# Tool
+.pytest_cache/
 .vscode/
 .idea/
-*.swp
-*.swo
 .claude/
 
-# -----------------------------
-# 🖥 OS
-# -----------------------------
+# macOS / OS
 .DS_Store
 Thumbs.db
-
-# -----------------------------
-# 🧪 Testing
-# -----------------------------
-.coverage
-htmlcov/
-.pytest_cache/
-datapizza-ai/
-
-# -----------------------------
-# 📦 UV
-# -----------------------------
-uv.lock
-
-resources/cook_server/dumps
-HACKAPIZZA-SKETCH.ipynb
